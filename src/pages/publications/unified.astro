@@ -1,5 +1,5 @@
 ---
-import { withBase } from "astro";
+const BASE_URL = import.meta.env.BASE_URL;
 import Layout from "../../layouts/Layout.astro";
 import { loadPubMedCache } from "../../lib/pubmed";
 import {
@@ -86,7 +86,7 @@ const unifiedPayload = cache
     canonical id when the same paper appears twice. Duplicate links and Scholar
     exclusions live in this browser only—use <strong>Export browser state</strong>{" "}
     to save a JSON snapshot. PubMed “Exclude” uses the same storage as{" "}
-    <a href={withBase("/publications/pubmed-review/")}>PubMed bibliography</a>.
+    <a href={BASE_URL + ""}>PubMed bibliography</a>.
   </p>
 
   {

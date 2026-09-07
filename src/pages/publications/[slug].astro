@@ -1,6 +1,6 @@
 ---
+const BASE_URL = import.meta.env.BASE_URL;
 import Layout from "../../layouts/Layout.astro";
-import { withBase } from "astro";
 import { loadFragment } from "../../lib/fragments";
 import { publicationSections } from "../../data/site";
 
@@ -23,7 +23,7 @@ const html = loadFragment(fragment);
 ---
 
 <Layout title={title}>
-  <a href={withBase("/publications/")}>&larr; Back to Publications</a>
+  <a href={BASE_URL + ""}>&larr; Back to Publications</a>
   <h1 class="page-title">{title}</h1>
   {
     html ? (

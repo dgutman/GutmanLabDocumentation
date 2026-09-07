@@ -1,6 +1,6 @@
 ---
+const BASE_URL = import.meta.env.BASE_URL;
 import { googleScholar } from "../data/site";
-import { withBase } from "astro";
 
 interface Props {
   variant?: "default" | "compact";
@@ -11,9 +11,9 @@ const { variant = "default" } = Astro.props;
 
 {variant === "compact" ? (
   <div class="gs-links">
-    <a href={withBase("/publications/coverage/")}>OpenAlex vs PubMed gaps</a> — we cannot
+    <a href={BASE_URL + ""}>OpenAlex vs PubMed gaps</a> — we cannot
     pull from Google Scholar directly.
-    <a href={withBase("/publications/scholar-bibtex/")}>View BibTeX in the site</a> (after
+    <a href={BASE_URL + ""}>View BibTeX in the site</a> (after
     running ``npm run sync:scholar`` or adding the export).
   </div>
 ) : (
