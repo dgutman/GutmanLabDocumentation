@@ -10,7 +10,8 @@ import {
 
 const BASE = import.meta.env.BASE_URL || "/";
 function link(href: string) {
-  return href === "/" ? BASE : BASE + href;
+  if (href === "/") return BASE;
+  return BASE + href.replace(/^\//, "");
 }
 
 const bibPath = join(process.cwd(), "content/publications/scholar-export.bib");

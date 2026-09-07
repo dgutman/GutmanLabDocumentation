@@ -5,7 +5,8 @@ import { publicationSections } from "../../data/site";
 
 const BASE = import.meta.env.BASE_URL || "/";
 function link(href: string) {
-  return href === "/" ? BASE : BASE + href;
+  if (href === "/") return BASE;
+  return BASE + href.replace(/^\//, "");
 }
 
 export function getStaticPaths() {
