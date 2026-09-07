@@ -2,6 +2,7 @@
 import { nav, siteTitle } from "../data/site";
 
 const pathname = Astro.url.pathname.replace(/\/$/, "") || "/";
+const siteVersion = "v0.1.0";
 ---
 
 <header class="site-header">
@@ -31,4 +32,5 @@ const pathname = Astro.url.pathname.replace(/\/$/, "") || "/";
       </ul>
     </nav>
   </div>
+  <div class="site-version">{siteVersion}</div>
 </header>
