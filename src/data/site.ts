@@ -25,11 +25,11 @@ export const googleScholar = {
 
 export const nav = [
   { href: "/", label: "Home" },
-  { href: "/people/about/", label: "People" },
-  { href: "/research/", label: "Research" },
-  { href: "/publications/", label: "Publications" },
-  { href: "/resources/", label: "Resources" },
-  { href: "/blog/", label: "Lab Blog" },
+  { href: "/people/about", label: "People" },
+  { href: "/research", label: "Research" },
+  { href: "/publications", label: "Publications" },
+  { href: "/resources", label: "Resources" },
+  { href: "/blog", label: "Lab Blog" },
 ] as const;
 
 /** URL slug → fragment file basename under `research-areas__` */
@@ -47,7 +47,7 @@ export const researchAreas = [
 export const homeHighlights = [
   {
     title: "Cancer Informatics",
-    href: "/research/cancer-informatics/",
+    href: "/research/cancer-informatics",
     blurb:
       "The goal of cancer informatics is to obtain and organize large amounts of data (histology, radiology, etc.) to formulate hypotheses about cancer development and guide diagnostic and prognostic decisions.",
     image:
@@ -55,7 +55,7 @@ export const homeHighlights = [
   },
   {
     title: "Non-human MRI Analysis",
-    href: "/research/non-human-mri-analysis/",
+    href: "/research/non-human-mri-analysis",
     blurb:
       "MRI from non-human models offers a unique perspective into neural functioning and complements experimental techniques not available in human specimens.",
     image:
@@ -63,7 +63,7 @@ export const homeHighlights = [
   },
   {
     title: "NeuroGenomics",
-    href: "/research/neurogenomics/",
+    href: "/research/neurogenomics",
     blurb:
       "In-silico methods to identify and measure brain features using radiological imaging to study pathological development.",
     image:
