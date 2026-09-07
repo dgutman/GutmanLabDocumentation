@@ -1,0 +1,37 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { loadFragment } from "../../lib/fragments";
+import { researchAreas } from "../../data/site";
+
+export function getStaticPaths() {
+  return researchAreas.map(({ slug, title }) => ({
+    params: { slug },
+    props: { title },
+  }));
+}
+
+interface Props {
+  title: string;
+}
+
+const { slug } = Astro.params;
+const { title } = Astro.props;
+
+const fragmentName = `research-areas__${slug}`;
+const html = loadFragment(fragmentName);
+---
+
+<Layout title={title}>
+  <h1 class="page-title">{title}</h1>
+  {
+    html ? (
+      <div class="content-recovered" set:html={html} />
+    ) : (
+      <p class="placeholder">
+        No recovered HTML for this topic yet. Run{" "}
+        <code>npm run recover</code> or add{" "}
+        <code>content/recovered/{fragmentName}.html.fragment</code>.
+      </p>
+    )
+  }
+</Layout>

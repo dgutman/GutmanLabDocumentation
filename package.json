@@ -1,0 +1,17 @@
+{
+  "name": "gutman-lab-website",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "recover": "python3 scripts/recover_wayback.py",
+    "sync:pubmed": "python3 scripts/sync_pubmed.py",
+    "compare:openalex": "python3 scripts/compare_openalex_pubmed.py",
+    "sanity:scholar": "python3 scripts/sanity_check_scholar_export.py"
+  },
+  "dependencies": {
+    "astro": "^5.7.0"
+  }
+}

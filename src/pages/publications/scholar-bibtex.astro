@@ -1,0 +1,188 @@
+---
+import { existsSync, readFileSync } from "node:fs";
+import { join } from "node:path";
+import Layout from "../../layouts/Layout.astro";
+import {
+  bibEntryAnchorId,
+  parseBibMeta,
+  splitBibtexEntries,
+} from "../../lib/scholarBib";
+
+const bibPath = join(process.cwd(), "content/publications/scholar-export.bib");
+let bibText = "";
+if (existsSync(bibPath)) {
+  try {
+    bibText = readFileSync(bibPath, "utf8");
+  } catch {
+    bibText = "";
+  }
+}
+const hasBib = bibText.trim().length > 0;
+const bibEntries = hasBib ? splitBibtexEntries(bibText) : [];
+---
+
+<Layout
+  title="Scholar BibTeX export"
+  description="Local copy of the Google Scholar BibTeX export (scholar-export.bib) for reference and copying."
+  noIndex={true}
+>
+  <h1 class="page-title">Scholar BibTeX export</h1>
+
+  <p class="bib-lede">
+    This is the same file as <code>content/publications/scholar-export.bib</code>{" "}
+    (saved from Google Scholar → Export → BibTeX). The text below is embedded when
+    the site is built or when the dev server renders this page—after you add or
+    change the .bib file, run <code>npm run build</code> (or save the file and
+    refresh while <code>npm run dev</code> is running). Run{" "}
+    <code>npm run sanity:scholar</code> to compare against the PubMed cache. Each
+    entry has an <code>id</code> so links from{" "}
+    <a href="/publications/unified/">Unified publications</a> jump here.
+  </p>
+
+  {
+    hasBib ? (
+      <>
+        <div class="bib-toolbar">
+          <button type="button" class="bib-copy" id="bib-copy">
+            Copy all
+          </button>
+          <span class="bib-meta" id="bib-meta" aria-live="polite" />
+        </div>
+        <div class="bib-entries-wrap" id="bib-entries">
+          {bibEntries.map((ent, i) => {
+            const meta = parseBibMeta(ent);
+            const anchor = meta
+              ? bibEntryAnchorId(meta.key)
+              : `bib-entry-${i}`;
+            return (
+              <pre class="bib-entry" id={anchor}>
+                {ent}
+              </pre>
+            );
+          })}
+        </div>
+        <p class="bib-hint" id="bib-hint" hidden>
+          Copied to clipboard.
+        </p>
+      </>
+    ) : (
+      <p class="bib-empty">
+        No BibTeX file yet, or it is empty. Save your Scholar export as{" "}
+        <code>content/publications/scholar-export.bib</code>. If you already
+        saved a non-empty file but still see this, run{" "}
+        <code>npm run build</code> (or hard-refresh the page while{" "}
+        <code>npm run dev</code> is running). An old preview or{" "}
+        <code>dist/</code> folder can still show the empty state until you
+        rebuild.
+      </p>
+    )
+  }
+</Layout>
+
+{
+  hasBib && (
+    <script is:inline>
+      (function () {
+        var btn = document.getElementById("bib-copy");
+        var wrap = document.getElementById("bib-entries");
+        var meta = document.getElementById("bib-meta");
+        var hint = document.getElementById("bib-hint");
+        if (wrap && meta) {
+          var blocks = wrap.querySelectorAll(".bib-entry");
+          var t = "";
+          var i;
+          for (i = 0; i < blocks.length; i++) {
+            t += (blocks[i].textContent || "") + (i < blocks.length - 1 ? "\n\n" : "");
+          }
+          meta.textContent =
+            t.length.toLocaleString() +
+            " characters · " +
+            blocks.length +
+            " entries";
+        }
+        btn?.addEventListener("click", function () {
+          var wrap = document.getElementById("bib-entries");
+          if (!wrap) return;
+          var blocks = wrap.querySelectorAll(".bib-entry");
+          var parts = [];
+          for (var j = 0; j < blocks.length; j++) {
+            parts.push(blocks[j].textContent || "");
+          }
+          var full = parts.join("\n\n");
+          if (!full) return;
+          navigator.clipboard.writeText(full).then(function () {
+            if (hint) {
+              hint.hidden = false;
+              setTimeout(function () {
+                hint.hidden = true;
+              }, 2000);
+            }
+          });
+        });
+      })();
+    </script>
+  )
+}
+
+<style>
+  .bib-lede {
+    max-width: 62ch;
+    font-size: 0.95rem;
+    color: var(--muted);
+    margin: 0 0 1.25rem;
+    line-height: 1.45;
+  }
+  .bib-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.65rem;
+  }
+  .bib-copy {
+    font: inherit;
+    font-size: 0.9rem;
+    font-weight: 600;
+    padding: 0.4rem 0.85rem;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    cursor: pointer;
+  }
+  .bib-copy:hover {
+    border-color: var(--muted);
+  }
+  .bib-meta {
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+  .bib-entries-wrap {
+    max-height: min(70vh, 48rem);
+    overflow: auto;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .bib-entry {
+    margin: 0;
+    padding: 0.85rem 1.1rem;
+    font-size: 0.8rem;
+    line-height: 1.35;
+    white-space: pre;
+    word-break: normal;
+    scroll-margin-top: 1rem;
+  }
+  .bib-entry + .bib-entry {
+    border-top: 1px solid var(--border);
+  }
+  .bib-hint {
+    font-size: 0.88rem;
+    color: var(--muted);
+    margin: 0.65rem 0 0;
+  }
+  .bib-empty {
+    max-width: 58ch;
+    color: var(--muted);
+  }
+</style>

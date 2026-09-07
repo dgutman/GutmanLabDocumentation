@@ -1,0 +1,75 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { loadFragment } from "../../lib/fragments";
+import { publicationSections } from "../../data/site";
+
+export function getStaticPaths() {
+  return publicationSections.map(({ slug, title, fragment }) => ({
+    params: { slug },
+    props: { title, fragment },
+  }));
+}
+
+interface Props {
+  title: string;
+  fragment: string;
+}
+
+const { title, fragment } = Astro.props;
+const html = loadFragment(fragment);
+
+const isPapers = Astro.params.slug === "papers";
+---
+
+<Layout title={title}>
+  <h1 class="page-title">{title}</h1>
+
+  {
+    isPapers ? (
+      <>
+        <p class="pubmed-panel-link">
+          <a href="/publications/pubmed-review/">
+            PubMed bibliography (live search + exclude)
+          </a>
+          — curated list with optional “not mine” flags; kept on a separate page
+          until an admin UI exists.
+        </p>
+        {html ? (
+          <div class="content-recovered" set:html={html} />
+        ) : (
+          <p class="placeholder">
+            Archived list not found. Run <code>npm run recover</code> or add the
+            fragment file.
+          </p>
+        )}
+      </>
+    ) : (
+      <>
+        {html ? (
+          <div class="content-recovered" set:html={html} />
+        ) : (
+          <p class="placeholder">
+            This section was not recovered yet. Run <code>npm run recover</code>{" "}
+            or add <code>content/recovered/{fragment}.html.fragment</code>.
+          </p>
+        )}
+      </>
+    )
+  }
+</Layout>
+
+<style>
+  .pubmed-panel-link {
+    max-width: 62ch;
+    margin: 0 0 1.5rem;
+    padding: 1rem 1.15rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    color: var(--muted);
+  }
+  .pubmed-panel-link a {
+    font-weight: 600;
+  }
+</style>

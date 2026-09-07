@@ -1,0 +1,1265 @@
+---
+import { existsSync, readFileSync } from "node:fs";
+import { join } from "node:path";
+import Layout from "../../layouts/Layout.astro";
+import { loadPubMedCache } from "../../lib/pubmed";
+import {
+  buildTitleToPmid,
+  heuristicMatchPmid,
+  parseScholarBibFile,
+} from "../../lib/scholarBib";
+
+const bibPath = join(process.cwd(), "content/publications/scholar-export.bib");
+let bibText = "";
+if (existsSync(bibPath)) {
+  try {
+    bibText = readFileSync(bibPath, "utf8");
+  } catch {
+    bibText = "";
+  }
+}
+
+const cache = loadPubMedCache();
+const scholarParsed = bibText.trim() ? parseScholarBibFile(bibText) : [];
+const titleToPmid = cache
+  ? buildTitleToPmid(
+      cache.articles.map((a) => ({ pmid: String(a.pmid), title: a.title })),
+    )
+  : new Map<string, string>();
+
+const pmidInCache = cache
+  ? new Set(cache.articles.map((a) => String(a.pmid)))
+  : new Set<string>();
+
+/** Prefer PMID from BibTeX URL when it points at cache; else title heuristic. PMID wins for deduping. */
+const scholar = scholarParsed.map((s) => {
+  const fromUrl =
+    s.pmidFromUrl && pmidInCache.has(String(s.pmidFromUrl))
+      ? String(s.pmidFromUrl)
+      : null;
+  const heur = heuristicMatchPmid(s.title, titleToPmid);
+  const resolvedPmid = fromUrl ?? heur ?? null;
+  return {
+    key: s.key,
+    entryType: s.entryType,
+    title: s.title,
+    year: s.year,
+    authorsShort: s.authorsShort,
+    authorsFull: s.authorsFull,
+    pmidFromUrl: s.pmidFromUrl,
+    heuristicPmid: heur,
+    resolvedPmid,
+  };
+});
+
+const unifiedPayload = cache
+  ? {
+      generatedAt: cache.generatedAt,
+      query: cache.query,
+      pmidCount: cache.pmidCount,
+      excludedPmids: cache.excludedPmids ?? [],
+      articles: cache.articles.map((a) => ({
+        pmid: String(a.pmid),
+        title: a.title,
+        authors: a.authors,
+        journal: a.journal,
+        year: a.year,
+        pubmedUrl: a.pubmedUrl,
+        publicationTypes: a.publicationTypes ?? [],
+      })),
+      scholar,
+    }
+  : null;
+---
+
+<Layout
+  title="Unified publications (PubMed + Scholar)"
+  description="Combine PubMed cache and Scholar BibTeX; optional browser state for duplicate links and Scholar exclusions."
+  noIndex={true}
+>
+  <h1 class="page-title">Unified publications</h1>
+
+  <p class="unified-lede">
+    Compare <strong>PubMed</strong> (synced cache) and <strong>Scholar BibTeX</strong>{" "}
+    in <strong>one table</strong> sorted by year (newest first), then author. The{" "}
+    <strong>Source</strong> column shows whether each row is from PubMed, Scholar, or
+    both. The <strong>PubMed PMID</strong> is the
+    canonical id when the same paper appears twice. Duplicate links and Scholar
+    exclusions live in this browser only—use <strong>Export browser state</strong>{" "}
+    to save a JSON snapshot. PubMed “Exclude” uses the same storage as{" "}
+    <a href="/publications/pubmed-review/">PubMed bibliography</a>.
+  </p>
+
+  {
+    !unifiedPayload ? (
+      <p class="placeholder">
+        No PubMed cache. Set email in{" "}
+        <code>content/publications/pubmed-config.json</code> and run{" "}
+        <code>npm run sync:pubmed</code>. Optional: add{" "}
+        <code>scholar-export.bib</code> and rebuild.
+      </p>
+    ) : (
+      <>
+        <div class="unified-meta">
+          {unifiedPayload.generatedAt ? (
+            <span>PubMed synced: {unifiedPayload.generatedAt}</span>
+          ) : null}
+          {unifiedPayload.query ? (
+            <span>
+              {" "}
+              · <code>{unifiedPayload.query}</code>
+            </span>
+          ) : null}
+          <span>
+            {" "}
+            · {unifiedPayload.articles.length} articles · {unifiedPayload.scholar.length}{" "}
+            Scholar entries
+          </span>
+        </div>
+
+        <div class="unified-toolbar">
+          <div class="unified-toolbar__actions">
+            <button type="button" class="btn btn--primary" id="btn-export-state">
+              Export browser state (JSON)
+            </button>
+            <button type="button" class="btn btn--ghost" id="btn-clear-dupes">
+              Clear duplicate links
+            </button>
+            <button type="button" class="btn btn--ghost" id="btn-clear-scholar-excl">
+              Clear Scholar key exclusions
+            </button>
+          </div>
+          <label class="unified-filter-label unified-filter-label--toolbar">
+            <input type="checkbox" id="unified-filter-hide-both" checked />
+            <span
+              >Ignore <strong>Both</strong> (on by default) — uncheck to include already-matched rows</span
+            >
+          </label>
+        </div>
+        <p class="unified-hint" id="export-state-hint" hidden>
+          Copied unified state JSON to clipboard.
+        </p>
+
+        <section class="unified-howto" aria-labelledby="howto-h">
+          <h2 id="howto-h" class="unified-howto__title">How to flag duplicates</h2>
+          <ol class="unified-howto__list">
+            <li>
+              The <strong>Source</strong> column labels each row: <strong>Both</strong>,{" "}
+              <strong>PubMed</strong>, or <strong>Scholar</strong>. “Both” means Scholar
+              already matches this PMID (URL/title in the <code>.bib</code> or a link you
+              saved).
+            </li>
+            <li>
+              <strong>Ignore Both</strong> is on by default so already-matched rows are
+              hidden; uncheck the box to see them again. When on, you only see
+              PubMed-only and Scholar-only (discrepancies).
+            </li>
+            <li>
+              Sort is shared, so <strong>PubMed</strong> and <strong>Scholar</strong> rows
+              for the same paper often appear near each other—use find-in-page on the
+              title if needed.
+            </li>
+            <li>
+              To link manually: on PubMed, paste the Scholar citation key (e.g.{" "}
+              <code>cooper2010integrative</code>) and click <strong>Link</strong>.
+              Or on Scholar, paste the PMID and click <strong>Link</strong>.
+            </li>
+            <li>
+              Saved pairs are listed under <strong>Duplicate links you saved</strong>.{" "}
+              <strong>Unlink</strong> if you made a mistake. PubMed stays the
+              canonical row.
+            </li>
+          </ol>
+        </section>
+
+        <div id="unified-root" class="unified-root" />
+      </>
+    )
+  }
+</Layout>
+
+{
+  unifiedPayload ? (
+    <script is:inline define:vars={{ unifiedPayload }}>
+      (function () {
+        const STORAGE_LOCAL_EXCLUDED = "gutman-pubmed-local-excluded";
+        const STORAGE_DUPLICATE_LINKS = "gutman-unified-duplicate-links";
+        const STORAGE_SCHOLAR_EXCLUDED = "gutman-unified-scholar-excluded-keys";
+
+        const data = unifiedPayload;
+        const cfgExcluded = new Set(
+          (data.excludedPmids || []).map(String),
+        );
+
+        function getLocalExcluded() {
+          try {
+            const a = JSON.parse(
+              localStorage.getItem(STORAGE_LOCAL_EXCLUDED) || "[]",
+            );
+            return Array.isArray(a) ? a.map(String) : [];
+          } catch {
+            return [];
+          }
+        }
+
+        function setLocalExcluded(ids) {
+          localStorage.setItem(STORAGE_LOCAL_EXCLUDED, JSON.stringify(ids));
+        }
+
+        function getDuplicateLinks() {
+          try {
+            const a = JSON.parse(
+              localStorage.getItem(STORAGE_DUPLICATE_LINKS) || "[]",
+            );
+            return Array.isArray(a) ? a : [];
+          } catch {
+            return [];
+          }
+        }
+
+        function setDuplicateLinks(rows) {
+          localStorage.setItem(
+            STORAGE_DUPLICATE_LINKS,
+            JSON.stringify(rows),
+          );
+        }
+
+        function getScholarExcludedKeys() {
+          try {
+            const a = JSON.parse(
+              localStorage.getItem(STORAGE_SCHOLAR_EXCLUDED) || "[]",
+            );
+            return Array.isArray(a) ? a.map(String) : [];
+          } catch {
+            return [];
+          }
+        }
+
+        function setScholarExcludedKeys(keys) {
+          localStorage.setItem(
+            STORAGE_SCHOLAR_EXCLUDED,
+            JSON.stringify(keys),
+          );
+        }
+
+        function mergedExcluded() {
+          const loc = new Set(getLocalExcluded());
+          const merged = new Set([...cfgExcluded, ...loc]);
+          return { loc, merged };
+        }
+
+        function escapeHtml(s) {
+          const d = document.createElement("div");
+          d.textContent = s;
+          return d.innerHTML;
+        }
+
+        function firstAuthorShort(segment) {
+          const s = (segment || "").trim();
+          if (!s) return "";
+          if (s.includes(",")) {
+            const parts = s.split(",").map((x) => x.trim());
+            const last = parts[0];
+            const rest = parts.slice(1).join(",").trim();
+            if (rest) {
+              const first = rest.split(/\s+/)[0];
+              return `${first} ${last}`;
+            }
+          }
+          const w = s.split(/\s+/).filter(Boolean);
+          if (w.length < 2) return s;
+          return `${w[1]} ${w[0]}`;
+        }
+
+        function firstAuthorSegment(full) {
+          if (!full) return "";
+          if (/\s+and\s+/i.test(full)) {
+            return full.split(/\s+and\s+/i)[0].trim();
+          }
+          const parts = full.split(", ").map((p) => p.trim()).filter(Boolean);
+          if (parts.length === 2) {
+            const w = parts[1].split(/\s+/).filter(Boolean);
+            if (w.length === 1) return `${parts[0]}, ${parts[1]}`;
+          }
+          return parts[0] || full.trim();
+        }
+
+        function isMultiAuthor(full) {
+          if (!full) return false;
+          if (/\s+and\s+/i.test(full)) return true;
+          const parts = full.split(", ").map((p) => p.trim()).filter(Boolean);
+          if (parts.length <= 1) return false;
+          if (parts.length === 2) {
+            const w = parts[1].split(/\s+/).filter(Boolean);
+            if (w.length === 1) return false;
+          }
+          return true;
+        }
+
+        function authorCellHtml(fullAuthors) {
+          const full = (fullAuthors || "").trim();
+          if (!full) return "—";
+          const seg = firstAuthorSegment(full);
+          const short = firstAuthorShort(seg);
+          const multi = isMultiAuthor(full);
+          const display = multi ? `${short} et al.` : short;
+          const displayEsc = escapeHtml(display);
+          if (!multi && display === full) {
+            return `<span>${displayEsc}</span>`;
+          }
+          return `<span class="unified-authors" title="${escapeHtml(full)}">${displayEsc}</span>`;
+        }
+
+        function pubmedKindLabel(types) {
+          const arr = Array.isArray(types) ? types : [];
+          const boring = /^(research support|nih|extramural|intramural|non-p\.h\.s\.|u\.s\. gov|gov't)/i;
+          const substantive = arr.filter((t) => !boring.test(String(t).trim()));
+          const work = substantive.length ? substantive : arr;
+          if (!work.length) return "Paper";
+          const low = work.map((t) => String(t).toLowerCase());
+          const joined = low.join(" ");
+          if (low.some((t) => /video-audio|video|webcast/i.test(t)))
+            return "Video";
+          if (low.some((t) => /erratum|retraction|retracted/i.test(t)))
+            return "Erratum";
+          if (low.some((t) => /abstract|poster|meeting abstract/i.test(t)))
+            return "Abstract";
+          if (
+            low.some((t) =>
+              /congress|conference|conference paper|proceedings|workshop/i.test(
+                t,
+              ),
+            )
+          )
+            return "Talk";
+          if (low.some((t) => /case report/i.test(t))) return "Case report";
+          if (joined.includes("review") && joined.includes("journal"))
+            return "Review";
+          if (low.some((t) => /editorial|comment|letter|news/i.test(t)))
+            return "Editorial";
+          if (low.some((t) => /book|chapter/i.test(t))) return "Book";
+          if (low.some((t) => /clinical trial|randomized/i.test(t)))
+            return "Paper";
+          if (low.some((t) => /journal article/i.test(t))) return "Paper";
+          const first = work[0];
+          return first.length > 26 ? first.slice(0, 24) + "…" : first;
+        }
+
+        function scholarKindLabel(entryType) {
+          const e = String(entryType || "").toLowerCase();
+          if (e === "article") return "Paper";
+          if (
+            e === "inproceedings" ||
+            e === "conference" ||
+            e === "proceedings"
+          )
+            return "Talk";
+          if (e === "inbook" || e === "incollection") return "Chapter";
+          if (e === "book") return "Book";
+          if (e === "phdthesis" || e === "mastersthesis") return "Thesis";
+          if (e === "techreport") return "Report";
+          if (e === "unpublished") return "Unpublished";
+          if (e === "booklet") return "Booklet";
+          if (e === "misc") return "Misc";
+          return entryType || "—";
+        }
+
+        /** Rough heuristic for whether a Scholar/BibTeX row is likely to find a PubMed PMID. */
+        function pmidLikelihoodTier(kindLabel) {
+          const k = String(kindLabel || "").trim().toLowerCase();
+          if (
+            /^(book|chapter|thesis|misc|report|unpublished|booklet|video)$/.test(
+              k,
+            )
+          )
+            return "unlikely";
+          if (
+            k === "abstract" ||
+            k === "talk" ||
+            /poster|meeting|conference|workshop|proceedings/.test(k)
+          )
+            return "maybe";
+          if (k.length > 24) return "maybe";
+          return "likely";
+        }
+
+        function kindBadgeHtml(kindLabel, detailTitle) {
+          const tier = pmidLikelihoodTier(kindLabel);
+          const hints = {
+            likely:
+              "Usually indexed in PubMed — a PMID match is realistic when linking Scholar ↔ PubMed.",
+            maybe:
+              "Sometimes in PubMed (meetings, abstracts) — try a title search; PMID may not exist.",
+            unlikely:
+              "Often not journal articles — PMID is uncommon; don’t expect a PubMed match.",
+          };
+          const detail = detailTitle ? String(detailTitle).trim() : "";
+          const tip = detail
+            ? `${detail} — ${hints[tier]}`
+            : hints[tier];
+          return `<span class="unified-kind unified-kind--pmid-${tier}" title="${escapeHtml(tip)}">${escapeHtml(kindLabel)}</span>`;
+        }
+
+        function filterHideBoth() {
+          const el = document.getElementById("unified-filter-hide-both");
+          return !!(el && el.checked);
+        }
+
+        function articleByPmid(pmid) {
+          return data.articles.find((a) => String(a.pmid) === String(pmid));
+        }
+
+        function sortUnifiedRows(rows) {
+          return [...rows].sort((a, b) => {
+            const y = (b.year || 0) - (a.year || 0);
+            if (y !== 0) return y;
+            return (a.sortAuthor || "").localeCompare(b.sortAuthor || "");
+          });
+        }
+
+        function render() {
+          const root = document.getElementById("unified-root");
+          if (!root) return;
+
+          const dupes = getDuplicateLinks().filter(
+            (r) =>
+              r &&
+              typeof r.scholarKey === "string" &&
+              typeof r.pmid === "string",
+          );
+          const dupeByScholar = new Map(
+            dupes.map((r) => [r.scholarKey, r.pmid]),
+          );
+          const scholarKeysForPmid = new Map();
+          for (const r of dupes) {
+            const set = scholarKeysForPmid.get(r.pmid) || [];
+            set.push(r.scholarKey);
+            scholarKeysForPmid.set(r.pmid, set);
+          }
+
+          const scholarExcl = new Set(getScholarExcludedKeys());
+          const { merged: exclPmids } = mergedExcluded();
+
+          const scholarOnlyRaw = [];
+          for (const s of data.scholar) {
+            if (scholarExcl.has(s.key)) continue;
+            if (dupeByScholar.has(s.key)) continue;
+            if (s.resolvedPmid) continue;
+            scholarOnlyRaw.push(s);
+          }
+
+          const activeArticles = data.articles.filter(
+            (a) => !exclPmids.has(String(a.pmid)),
+          );
+
+          function isMatchedPubMed(a) {
+            const pmid = String(a.pmid);
+            if ((scholarKeysForPmid.get(pmid) || []).length > 0) return true;
+            return data.scholar.some(
+              (s) =>
+                s.resolvedPmid === pmid && !scholarExcl.has(s.key),
+            );
+          }
+
+          const unifiedRows = [];
+          for (const a of activeArticles) {
+            const matched = isMatchedPubMed(a);
+            unifiedRows.push({
+              kind: "pubmed",
+              year: a.year,
+              sortAuthor: a.authors || "",
+              article: a,
+              matched,
+            });
+          }
+          for (const s of scholarOnlyRaw) {
+            unifiedRows.push({
+              kind: "scholar",
+              year: s.year,
+              sortAuthor: s.authorsShort || "",
+              scholar: s,
+            });
+          }
+          const sortedRows = sortUnifiedRows(unifiedRows);
+          const rowsToRender = filterHideBoth()
+            ? sortedRows.filter(
+                (r) => !(r.kind === "pubmed" && r.matched),
+              )
+            : sortedRows;
+
+          const BIBTEX_PAGE = "/publications/scholar-bibtex/";
+
+          function bibEntryAnchorFragment(key) {
+            return "bib-" + String(key).replace(/[^a-zA-Z0-9_-]/g, "_");
+          }
+
+          /** Unique @keys tied to this PMID (manual link, BibTeX URL, or title heuristic). */
+          function collectScholarKeysForPmid(pmid) {
+            const out = [];
+            const seen = new Set();
+            function add(key, source) {
+              if (!key || seen.has(key)) return;
+              seen.add(key);
+              out.push({ key, source });
+            }
+            for (const k of scholarKeysForPmid.get(pmid) || []) add(k, "link");
+            for (const x of data.scholar) {
+              if (
+                String(x.pmidFromUrl || "") === pmid &&
+                !dupeByScholar.has(x.key) &&
+                !scholarExcl.has(x.key)
+              )
+                add(x.key, "bib");
+            }
+            for (const x of data.scholar) {
+              if (
+                x.heuristicPmid === pmid &&
+                !x.pmidFromUrl &&
+                !dupeByScholar.has(x.key) &&
+                !scholarExcl.has(x.key)
+              )
+                add(x.key, "heuristic");
+            }
+            return out;
+          }
+
+          function scholarBibtexLinksHtml(entries) {
+            if (!entries.length)
+              return `<span class="unified-table__dash">—</span>`;
+            const titleFor = (source) => {
+              if (source === "link") return "Manually linked duplicate";
+              if (source === "bib") return "PMID in BibTeX URL";
+              if (source === "scholar-only")
+                return "Scholar BibTeX entry — open export page and search for this @key";
+              return "Automatic title match";
+            };
+            return `<div class="unified-table__bib-links">${entries
+              .map(
+                ({ key, source }) =>
+                  `<a class="unified-bib-link" href="${BIBTEX_PAGE}#${bibEntryAnchorFragment(key)}" title="${escapeHtml(titleFor(source))}">@${escapeHtml(key)}</a>`,
+              )
+              .join(" ")}</div>`;
+          }
+
+          function pubmedRowHtml(a, matched) {
+            const pmid = String(a.pmid);
+            const scholarKeys = collectScholarKeysForPmid(pmid);
+            const statusBadge = matched
+              ? `<span class="unified-badge unified-badge--both" title="PubMed cache + Scholar BibTeX">Both</span>`
+              : `<span class="unified-badge unified-badge--pm-only" title="PubMed cache only">PubMed</span>`;
+            const rowClass = matched
+              ? "unified-tr unified-tr--pubmed unified-tr--both"
+              : "unified-tr unified-tr--pubmed unified-tr--pubmed-only";
+            const idInput = "link-pmid-" + String(pmid).replace(/[^a-zA-Z0-9_-]/g, "_");
+            const pmidCell = `<a class="unified-pmid-link" href="${escapeHtml(a.pubmedUrl)}">${escapeHtml(pmid)}</a>`;
+            const scholarCell = scholarBibtexLinksHtml(scholarKeys);
+            const kindLabel = pubmedKindLabel(a.publicationTypes);
+            const kindCell = kindBadgeHtml(
+              kindLabel,
+              (a.publicationTypes || []).join(", "),
+            );
+            return `<tr class="${rowClass}" data-pmid="${escapeHtml(pmid)}">
+              <td class="unified-table__src">${statusBadge}</td>
+              <td class="unified-table__year">${a.year != null ? escapeHtml(String(a.year)) : "—"}</td>
+              <td class="unified-table__authors">${authorCellHtml(a.authors)}</td>
+              <td class="unified-table__titlecell">
+                <div class="unified-table__title-main"><a href="${escapeHtml(a.pubmedUrl)}">${escapeHtml(a.title)}</a></div>
+                <div class="unified-table__title-sub">${escapeHtml(a.journal || "")}</div>
+              </td>
+              <td class="unified-table__type">${kindCell}</td>
+              <td class="unified-table__pmid">${pmidCell}</td>
+              <td class="unified-table__scholar">${scholarCell}</td>
+              <td class="unified-table__actions">
+                <div class="unified-table__actionrow" role="group" aria-label="Link PubMed ${escapeHtml(pmid)} to Scholar key">
+                  <input type="text" class="unified-link-input unified-link-input--table" id="${idInput}" placeholder="Scholar key" autocomplete="off" aria-label="Scholar citation key for PMID ${escapeHtml(pmid)}" data-link-pmid="${escapeHtml(pmid)}" />
+                  <button type="button" class="btn btn--small btn--link-scholar" data-pmid="${escapeHtml(pmid)}">Link</button>
+                  <button type="button" class="btn btn--small btn--exclude btn--unified-exclude" data-pmid="${escapeHtml(pmid)}">Exclude</button>
+                </div>
+              </td>
+            </tr>`;
+          }
+
+          function scholarRowHtml(s) {
+            const keySlug = String(s.key).replace(/[^a-zA-Z0-9_-]/g, "_");
+            const sid = "sch-" + keySlug;
+            const skind = scholarKindLabel(s.entryType);
+            const kindCell = kindBadgeHtml(
+              skind,
+              `BibTeX: ${s.entryType}`,
+            );
+            return `<tr class="unified-tr unified-tr--scholar" data-scholar-key="${escapeHtml(s.key)}">
+              <td class="unified-table__src"><span class="unified-badge unified-badge--sch-only" title="Scholar BibTeX only">Scholar</span></td>
+              <td class="unified-table__year">${s.year != null ? escapeHtml(String(s.year)) : "—"}</td>
+              <td class="unified-table__authors">${authorCellHtml(s.authorsFull || s.authorsShort || "")}</td>
+              <td class="unified-table__titlecell">
+                <div class="unified-table__title-main">${escapeHtml(s.title || "(no title)")}</div>
+              </td>
+              <td class="unified-table__type">${kindCell}</td>
+              <td class="unified-table__pmid"><span class="unified-table__dash">—</span></td>
+              <td class="unified-table__scholar">${scholarBibtexLinksHtml([{ key: s.key, source: "scholar-only" }])}</td>
+              <td class="unified-table__actions">
+                <div class="unified-table__actionrow" role="group" aria-label="Link @${escapeHtml(s.key)} to PMID">
+                  <input type="text" class="unified-link-input unified-link-input--table" id="link-key-${sid}" inputmode="numeric" placeholder="PMID" autocomplete="off" aria-label="PMID for Scholar key ${escapeHtml(s.key)}" data-link-key="${escapeHtml(s.key)}" />
+                  <button type="button" class="btn btn--small btn--link-pmid" data-key="${escapeHtml(s.key)}">Link</button>
+                  <button type="button" class="btn btn--small btn--exclude btn--scholar-exclude" data-key="${escapeHtml(s.key)}">Hide</button>
+                </div>
+              </td>
+            </tr>`;
+          }
+
+          let html = "";
+
+          const totalCount = sortedRows.length;
+          const shownCount = rowsToRender.length;
+          const countTitle =
+            shownCount === totalCount
+              ? `All publications (${totalCount})`
+              : `All publications (${shownCount} of ${totalCount})`;
+          html += `<section class="unified-section" aria-labelledby="s-all"><h2 id="s-all" class="unified-section__title">${countTitle}</h2>
+          <p class="unified-section__sub"><strong>Publication type</strong> uses color as a rough guide for Scholar→PubMed linking: <strong class="unified-legend-ref unified-legend-ref--likely">green</strong> = often has PMID, <strong class="unified-legend-ref unified-legend-ref--maybe">amber</strong> = sometimes, <strong class="unified-legend-ref unified-legend-ref--unlikely">gray</strong> = PMID uncommon. Hover a badge for details. <strong>Authors</strong>: first author shown; hover for full list. Toolbar: matched (“Both”) rows are hidden by default; uncheck to show them.</p>`;
+          if (!sortedRows.length) {
+            html += `<p class="unified-empty">No rows to show—exclude PubMed items or hide Scholar keys, or your cache/BibTeX may be empty.</p>`;
+          } else {
+            html += `<div class="unified-table-wrap">
+            <p class="unified-pmid-legend" role="note">
+              <span class="unified-pmid-legend__title">PMID match heuristic</span>
+              <span class="unified-pmid-legend__items">
+                <span class="unified-pmid-legend__chip unified-kind--pmid-likely">Likely</span> journal reviews, papers
+                <span class="unified-pmid-legend__sep">·</span>
+                <span class="unified-pmid-legend__chip unified-kind--pmid-maybe">Maybe</span> talks, abstracts
+                <span class="unified-pmid-legend__sep">·</span>
+                <span class="unified-pmid-legend__chip unified-kind--pmid-unlikely">Unlikely</span> books, theses, misc
+              </span>
+            </p>
+            <table class="unified-table">
+              <caption class="unified-table__caption">Publications merged from PubMed and Scholar, sorted by year then author</caption>
+              <colgroup>
+                <col class="unified-col unified-col--src" />
+                <col class="unified-col unified-col--year" />
+                <col class="unified-col unified-col--authors" />
+                <col class="unified-col unified-col--title" />
+                <col class="unified-col unified-col--type" />
+                <col class="unified-col unified-col--pmid" />
+                <col class="unified-col unified-col--scholar" />
+                <col class="unified-col unified-col--actions" />
+              </colgroup>
+              <thead>
+                <tr>
+                  <th scope="col">Source</th>
+                  <th scope="col">Year</th>
+                  <th scope="col">Authors</th>
+                  <th scope="col">Title</th>
+                  <th scope="col" class="unified-th--pubtype">Publication type</th>
+                  <th scope="col">PMID</th>
+                  <th scope="col">Scholar</th>
+                  <th scope="col">Link</th>
+                </tr>
+              </thead>
+              <tbody>`;
+            for (const row of rowsToRender) {
+              if (row.kind === "pubmed") {
+                html += pubmedRowHtml(row.article, row.matched);
+              } else {
+                html += scholarRowHtml(row.scholar);
+              }
+            }
+            html += `</tbody></table></div>`;
+          }
+          html += `</section>`;
+
+          html += `<section class="unified-section unified-section--muted" aria-labelledby="s-dup"><h2 id="s-dup" class="unified-section__title">Duplicate links you saved (${dupes.length})</h2>
+          <p class="unified-section__sub">Pairs you created with <strong>Link</strong> on a PubMed or Scholar row. Stored in this browser only.</p>
+          <ul class="unified-dupelist">`;
+          for (const r of dupes) {
+            const art = articleByPmid(r.pmid);
+            html += `<li class="unified-dupeitem">
+              <code>@${escapeHtml(r.scholarKey)}</code> ↔ PMID ${escapeHtml(r.pmid)}
+              ${art ? ` — <span class="unified-dupe-title">${escapeHtml(art.title.slice(0, 80))}${art.title.length > 80 ? "…" : ""}</span>` : ""}
+              <button type="button" class="btn btn--small btn--ghost btn--unlink" data-scholar-key="${escapeHtml(r.scholarKey)}" data-pmid="${escapeHtml(r.pmid)}">Unlink</button>
+            </li>`;
+          }
+          if (!dupes.length) {
+            html += `<li class="unified-empty">No saved pairs—use <strong>Link</strong> above when the same paper appears in PubMed only and Scholar only.</li>`;
+          }
+          html += `</ul></section>`;
+
+          root.innerHTML = html;
+
+          root.querySelectorAll(".btn--unified-exclude").forEach((btn) => {
+            btn.addEventListener("click", () => {
+              const pmid = btn.getAttribute("data-pmid");
+              if (!pmid) return;
+              const cur = getLocalExcluded();
+              if (!cur.includes(pmid)) {
+                cur.push(pmid);
+                setLocalExcluded(cur);
+              }
+              render();
+            });
+          });
+
+          root.querySelectorAll(".btn--scholar-exclude").forEach((btn) => {
+            btn.addEventListener("click", () => {
+              const key = btn.getAttribute("data-key");
+              if (!key) return;
+              const cur = getScholarExcludedKeys();
+              if (!cur.includes(key)) {
+                cur.push(key);
+                setScholarExcludedKeys(cur);
+              }
+              render();
+            });
+          });
+
+          root.querySelectorAll(".btn--link-scholar").forEach((btn) => {
+            btn.addEventListener("click", () => {
+              const pmid = btn.getAttribute("data-pmid");
+              const row = btn.closest("tr.unified-tr");
+              const inp =
+                row && row.querySelector("input[data-link-pmid]");
+              const key = (inp && inp.value || "").trim().replace(/^@/, "");
+              if (!pmid || !key) return;
+              const rows = getDuplicateLinks().filter(
+                (r) => r.scholarKey !== key,
+              );
+              rows.push({ scholarKey: key, pmid: String(pmid) });
+              setDuplicateLinks(rows);
+              if (inp) inp.value = "";
+              render();
+            });
+          });
+
+          root.querySelectorAll(".btn--link-pmid").forEach((btn) => {
+            btn.addEventListener("click", () => {
+              const key = btn.getAttribute("data-key");
+              const row = btn.closest("tr.unified-tr");
+              const inp =
+                row && row.querySelector("input[data-link-key]");
+              const pmid = (inp && inp.value || "").trim();
+              if (!pmid || !key) return;
+              const rows = getDuplicateLinks().filter(
+                (r) => r.scholarKey !== key,
+              );
+              rows.push({ scholarKey: key, pmid: String(pmid) });
+              setDuplicateLinks(rows);
+              if (inp) inp.value = "";
+              render();
+            });
+          });
+
+          root.querySelectorAll(".btn--unlink").forEach((btn) => {
+            btn.addEventListener("click", () => {
+              const sk = btn.getAttribute("data-scholar-key");
+              const pm = btn.getAttribute("data-pmid");
+              const rows = getDuplicateLinks().filter(
+                (r) => !(r.scholarKey === sk && r.pmid === pm),
+              );
+              setDuplicateLinks(rows);
+              render();
+            });
+          });
+        }
+
+        function exportState() {
+          const snapshot = {
+            exportedAt: new Date().toISOString(),
+            duplicateLinks: getDuplicateLinks(),
+            scholarExcludedKeys: getScholarExcludedKeys(),
+            pubmedLocalExcludedPmids: getLocalExcluded(),
+            note:
+              "Browser-only. pubmedLocalExcludedPmids uses the same list as PubMed bibliography. Merge duplicateLinks / scholarExcludedKeys into a future JSON file in the repo if you want them versioned.",
+          };
+          const text = JSON.stringify(snapshot, null, 2);
+          const hint = document.getElementById("export-state-hint");
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(() => {
+              if (hint) {
+                hint.hidden = false;
+                setTimeout(() => {
+                  hint.hidden = true;
+                }, 4000);
+              }
+            });
+          } else {
+            window.prompt("Copy:", text);
+          }
+        }
+
+        document
+          .getElementById("btn-export-state")
+          ?.addEventListener("click", exportState);
+        document
+          .getElementById("btn-clear-dupes")
+          ?.addEventListener("click", () => {
+            if (confirm("Remove all manual Scholar ↔ PMID duplicate links?")) {
+              localStorage.removeItem(STORAGE_DUPLICATE_LINKS);
+              render();
+            }
+          });
+        document
+          .getElementById("btn-clear-scholar-excl")
+          ?.addEventListener("click", () => {
+            if (confirm("Clear all Scholar citation key exclusions?")) {
+              localStorage.removeItem(STORAGE_SCHOLAR_EXCLUDED);
+              render();
+            }
+          });
+
+        document
+          .getElementById("unified-filter-hide-both")
+          ?.addEventListener("change", render);
+
+        render();
+      })();
+    </script>
+  ) : null
+}
+
+<style>
+  .unified-lede {
+    max-width: 62ch;
+    color: var(--muted);
+    margin-bottom: 1.25rem;
+    line-height: 1.45;
+    font-size: 0.95rem;
+  }
+  .unified-meta {
+    font-size: 0.9rem;
+    color: var(--muted);
+    margin-bottom: 1rem;
+  }
+  .unified-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1rem;
+    margin-bottom: 0.5rem;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .unified-toolbar__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: center;
+  }
+  .unified-hint {
+    font-size: 0.9rem;
+    color: var(--accent);
+    margin-bottom: 1rem;
+  }
+  .unified-filter-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    color: var(--text);
+    user-select: none;
+    font-size: 0.9rem;
+    line-height: 1.35;
+  }
+  .unified-filter-label--toolbar {
+    padding: 0.4rem 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: color-mix(in srgb, var(--border) 6%, var(--surface));
+    max-width: 100%;
+  }
+  .unified-filter-label input {
+    width: 1.05rem;
+    height: 1.05rem;
+    flex-shrink: 0;
+    accent-color: var(--accent);
+  }
+  .unified-howto {
+    margin-bottom: 1.75rem;
+    padding: 1rem 1.15rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    max-width: 62rem;
+  }
+  .unified-howto__title {
+    font-size: 1rem;
+    margin: 0 0 0.65rem;
+  }
+  .unified-howto__list {
+    margin: 0;
+    padding-left: 1.25rem;
+    font-size: 0.9rem;
+    color: var(--muted);
+    line-height: 1.55;
+  }
+  .unified-howto__list li {
+    margin-bottom: 0.5rem;
+  }
+  .unified-root {
+    margin-top: 0.5rem;
+  }
+  .unified-section {
+    margin-bottom: 2.5rem;
+  }
+  .unified-section--muted {
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+  .unified-section__title {
+    font-size: 1.1rem;
+    margin: 0 0 0.35rem;
+  }
+  .unified-section__sub {
+    font-size: 0.88rem;
+    color: var(--muted);
+    margin: 0 0 1rem;
+    max-width: 70ch;
+    line-height: 1.45;
+  }
+  .unified-table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-bottom: 0.5rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface);
+    max-width: 100%;
+  }
+  .unified-pmid-legend {
+    margin: 0;
+    padding: 0.55rem 0.75rem;
+    font-size: 0.78rem;
+    line-height: 1.5;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
+    background: color-mix(in srgb, var(--border) 5%, var(--surface));
+  }
+  .unified-pmid-legend__title {
+    font-weight: 700;
+    color: var(--text);
+    margin-right: 0.5rem;
+  }
+  .unified-pmid-legend__sep {
+    margin: 0 0.4rem;
+    opacity: 0.45;
+  }
+  .unified-pmid-legend__chip {
+    display: inline-block;
+    padding: 0.08rem 0.35rem;
+    border-radius: 4px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    margin-right: 0.2rem;
+    border: 1px solid transparent;
+  }
+  .unified-legend-ref--likely {
+    color: #1b4332;
+  }
+  .unified-legend-ref--maybe {
+    color: #7a6200;
+  }
+  .unified-legend-ref--unlikely {
+    color: #5c5363;
+  }
+  .unified-table {
+    width: 100%;
+    min-width: 58rem;
+    table-layout: fixed;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+    line-height: 1.35;
+  }
+  .unified-col--src {
+    width: 5.5%;
+  }
+  .unified-col--year {
+    width: 3.5%;
+  }
+  .unified-col--authors {
+    width: 10%;
+  }
+  .unified-col--title {
+    width: 38.5%;
+  }
+  .unified-col--type {
+    width: 7%;
+  }
+  .unified-col--pmid {
+    width: 6.5%;
+  }
+  .unified-col--scholar {
+    width: 9.5%;
+  }
+  .unified-col--actions {
+    width: 19.5%;
+  }
+  .unified-table__caption {
+    caption-side: top;
+    text-align: left;
+    font-size: 0.78rem;
+    color: var(--muted);
+    padding: 0.6rem 0.75rem;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    background: color-mix(in srgb, var(--border) 8%, var(--surface));
+  }
+  .unified-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    text-align: left;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 0.45rem 0.4rem;
+    border-bottom: 2px solid var(--border);
+    border-right: 1px solid var(--border);
+    background: var(--surface);
+    white-space: nowrap;
+  }
+  .unified-th--pubtype {
+    white-space: normal;
+    line-height: 1.25;
+    max-width: 5.5rem;
+    text-transform: none;
+    font-size: 0.78rem;
+    letter-spacing: 0.01em;
+  }
+  .unified-table thead th:last-child {
+    border-right: none;
+  }
+  .unified-table tbody td {
+    padding: 0.4rem 0.4rem;
+    border-bottom: 1px solid var(--border);
+    border-right: 1px solid color-mix(in srgb, var(--border) 85%, transparent);
+    vertical-align: top;
+  }
+  .unified-table tbody td:last-child {
+    border-right: none;
+  }
+  .unified-table tbody tr:nth-child(even) td {
+    background: color-mix(in srgb, var(--border) 4.5%, var(--surface));
+  }
+  .unified-table tbody tr:last-child td {
+    border-bottom: none;
+  }
+  .unified-table tbody tr:hover td {
+    background: color-mix(in srgb, var(--border) 9%, var(--surface));
+  }
+  .unified-tr--both td:first-child {
+    box-shadow: inset 3px 0 0 #1d6b3a;
+  }
+  .unified-tr--pubmed-only td:first-child {
+    box-shadow: inset 3px 0 0 #5c6b7a;
+  }
+  .unified-tr--scholar td:first-child {
+    box-shadow: inset 3px 0 0 #6b7c93;
+  }
+  .unified-table__src {
+    white-space: nowrap;
+  }
+  .unified-table__year {
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+  .unified-table__authors {
+    word-break: break-word;
+    hyphens: auto;
+  }
+  .unified-authors {
+    cursor: help;
+    border-bottom: 1px dotted color-mix(in srgb, var(--muted) 55%, transparent);
+  }
+  .unified-table__type {
+    white-space: nowrap;
+  }
+  .unified-kind {
+    display: inline-block;
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 0.18rem 0.45rem;
+    border-radius: 5px;
+    border: 1px solid var(--border);
+  }
+  .unified-kind--pmid-likely {
+    border-color: #2d6a4f;
+    background: #f0faf3;
+    color: #1b4332;
+  }
+  .unified-kind--pmid-maybe {
+    border-color: #c9a227;
+    background: #fffbf0;
+    color: #6b5b00;
+  }
+  .unified-kind--pmid-unlikely {
+    border-color: #9a8fa3;
+    background: #f7f5f9;
+    color: #4a424d;
+  }
+  .unified-table__titlecell {
+    overflow-wrap: anywhere;
+  }
+  .unified-table__title-main {
+    font-weight: 600;
+    margin-bottom: 0.2rem;
+    line-height: 1.32;
+  }
+  .unified-table__title-main a {
+    font-weight: 600;
+  }
+  .unified-table__title-sub {
+    font-size: 0.78rem;
+    color: var(--muted);
+    line-height: 1.3;
+  }
+  .unified-table__pmid {
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+  .unified-pmid-link {
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    text-decoration: none;
+    border-bottom: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
+    color: var(--accent);
+  }
+  .unified-pmid-link:hover {
+    border-bottom-color: var(--accent);
+  }
+  .unified-table__scholar {
+    overflow-wrap: anywhere;
+  }
+  .unified-table__bib-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    align-items: center;
+  }
+  .unified-bib-link {
+    font-size: 0.78rem;
+    font-weight: 600;
+    font-family: ui-monospace, monospace;
+    text-decoration: none;
+    color: #1a5f7a;
+    border-bottom: 1px dashed color-mix(in srgb, #1a5f7a 50%, transparent);
+  }
+  .unified-bib-link:hover {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+  .unified-table__dash {
+    color: var(--muted);
+  }
+  .unified-table__actions {
+    vertical-align: middle;
+  }
+  .unified-table__actionrow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.3rem;
+    justify-content: flex-end;
+  }
+  .unified-badge {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 0.15rem 0.45rem;
+    border-radius: 4px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    margin-right: 0.35rem;
+  }
+  .unified-badge--link {
+    border-color: #1d6b3a;
+    color: #1d6b3a;
+    background: #f3faf5;
+  }
+  .unified-badge--hint {
+    border-color: #8a5a00;
+    color: #8a5a00;
+    background: #fffbf0;
+  }
+  .unified-badge--pmid {
+    border-color: #1a5f7a;
+    color: #1a5f7a;
+    background: #f0f8fb;
+  }
+  .unified-badge--both {
+    border-color: #1d6b3a;
+    color: #1d6b3a;
+    background: #f3faf5;
+  }
+  .unified-badge--pm-only {
+    border-color: #5c6b7a;
+    color: #4a5568;
+    background: #f4f6f8;
+  }
+  .unified-badge--sch-only {
+    border-color: #6b7c93;
+    color: #4a5568;
+    background: #f4f6f9;
+  }
+  .unified-link-input {
+    font: inherit;
+    font-size: 0.78rem;
+    padding: 0.22rem 0.35rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    width: 5.5rem;
+    min-width: 0;
+    flex: 1 1 auto;
+    max-width: 8rem;
+  }
+  .unified-dupelist {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .unified-dupeitem {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.5rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.9rem;
+  }
+  .unified-dupe-title {
+    color: var(--muted);
+    font-size: 0.85rem;
+  }
+  .unified-empty {
+    font-size: 0.95rem;
+    color: var(--muted);
+    font-style: italic;
+    margin: 0;
+  }
+  .btn {
+    font-family: var(--font);
+    font-size: 0.9rem;
+    padding: 0.45rem 0.9rem;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    background: var(--surface);
+    color: var(--text);
+  }
+  .btn--primary {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+  .btn--ghost:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .btn--small {
+    font-size: 0.8rem;
+    padding: 0.25rem 0.55rem;
+  }
+  .btn--exclude {
+    color: #8b2942;
+    border-color: #e8c4ce;
+    background: #fdf5f7;
+  }
+</style>

@@ -1,0 +1,195 @@
+#!/usr/bin/env python3
+"""
+Compare OpenAlex author works to the local PubMed cache (pubmed-cache.json).
+
+Google Scholar has no supported API and blocks automated scraping, so this
+script uses the OpenAlex API (https://openalex.org/) — an open index that
+often overlaps with what Google Scholar lists. It is not identical to Scholar.
+
+1. Set openalexAuthorId in content/publications/pubmed-config.json (short ID
+   like A5073937900 from https://openalex.org/authors?search=your+name).
+2. Run: npm run compare:openalex
+3. Read content/publications/openalex-diff.json and/or the printed summary.
+
+Requires: Python 3.9+, urllib (stdlib).
+"""
+from __future__ import annotations
+
+import json
+import re
+import ssl
+import sys
+import time
+import urllib.parse
+import urllib.request
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+CONFIG_PATH = ROOT / "content" / "publications" / "pubmed-config.json"
+CACHE_PATH = ROOT / "content" / "publications" / "pubmed-cache.json"
+OUT_PATH = ROOT / "content" / "publications" / "openalex-diff.json"
+
+OPENALEX = "https://api.openalex.org"
+UA = "GutmanLabWebsite/1.0 (mailto:lab; OpenAlex compare)"
+
+
+def fetch_json(url: str) -> dict:
+    req = urllib.request.Request(url, headers={"User-Agent": UA})
+    ctx = ssl.create_default_context()
+    with urllib.request.urlopen(req, context=ctx, timeout=120) as r:
+        return json.loads(r.read().decode("utf-8"))
+
+
+def short_author_id(full_id: str) -> str:
+    """https://openalex.org/A5073937900 -> A5073937900"""
+    s = full_id.rstrip("/").split("/")[-1]
+    if not re.match(r"^A\d+$", s):
+        raise ValueError(f"Not a valid OpenAlex author id: {full_id!r}")
+    return s
+
+
+def pmid_from_work(work: dict) -> str | None:
+    ids = work.get("ids") or {}
+    u = ids.get("pmid")
+    if not u:
+        return None
+    return u.rstrip("/").split("/")[-1]
+
+
+def fetch_all_works(author_short: str) -> list[dict]:
+    out: list[dict] = []
+    page = 1
+    per_page = 200
+    while True:
+        q = urllib.parse.urlencode(
+            {
+                "filter": f"author.id:{author_short}",
+                "per_page": str(per_page),
+                "page": str(page),
+            }
+        )
+        url = f"{OPENALEX}/works?{q}"
+        print(f"Fetching OpenAlex works page {page} ...", flush=True)
+        data = fetch_json(url)
+        batch = data.get("results") or []
+        if not batch:
+            break
+        out.extend(batch)
+        if len(batch) < per_page:
+            break
+        page += 1
+        time.sleep(0.15)
+    return out
+
+
+def main() -> int:
+    if not CONFIG_PATH.is_file():
+        print(f"Missing {CONFIG_PATH}", file=sys.stderr)
+        return 1
+    cfg = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
+    raw_id = (cfg.get("openalexAuthorId") or "").strip()
+    if not raw_id:
+        print(
+            "Set openalexAuthorId in pubmed-config.json (e.g. A5073937900). "
+            "Find it at https://openalex.org/authors?search=your+name",
+            file=sys.stderr,
+        )
+        return 1
+    try:
+        author_short = short_author_id(raw_id) if "openalex.org" in raw_id else raw_id
+        if not re.match(r"^A\d+$", author_short):
+            raise ValueError("expected A followed by digits")
+    except ValueError as e:
+        print(f"Invalid openalexAuthorId: {e}", file=sys.stderr)
+        return 1
+
+    if not CACHE_PATH.is_file():
+        print(f"Missing {CACHE_PATH}; run npm run sync:pubmed first.", file=sys.stderr)
+        return 1
+
+    cache = json.loads(CACHE_PATH.read_text(encoding="utf-8"))
+    pubmed_pmids = {str(a["pmid"]) for a in (cache.get("articles") or [])}
+
+    works = fetch_all_works(author_short)
+    print(f"OpenAlex returned {len(works)} works.", flush=True)
+
+    oa_pmids: dict[str, dict] = {}
+    no_pmid: list[dict] = []
+    for w in works:
+        pm = pmid_from_work(w)
+        wid = (w.get("ids") or {}).get("openalex", "")
+        title = w.get("display_name") or w.get("title") or ""
+        year = (w.get("publication_year")) or ""
+        doi = w.get("doi") or ""
+        if pm:
+            oa_pmids[pm] = {
+                "openalexWorkUrl": wid,
+                "title": title,
+                "year": year,
+                "doi": doi,
+            }
+        else:
+            no_pmid.append(
+                {
+                    "openalexWorkUrl": wid,
+                    "title": title,
+                    "year": year,
+                    "doi": doi,
+                }
+            )
+
+    not_in_pubmed = sorted(
+        (pm for pm in oa_pmids if pm not in pubmed_pmids),
+        key=lambda x: int(x) if x.isdigit() else 0,
+    )
+    in_pubmed_not_in_oa = sorted(
+        (pm for pm in pubmed_pmids if pm not in oa_pmids),
+        key=lambda x: int(x) if x.isdigit() else 0,
+    )
+
+    payload = {
+        "generatedAt": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        "note": "Generated by scripts/compare_openalex_pubmed.py. OpenAlex ≠ Google Scholar; verify author ID.",
+        "openalexAuthorId": author_short,
+        "openalexAuthorUrl": f"https://openalex.org/{author_short}",
+        "openalexWorksTotal": len(works),
+        "openalexWorksWithPmid": len(oa_pmids),
+        "openalexWorksWithoutPmid": len(no_pmid),
+        "pubmedCachePmidsTotal": len(pubmed_pmids),
+        "pmidsInOpenAlexNotInPubMedCache": [
+            {
+                "pmid": pm,
+                "pubmedUrl": f"https://pubmed.ncbi.nlm.nih.gov/{pm}/",
+                **oa_pmids[pm],
+            }
+            for pm in not_in_pubmed
+        ],
+        "pmidsInPubMedCacheNotInOpenAlex": [
+            {"pmid": pm, "pubmedUrl": f"https://pubmed.ncbi.nlm.nih.gov/{pm}/"}
+            for pm in in_pubmed_not_in_oa
+        ],
+        "openalexWorksWithoutPmidSample": no_pmid[:80],
+    }
+
+    OUT_PATH.parent.mkdir(parents=True, exist_ok=True)
+    OUT_PATH.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
+    print(f"Wrote {OUT_PATH}", flush=True)
+
+    print("\n--- Summary ---", flush=True)
+    print(
+        f"PMIDs in OpenAlex but not in local PubMed cache: {len(not_in_pubmed)}",
+        flush=True,
+    )
+    print(
+        f"PMIDs in PubMed cache but not linked on this OpenAlex author: {len(in_pubmed_not_in_oa)}",
+        flush=True,
+    )
+    print(f"OpenAlex works with no PMID (preprints, books, etc.): {len(no_pmid)}", flush=True)
+    if not_in_pubmed[:15]:
+        print("First gaps (PMID):", ", ".join(not_in_pubmed[:15]), flush=True)
+
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

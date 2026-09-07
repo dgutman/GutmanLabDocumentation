@@ -1,0 +1,192 @@
+---
+import { existsSync, readFileSync } from "node:fs";
+import { join } from "node:path";
+import Layout from "../../layouts/Layout.astro";
+
+const diffPath = join(
+  process.cwd(),
+  "content/publications/openalex-diff.json",
+);
+
+type DiffPayload = {
+  generatedAt?: string;
+  note?: string;
+  openalexAuthorId?: string;
+  openalexAuthorUrl?: string;
+  openalexWorksTotal?: number;
+  pmidsInOpenAlexNotInPubMedCache?: Array<{
+    pmid: string;
+    title?: string;
+    pubmedUrl?: string;
+    openalexWorkUrl?: string;
+  }>;
+  pmidsInPubMedCacheNotInOpenAlex?: Array<{ pmid: string; pubmedUrl?: string }>;
+  openalexWorksWithoutPmidSample?: Array<{
+    title?: string;
+    openalexWorkUrl?: string;
+    year?: number;
+    doi?: string;
+  }>;
+};
+
+let diff: DiffPayload | null = null;
+if (existsSync(diffPath)) {
+  try {
+    diff = JSON.parse(readFileSync(diffPath, "utf-8")) as DiffPayload;
+  } catch {
+    diff = null;
+  }
+}
+---
+
+<Layout
+  title="Coverage: OpenAlex vs PubMed cache"
+  description="Compare OpenAlex author works to the local PubMed sync (Google Scholar cannot be queried automatically)."
+  noIndex={true}
+>
+  <h1 class="page-title">Coverage: OpenAlex vs PubMed</h1>
+
+  <p class="coverage-lede">
+    <strong>Google Scholar</strong> has no public API and blocks scraping, so
+    this site does not query it. For a manual check against Scholar, use your
+    profile’s export or “My library,” then compare lists by hand or in a
+    spreadsheet. Automatically, we compare your local PubMed cache to{" "}
+    <a href="https://openalex.org/">OpenAlex</a> (open index; often overlaps
+    Scholar but not the same). Confirm <code>openalexAuthorId</code> in{" "}
+    <code>pubmed-config.json</code> is your OpenAlex author record.
+  </p>
+
+  {
+    !diff?.generatedAt ? (
+      <p class="placeholder">
+        No report yet. Run <code>npm run compare:openalex</code> after{" "}
+        <code>npm run sync:pubmed</code> to generate{" "}
+        <code>content/publications/openalex-diff.json</code>.
+      </p>
+    ) : (
+      <>
+        <p class="coverage-meta">
+          Generated: {diff.generatedAt}
+          {diff.openalexAuthorUrl ? (
+            <>
+              {" "}
+              ·{" "}
+              <a href={diff.openalexAuthorUrl}>OpenAlex author</a>
+            </>
+          ) : null}
+        </p>
+
+        <section class="coverage-section" aria-labelledby="gap-h">
+          <h2 id="gap-h">
+            In OpenAlex but not in your PubMed cache (
+            {diff.pmidsInOpenAlexNotInPubMedCache?.length ?? 0})
+          </h2>
+          <p class="coverage-hint">
+            Worth checking in PubMed or Scholar — may be missing from your
+            query, or indexing lag.
+          </p>
+          {
+            (diff.pmidsInOpenAlexNotInPubMedCache?.length ?? 0) === 0 ? (
+              <p class="coverage-empty">None — lists align on PMIDs.</p>
+            ) : (
+              <ul class="coverage-list">
+                {diff.pmidsInOpenAlexNotInPubMedCache!.map((row) => (
+                  <li>
+                    <a href={row.pubmedUrl}>PMID {row.pmid}</a>
+                    {row.title ? <> — {row.title}</> : null}
+                  </li>
+                ))}
+              </ul>
+            )
+          }
+        </section>
+
+        <section class="coverage-section" aria-labelledby="lag-h">
+          <h2 id="lag-h">
+            In PubMed cache but not on this OpenAlex author (
+            {diff.pmidsInPubMedCacheNotInOpenAlex?.length ?? 0})
+          </h2>
+          <p class="coverage-hint">
+            Common for very new articles, different author disambiguation, or
+            works not yet linked in OpenAlex.
+          </p>
+          {
+            (diff.pmidsInPubMedCacheNotInOpenAlex?.length ?? 0) === 0 ? (
+              <p class="coverage-empty">None.</p>
+            ) : (
+              <ul class="coverage-list">
+                {diff.pmidsInPubMedCacheNotInOpenAlex!.map((row) => (
+                  <li>
+                    <a href={row.pubmedUrl}>PMID {row.pmid}</a>
+                  </li>
+                ))}
+              </ul>
+            )
+          }
+        </section>
+
+        <section class="coverage-section" aria-labelledby="nopmid-h">
+          <h2 id="nopmid-h">
+            OpenAlex works without a PMID (sample)
+          </h2>
+          <p class="coverage-hint">
+            Preprints, books, abstracts, or records not in PubMed — compare
+            manually with Scholar.
+          </p>
+          <ul class="coverage-list">
+            {(diff.openalexWorksWithoutPmidSample ?? []).slice(0, 25).map((w) => (
+              <li>
+                {w.openalexWorkUrl ? (
+                  <a href={w.openalexWorkUrl}>{w.title || "Untitled"}</a>
+                ) : (
+                  w.title
+                )}
+                {w.year ? <> ({w.year})</> : null}
+              </li>
+            ))}
+          </ul>
+        </section>
+      </>
+    )
+  }
+</Layout>
+
+<style>
+  .coverage-lede {
+    max-width: 62ch;
+    color: var(--muted);
+    line-height: 1.5;
+    margin-bottom: 1.5rem;
+  }
+  .coverage-meta {
+    font-size: 0.9rem;
+    color: var(--muted);
+    margin-bottom: 1.5rem;
+  }
+  .coverage-section {
+    margin-bottom: 2rem;
+  }
+  .coverage-section h2 {
+    font-size: 1.1rem;
+    margin: 0 0 0.35rem;
+  }
+  .coverage-hint {
+    font-size: 0.88rem;
+    color: var(--muted);
+    margin: 0 0 0.75rem;
+    max-width: 58ch;
+  }
+  .coverage-list {
+    margin: 0;
+    padding-left: 1.2rem;
+    max-width: 65ch;
+  }
+  .coverage-list li {
+    margin: 0.35rem 0;
+  }
+  .coverage-empty {
+    color: var(--muted);
+    font-style: italic;
+    margin: 0;
+  }
+</style>

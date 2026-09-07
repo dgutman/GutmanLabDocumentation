@@ -1,0 +1,23 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import GoogleScholarLinks from "../../components/GoogleScholarLinks.astro";
+import { loadFragment } from "../../lib/fragments";
+
+const html = loadFragment("people__about");
+---
+
+<Layout title="David Gutman, M.D., Ph.D.">
+  <h1 class="page-title">David Gutman, M.D., Ph.D.</h1>
+  <GoogleScholarLinks variant="compact" />
+  {
+    html ? (
+      <div class="content-recovered" set:html={html} />
+    ) : (
+      <p class="placeholder">
+        Biography content not found. Run{" "}
+        <code>npm run recover</code> to download fragments from the Internet
+        Archive.
+      </p>
+    )
+  }
+</Layout>

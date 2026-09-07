@@ -1,0 +1,53 @@
+---
+import Layout from "../layouts/Layout.astro";
+import GoogleScholarLinks from "../components/GoogleScholarLinks.astro";
+import {
+  siteTitle,
+  siteTagline,
+  siteDescription,
+  contact,
+  homeHighlights,
+} from "../data/site";
+
+const contactText = [
+  contact.department,
+  contact.school,
+  contact.building,
+  contact.address,
+  contact.city,
+  "",
+  `Phone: ${contact.phone}`,
+  `Email: ${contact.emailDisplay}`,
+].join("\n");
+---
+
+<Layout title={siteTitle} description={siteDescription}>
+  <section class="hero">
+    <h1>{siteTitle}</h1>
+    <p class="tagline">{siteTagline}</p>
+    <p class="lede">{siteDescription}</p>
+  </section>
+
+  <div class="card-grid">
+    {
+      homeHighlights.map((h) => (
+        <article class="card">
+          <img src={h.image} alt="" width="400" height="250" loading="lazy" />
+          <div class="card__body">
+            <h2>
+              <a href={h.href}>{h.title}</a>
+            </h2>
+            <p>{h.blurb}</p>
+          </div>
+        </article>
+      ))
+    }
+  </div>
+
+  <GoogleScholarLinks />
+
+  <section class="contact-block" aria-labelledby="contact-heading">
+    <h2 id="contact-heading">Contact</h2>
+    <p>{contactText}</p>
+  </section>
+</Layout>

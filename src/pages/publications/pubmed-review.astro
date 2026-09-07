@@ -1,0 +1,603 @@
+---
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
+import Layout from "../../layouts/Layout.astro";
+import { loadPubMedCache } from "../../lib/pubmed";
+
+function loadApprovedFromConfig(): string[] {
+  try {
+    const p = join(
+      process.cwd(),
+      "content/publications/pubmed-config.json",
+    );
+    const j = JSON.parse(readFileSync(p, "utf-8")) as {
+      approvedPmids?: unknown;
+    };
+    if (!Array.isArray(j.approvedPmids)) return [];
+    return j.approvedPmids.map((x) => String(x));
+  } catch {
+    return [];
+  }
+}
+
+const approvedFromConfig = loadApprovedFromConfig();
+
+const cache = loadPubMedCache();
+const cacheData = cache
+  ? {
+      articles: cache.articles,
+      excludedPmids: cache.excludedPmids ?? [],
+      query: cache.query,
+      generatedAt: cache.generatedAt,
+      pmidCount: cache.pmidCount,
+    }
+  : null;
+---
+
+<Layout
+  title="PubMed bibliography (curate)"
+  description="Review PubMed search results, exclude mis-attributed papers, export for pubmed-config.json."
+  noIndex={true}
+>
+  <h1 class="page-title">PubMed bibliography</h1>
+  <p class="review-lede">
+    All hits from your saved PubMed query. <strong>Approve</strong> papers you
+    have checked (yours or OK to ignore); after each scrape, only new PMIDs stay
+    under “Needs review.” Use <strong>Exclude</strong> for mis-attributed
+    papers. Use the <strong>Export</strong> buttons below to copy
+    <strong>denied</strong> (excluded) and/or <strong>approved</strong> PMID
+    lists; denied PMIDs go into <code>excludedPmids</code>, approved into
+    <code>approvedPmids</code> in <code>pubmed-config.json</code> (this repo
+    already seeds <code>approvedPmids</code>; add more after export + rebuild).
+  </p>
+
+  {
+    !cacheData ? (
+      <p class="placeholder">
+        No PubMed cache yet. Set your email in{" "}
+        <code>content/publications/pubmed-config.json</code> and run{" "}
+        <code>npm run sync:pubmed</code>.
+      </p>
+    ) : (
+      <>
+        <div class="review-meta">
+          {cacheData.generatedAt ? (
+            <span>Last synced: {cacheData.generatedAt}</span>
+          ) : null}
+          {cacheData.query ? (
+            <span>
+              · Query: <code>{cacheData.query}</code>
+            </span>
+          ) : null}
+          {cacheData.pmidCount != null ? (
+            <span> · {cacheData.pmidCount} PMIDs</span>
+          ) : null}
+        </div>
+
+        <div class="review-export-panel" aria-labelledby="export-heading">
+          <h2 id="export-heading" class="review-export-panel__title">
+            Export PMID lists
+          </h2>
+          <p class="review-export-panel__desc">
+            <strong>Denied</strong> = excluded (not your papers).{" "}
+            <strong>Approved</strong> = you’ve reviewed and confirmed. Each
+            button copies JSON to the clipboard.
+          </p>
+          <div class="review-toolbar review-toolbar--export">
+            <button type="button" class="btn btn--primary" id="btn-export-denied">
+              Export denied (excluded)
+            </button>
+            <button type="button" class="btn btn--primary btn--secondary" id="btn-export-approved">
+              Export approved
+            </button>
+            <button type="button" class="btn btn--ghost" id="btn-export-both">
+              Export both (one JSON file)
+            </button>
+          </div>
+          <p class="review-export-hint" id="export-hint" hidden>
+            Copied denied PMIDs. Paste into <code>excludedPmids</code> in
+            pubmed-config.json, then run <code>npm run sync:pubmed</code>.
+          </p>
+          <p class="review-export-hint" id="export-approved-hint" hidden>
+            Copied merged approved PMIDs (config + browser). Merge into
+            approvedPmids in pubmed-config.json if you want them in git.
+          </p>
+          <p class="review-export-hint" id="export-both-hint" hidden>
+            Copied combined snapshot (<code>excludedPmids</code> +{" "}
+            <code>approvedPmids</code>).
+          </p>
+        </div>
+
+        <div class="review-toolbar review-toolbar--danger">
+          <button type="button" class="btn btn--ghost" id="btn-clear-local">
+            Clear browser-only denied
+          </button>
+          <button type="button" class="btn btn--ghost" id="btn-clear-approved">
+            Clear all approvals
+          </button>
+        </div>
+
+        <div id="review-root" class="review-root" />
+      </>
+    )
+  }
+
+  {
+    cacheData ? (
+      <script is:inline define:vars={{ cacheData, approvedFromConfig }}>
+        (function () {
+          const STORAGE_EXCLUDED = "gutman-pubmed-local-excluded";
+          const STORAGE_APPROVED = "gutman-pubmed-approved-pmids";
+          const data = cacheData;
+          const approvedFromConfigSet = new Set(
+            (approvedFromConfig || []).map(String),
+          );
+
+          function getLocalExcluded() {
+            try {
+              const a = JSON.parse(
+                localStorage.getItem(STORAGE_EXCLUDED) || "[]",
+              );
+              return Array.isArray(a) ? a.map(String) : [];
+            } catch {
+              return [];
+            }
+          }
+
+          function setLocalExcluded(ids) {
+            localStorage.setItem(STORAGE_EXCLUDED, JSON.stringify(ids));
+          }
+
+          function getLocalApproved() {
+            try {
+              const a = JSON.parse(
+                localStorage.getItem(STORAGE_APPROVED) || "[]",
+              );
+              return Array.isArray(a) ? a.map(String) : [];
+            } catch {
+              return [];
+            }
+          }
+
+          function setLocalApproved(ids) {
+            localStorage.setItem(STORAGE_APPROVED, JSON.stringify(ids));
+          }
+
+          function mergedApprovedSet() {
+            return new Set([
+              ...approvedFromConfigSet,
+              ...getLocalApproved(),
+            ]);
+          }
+
+          function unapprove(pmid) {
+            if (approvedFromConfigSet.has(pmid)) {
+              alert(
+                "This PMID is listed in approvedPmids in pubmed-config.json. Remove it there and rebuild, or export and edit the JSON.",
+              );
+              return;
+            }
+            setLocalApproved(getLocalApproved().filter((x) => x !== pmid));
+          }
+
+          function removeFromLocalApprovedOnly(pmid) {
+            setLocalApproved(getLocalApproved().filter((x) => x !== pmid));
+          }
+
+          function mergedExcluded() {
+            const cfg = new Set((data.excludedPmids || []).map(String));
+            const loc = new Set(getLocalExcluded());
+            return { cfg, loc, merged: new Set([...cfg, ...loc]) };
+          }
+
+          function sortByYearDesc(list) {
+            return [...list].sort(
+              (x, y) =>
+                (y.year || 0) - (x.year || 0) ||
+                (x.title || "").localeCompare(y.title || ""),
+            );
+          }
+
+          function escapeHtml(s) {
+            const d = document.createElement("div");
+            d.textContent = s;
+            return d.innerHTML;
+          }
+
+          function paperCard(a, opts) {
+            const { excluded, reason, loc, approved } = opts;
+            const pmid = String(a.pmid);
+            const types =
+              a.publicationTypes && a.publicationTypes.length
+                ? `<p class="pubmed-paper__types">${escapeHtml(a.publicationTypes.join(" · "))}</p>`
+                : "";
+            const abs = a.abstract
+              ? `<details class="pubmed-paper__abstract"><summary>Abstract</summary><p>${escapeHtml(a.abstract)}</p></details>`
+              : "";
+            let badge = "";
+            if (excluded) {
+              badge = `<span class="review-badge review-badge--excluded">Excluded${reason ? " · " + escapeHtml(reason) : ""}</span>`;
+            } else if (approved) {
+              badge = `<span class="review-badge review-badge--ok">Reviewed</span>`;
+            } else {
+              badge = `<span class="review-badge review-badge--pending">Needs review</span>`;
+            }
+            const restoreSource =
+              loc && loc.has(pmid) ? "local" : "config";
+            let actions = "";
+            if (excluded) {
+              actions = `<button type="button" class="btn btn--small btn--restore" data-pmid="${escapeHtml(pmid)}" data-source="${restoreSource}">Restore</button>`;
+            } else {
+              const approveBtn = approved
+                ? `<button type="button" class="btn btn--small btn--unapprove" data-pmid="${escapeHtml(pmid)}">Unapprove</button>`
+                : `<button type="button" class="btn btn--small btn--approve" data-pmid="${escapeHtml(pmid)}">Approve</button>`;
+              actions = `${approveBtn}<button type="button" class="btn btn--small btn--exclude" data-pmid="${escapeHtml(pmid)}">Exclude</button>`;
+            }
+            const cardClass = [
+              "review-card",
+              excluded ? "review-card--excluded" : "",
+              !excluded && !approved ? "review-card--pending" : "",
+            ]
+              .filter(Boolean)
+              .join(" ");
+            return `<article class="${cardClass}" data-pmid="${escapeHtml(pmid)}">
+            <div class="review-card__head">
+              ${badge}
+              ${actions}
+            </div>
+            <h3 class="pubmed-paper__title"><a href="${escapeHtml(a.pubmedUrl)}">${escapeHtml(a.title)}</a></h3>
+            <p class="pubmed-paper__authors">${escapeHtml(a.authors)}</p>
+            <p class="pubmed-paper__journal">${escapeHtml(a.journal)}${a.year ? " · " + a.year : ""}${a.pubMonth ? " · " + escapeHtml(a.pubMonth) : ""}</p>
+            ${types}
+            ${abs}
+          </article>`;
+          }
+
+          function render() {
+            const root = document.getElementById("review-root");
+            if (!root || !data.articles) return;
+            const approvedSet = mergedApprovedSet();
+            const { cfg, loc, merged } = mergedExcluded();
+            const active = [];
+            const excluded = [];
+            for (const a of data.articles) {
+              const pmid = String(a.pmid);
+              if (merged.has(pmid)) {
+                let reason = "browser";
+                if (cfg.has(pmid) && loc.has(pmid)) reason = "config + browser";
+                else if (cfg.has(pmid)) reason = "config";
+                excluded.push({ a, reason });
+              } else active.push(a);
+            }
+            const needsReview = sortByYearDesc(
+              active.filter((a) => !approvedSet.has(String(a.pmid))),
+            );
+            const reviewed = sortByYearDesc(
+              active.filter((a) => approvedSet.has(String(a.pmid))),
+            );
+
+            let html = `<section class="review-section" aria-labelledby="pending-h"><h2 id="pending-h" class="review-section__title">Needs review (${needsReview.length})</h2><p class="review-section__sub">New since last scrape or not yet approved.</p><div class="review-stack">`;
+            for (const a of needsReview) {
+              html += paperCard(a, {
+                excluded: false,
+                loc,
+                approved: false,
+              });
+            }
+            if (!needsReview.length) {
+              html += `<p class="review-empty">Nothing pending — you’re caught up.</p>`;
+            }
+            html += `</div></section><section class="review-section" aria-labelledby="ok-h"><h2 id="ok-h" class="review-section__title">Reviewed (${reviewed.length})</h2><p class="review-section__sub">Merged from pubmed-config.json approvedPmids plus any you approved in this browser.</p><div class="review-stack">`;
+            for (const a of reviewed) {
+              html += paperCard(a, {
+                excluded: false,
+                loc,
+                approved: true,
+              });
+            }
+            if (!reviewed.length) {
+              html += `<p class="review-empty">No approvals yet. Use Approve on papers you’ve checked.</p>`;
+            }
+            html += `</div></section><section class="review-section review-section--muted" aria-labelledby="ex-h"><h2 id="ex-h" class="review-section__title">Excluded (${excluded.length})</h2><div class="review-stack">`;
+            for (const { a, reason } of excluded) {
+              html += paperCard(a, {
+                excluded: true,
+                reason: reason,
+                loc: loc,
+              });
+            }
+            html += "</div></section>";
+            root.innerHTML = html;
+
+            root.querySelectorAll(".btn--approve").forEach((btn) => {
+              btn.addEventListener("click", () => {
+                const pmid = btn.getAttribute("data-pmid");
+                if (!pmid) return;
+                if (mergedApprovedSet().has(pmid)) return;
+                const cur = getLocalApproved();
+                cur.push(pmid);
+                setLocalApproved(cur);
+                render();
+              });
+            });
+            root.querySelectorAll(".btn--unapprove").forEach((btn) => {
+              btn.addEventListener("click", () => {
+                const pmid = btn.getAttribute("data-pmid");
+                if (!pmid) return;
+                unapprove(pmid);
+                render();
+              });
+            });
+            root.querySelectorAll(".btn--exclude").forEach((btn) => {
+              btn.addEventListener("click", () => {
+                const pmid = btn.getAttribute("data-pmid");
+                if (!pmid) return;
+                removeFromLocalApprovedOnly(pmid);
+                const cur = getLocalExcluded();
+                if (!cur.includes(pmid)) {
+                  cur.push(pmid);
+                  setLocalExcluded(cur);
+                }
+                render();
+              });
+            });
+            root.querySelectorAll(".btn--restore").forEach((btn) => {
+              btn.addEventListener("click", () => {
+                const pmid = btn.getAttribute("data-pmid");
+                const source = btn.getAttribute("data-source");
+                if (!pmid) return;
+                if (source === "config") {
+                  alert(
+                    "This PMID is listed in pubmed-config.json. Remove it from excludedPmids there, then run sync.",
+                  );
+                  return;
+                }
+                setLocalExcluded(getLocalExcluded().filter((x) => x !== pmid));
+                render();
+              });
+            });
+          }
+
+          function copyText(text, hintId) {
+            ["export-hint", "export-approved-hint", "export-both-hint"].forEach(
+              (id) => {
+                const el = document.getElementById(id);
+                if (el) el.hidden = true;
+              },
+            );
+            const done = () => {
+              const h = document.getElementById(hintId);
+              if (h) {
+                h.hidden = false;
+                setTimeout(() => {
+                  h.hidden = true;
+                }, 5000);
+              }
+            };
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+              navigator.clipboard.writeText(text).then(done).catch(() => {
+                window.prompt("Copy:", text);
+                done();
+              });
+            } else {
+              window.prompt("Copy:", text);
+              done();
+            }
+          }
+
+          document.getElementById("btn-export-denied")?.addEventListener("click", () => {
+            const { merged } = mergedExcluded();
+            const arr = [...merged].sort();
+            copyText(JSON.stringify(arr, null, 2), "export-hint");
+          });
+
+          document.getElementById("btn-export-approved")?.addEventListener("click", () => {
+            const approved = [...mergedApprovedSet()].sort();
+            copyText(JSON.stringify(approved, null, 2), "export-approved-hint");
+          });
+
+          document.getElementById("btn-export-both")?.addEventListener("click", () => {
+            const { merged } = mergedExcluded();
+            const snapshot = {
+              excludedPmids: [...merged].sort(),
+              approvedPmids: [...mergedApprovedSet()].sort(),
+            };
+            copyText(JSON.stringify(snapshot, null, 2), "export-both-hint");
+          });
+
+          document.getElementById("btn-clear-local")?.addEventListener("click", () => {
+            localStorage.removeItem(STORAGE_EXCLUDED);
+            render();
+          });
+
+          document.getElementById("btn-clear-approved")?.addEventListener("click", () => {
+            if (
+              !confirm(
+                "Clear browser-only approvals? PMIDs in pubmed-config.json approvedPmids stay until you edit that file.",
+              )
+            ) {
+              return;
+            }
+            localStorage.removeItem(STORAGE_APPROVED);
+            render();
+          });
+
+          render();
+        })();
+      </script>
+    ) : null
+  }
+</Layout>
+
+<style>
+  .review-lede {
+    max-width: 62ch;
+    color: var(--muted);
+    margin-bottom: 1.25rem;
+  }
+  .review-meta {
+    font-size: 0.9rem;
+    color: var(--muted);
+    margin-bottom: 1rem;
+  }
+  .review-export-panel {
+    margin-bottom: 1.25rem;
+    padding: 1.15rem 1.25rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .review-export-panel__title {
+    font-size: 1.05rem;
+    margin: 0 0 0.5rem;
+  }
+  .review-export-panel__desc {
+    font-size: 0.9rem;
+    color: var(--muted);
+    margin: 0 0 1rem;
+    max-width: 62ch;
+    line-height: 1.45;
+  }
+  .review-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+    align-items: center;
+  }
+  .review-export-hint {
+    font-size: 0.9rem;
+    color: var(--accent);
+    margin-bottom: 1rem;
+  }
+  .btn {
+    font-family: var(--font);
+    font-size: 0.9rem;
+    padding: 0.45rem 0.9rem;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    background: var(--surface);
+    color: var(--text);
+  }
+  .btn--primary {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+  .btn--primary:hover {
+    background: var(--accent-hover);
+    border-color: var(--accent-hover);
+  }
+  .btn--secondary {
+    background: #fff;
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+  .btn--secondary:hover {
+    background: #f0faf8;
+    border-color: var(--accent-hover);
+    color: var(--accent-hover);
+  }
+  .review-toolbar--export {
+    margin-bottom: 0.5rem;
+  }
+  .review-toolbar--danger {
+    margin-bottom: 1rem;
+    padding-top: 0.5rem;
+    border-top: 1px dashed var(--border);
+  }
+  .btn--ghost:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .btn--small {
+    font-size: 0.8rem;
+    padding: 0.25rem 0.55rem;
+  }
+  .btn--exclude {
+    color: #8b2942;
+    border-color: #e8c4ce;
+    background: #fdf5f7;
+  }
+  .btn--restore {
+    color: var(--accent);
+  }
+  .review-root {
+    margin-top: 0.5rem;
+  }
+  .review-section {
+    margin-bottom: 2.5rem;
+  }
+  .review-section--muted {
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+  .review-section__title {
+    font-size: 1.1rem;
+    margin: 0 0 0.35rem;
+  }
+  .review-section__sub {
+    font-size: 0.88rem;
+    color: var(--muted);
+    margin: 0 0 1rem;
+    max-width: 58ch;
+  }
+  .review-empty {
+    font-size: 0.95rem;
+    color: var(--muted);
+    font-style: italic;
+    margin: 0;
+  }
+  .review-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+  .review-card {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem 1.1rem;
+    background: var(--surface);
+  }
+  .review-card--excluded {
+    opacity: 0.88;
+    background: #f7f6f4;
+  }
+  .review-card__head {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    flex-wrap: wrap;
+  }
+  .review-badge {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-right: auto;
+    color: var(--muted);
+  }
+  .review-badge--excluded {
+    color: #8b2942;
+  }
+  .review-badge--pending {
+    color: #8a5a00;
+  }
+  .review-badge--ok {
+    color: #1d6b3a;
+  }
+  .review-card--pending {
+    border-left: 4px solid #e6c04a;
+  }
+  .btn--approve {
+    color: #1d6b3a;
+    border-color: #b8dcc4;
+    background: #f3faf5;
+  }
+  .btn--unapprove {
+    color: var(--muted);
+  }
+</style>

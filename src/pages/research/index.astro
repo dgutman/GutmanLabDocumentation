@@ -1,0 +1,21 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { loadFragment } from "../../lib/fragments";
+
+const html = loadFragment("research-areas");
+---
+
+<Layout title="Research areas">
+  {
+    html ? (
+      <div class="content-recovered" set:html={html} />
+    ) : (
+      <>
+        <h1 class="page-title">Research areas</h1>
+        <p class="placeholder">
+          Overview not found. Run <code>npm run recover</code>.
+        </p>
+      </>
+    )
+  }
+</Layout>

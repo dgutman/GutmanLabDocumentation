@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<!--[if IE 6]>
+<html id="ie6" lang="en-US">
+<![endif]-->
+<!--[if IE 7]>
+<html id="ie7" lang="en-US">
+<![endif]-->
+<!--[if IE 8]>
+<html id="ie8" lang="en-US">
+<![endif]-->
+<!--[if !(IE 6) | !(IE 7) | !(IE 8)  ]><!-->
+<html lang="en-US">
+<!--<![endif]-->
+<head><script src="//archive.org/includes/athena.js" type="text/javascript"></script>
+<script type="text/javascript">window.addEventListener('DOMContentLoaded',function(){var v=archive_analytics.values;v.service='wb';v.server_name='wwwb-app254.us.archive.org';v.server_ms=568;archive_analytics.send_pageview({});});</script>
+<script type="text/javascript" src="https://web-static.archive.org/_static/js/bundle-playback.js?v=2N_sDSC0" charset="utf-8"></script>
+<script type="text/javascript" src="https://web-static.archive.org/_static/js/wombat.js?v=txqj7nKC" charset="utf-8"></script>
+<script>window.RufflePlayer=window.RufflePlayer||{};window.RufflePlayer.config={"autoplay":"on","unmuteOverlay":"hidden","showSwfDownload":true};</script>
+<script type="text/javascript" src="https://web-static.archive.org/_static/js/ruffle/ruffle.js"></script>
+<script type="text/javascript">
+    __wm.init("https://web.archive.org/web");
+  __wm.wombat("http://drgutman.org:80/the-blog-page/","20200222235435","https://web.archive.org/","web","https://web-static.archive.org/_static/",
+	      "1582415675");
+</script>
+<link rel="stylesheet" type="text/css" href="https://web-static.archive.org/_static/css/banner-styles.css?v=1utQkbB3" />
+<link rel="stylesheet" type="text/css" href="https://web-static.archive.org/_static/css/iconochive.css?v=3PDvdIFv" />
+<!-- End Wayback Rewrite JS Include -->
+
+<meta charset="UTF-8"/>
+<title>Lab Blog | The Gutman Lab</title>
+<link rel="profile" href="http://gmpg.org/xfn/11"/>
+<link rel="pingback" href="http://drgutman.org/dglab_wordpress/xmlrpc.php"/>
+
+<!-- All in One SEO Pack 2.7.2 by Michael Torbert of Semper Fi Web Design[301,339] -->
+<meta name="keywords" content="data sharing,metadata,grid engine,linux,sge,ubuntu"/>
+
+<link rel="canonical" href="https://web.archive.org/web/20200222235435/http://drgutman.org/the-blog-page/"/>
+<!-- /all in one seo pack -->
+<link rel="dns-prefetch" href="//web.archive.org/web/20200222235435/http://s.w.org/"/>
+<link rel="alternate" type="application/rss+xml" title="The Gutman Lab » Feed" href="https://web.archive.org/web/20200222235435/http://drgutman.org/feed/"/>
+<link rel="alternate" type="application/rss+xml" title="The Gutman Lab » Comments Feed" href="https://web.archive.org/web/20200222235435/http://drgutman.org/comments/feed/"/>
+		<script type="text/javascript">
+			window._wpemojiSettings = {"baseUrl":"https:\/\/web.archive.org\/web\/20200222235435\/https:\/\/s.w.org\/images\/core\/emoji\/11\/72x72\/","ext":".png","svgUrl":"https:\/\/web.archive.org\/web\/20200222235435\/https:\/\/s.w.org\/images\/core\/emoji\/11\/svg\/","svgExt":".svg","source":{"concatemoji":"https:\/\/web.archive.org\/web\/20200222235435\/http:\/\/drgutman.org\/dglab_wordpress\/wp-includes\/js\/wp-emoji-release.min.js?ver=4.9.13"}};
+			!function(a,b,c){function d(a,b){var c=String.fromCharCode;l.clearRect(0,0,k.width,k.height),l.fillText(c.apply(this,a),0,0);var d=k.toDataURL();l.clearRect(0,0,k.width,k.height),l.fillText(c.apply(this,b),0,0);var e=k.toDataURL();return d===e}function e(a){var b;if(!l||!l.fillText)return!1;switch(l.textBaseline="top",l.font="600 32px Arial",a){case"flag":return!(b=d([55356,56826,55356,56819],[55356,56826,8203,55356,56819]))&&(b=d([55356,57332,56128,56423,56128,56418,56128,56421,56128,56430,56128,56423,56128,56447],[55356,57332,8203,56128,56423,8203,56128,56418,8203,56128,56421,8203,56128,56430,8203,56128,56423,8203,56128,56447]),!b);case"emoji":return b=d([55358,56760,9792,65039],[55358,56760,8203,9792,65039]),!b}return!1}function f(a){var c=b.createElement("script");c.src=a,c.defer=c.type="text/javascript",b.getElementsByTagName("head")[0].appendChild(c)}var g,h,i,j,k=b.createElement("canvas"),l=k.getContext&&k.getContext("2d");for(j=Array("flag","emoji"),c.supports={everything:!0,everythingExceptFlag:!0},i=0;i<j.length;i++)c.supports[j[i]]=e(j[i]),c.supports.everything=c.supports.everything&&c.supports[j[i]],"flag"!==j[i]&&(c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&c.supports[j[i]]);c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&!c.supports.flag,c.DOMReady=!1,c.readyCallback=function(){c.DOMReady=!0},c.supports.everything||(h=function(){c.readyCallback()},b.addEventListener?(b.addEventListener("DOMContentLoaded",h,!1),a.addEventListener("load",h,!1)):(a.attachEvent("onload",h),b.attachEvent("onreadystatechange",function(){"complete"===b.readyState&&c.readyCallback()})),g=c.source||{},g.concatemoji?f(g.concatemoji):g.wpemoji&&g.twemoji&&(f(g.twemoji),f(g.wpemoji)))}(window,document,window._wpemojiSettings);
+		</script>
+		<style type="text/css">
+img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 .07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
+</style>
+<link rel="stylesheet" id="printomatic-css-css" href="https://web.archive.org/web/20200222235435cs_/http://drgutman.org/dglab_wordpress/wp-content/plugins/print-o-matic/css/style.css?ver=1.2" type="text/css" media="all"/>
+<link rel="stylesheet" id="catcheverest-css" href="https://web.archive.org/web/20200222235435cs_/http://drgutman.org/dglab_wordpress/wp-content/themes/catch-everest-pro/style.css" type="text/css" media="all"/>
+<script type="text/javascript" src="https://web.archive.org/web/20200222235435js_/http://drgutman.org/dglab_wordpress/wp-includes/js/jquery/jquery.js?ver=1.12.4"></script>
+<script type="text/javascript" src="https://web.archive.org/web/20200222235435js_/http://drgutman.org/dglab_wordpress/wp-includes/js/jquery/jquery-migrate.min.js?ver=1.4.1"></script>
+<script type="text/javascript" src="https://web.archive.org/web/20200222235435js_/http://drgutman.org/dglab_wordpress/wp-content/plugins/print-o-matic/printomat.js?ver=1.8.6"></script>
+<link rel="https://api.w.org/" href="http://drgutman.org/wp-json/"/>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://drgutman.org/dglab_wordpress/xmlrpc.php?rsd"/>
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://drgutman.org/dglab_wordpress/wp-includes/wlwmanifest.xml"/> 
+<meta name="generator" content="WordPress 4.9.13"/>
+<!-- refreshing cache --><!-- The Gutman Lab Custom CSS Styles -->
+<style type="text/css" media="screen">
+#site-title { font-family: "Courier New", Courier, monospace; }
+</style>
+<meta name="google-site-verification" content="http://drgutman.org/"/>
+<!-- refreshing cache --></head>
+
+<body class="blog right-sidebar content-excerpt"><!-- BEGIN WAYBACK TOOLBAR INSERT -->
+<script>__wm.rw(0);</script>
+<div id="wm-ipp-base" lang="en" style="display:none;direction:ltr;" toolbar-mode="auto">
+<div id="wm-ipp" style="position:fixed;left:0;top:0;right:0;">
+<div id="donato" style="position:relative;width:100%;height:0;">
+  <div id="donato-base">
+    <iframe id="donato-if" src="https://archive.org/includes/donate.php?as_page=1&amp;platform=wb&amp;referer=https%3A//web.archive.org/web/20200222235435/http%3A//drgutman.org/the-blog-page/"
+	    scrolling="no" frameborder="0" style="width:100%; height:100%">
+    </iframe>
+  </div>
+</div><div id="wm-ipp-inside">
+  <div id="wm-toolbar" style="position:relative;display:flex;flex-flow:row nowrap;justify-content:space-between;" nav="async">
+    <div id="wm-logo" style="/*width:110px;*/padding-top:12px;">
+      <a href="/web/" title="Wayback Machine home page"><img src="https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-200.png" srcset="https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-100.png, https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-150.png 1.5x, https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-200.png 2x" alt="Wayback Machine" style="width:100px" border="0" /></a>
+    </div>
+    <div class="c" style="display:flex;flex-flow:column nowrap;justify-content:space-between;flex:1;">
+      <form class="u" style="display:flex;flex-direction:row;flex-wrap:nowrap;" target="_top" method="get" action="/web/submit" name="wmtb" id="wmtb"><input type="text" name="url" id="wmtbURL" value="http://drgutman.org/the-blog-page/" onfocus="this.focus();this.select();" style="flex:1;"/><input type="hidden" name="type" value="replay" /><input type="hidden" name="date" value="20200222235435" /><input type="submit" value="Go" />
+      </form>
+      <div style="display:flex;flex-flow:row nowrap;align-items:flex-end;">
+                <div class="s" id="wm-nav-captures" style="flex:1;">
+                    <a class="t" href="/web/20200222235435*/http://drgutman.org/the-blog-page/" title="See a list of every capture for this URL">32 captures</a>
+          <div class="r" title="Timespan for captures of this URL">12 Sep 2014 - 22 Feb 2020</div>
+          </div>
+        <div class="k">
+          <a href="" id="wm-graph-anchor">
+            <div id="wm-ipp-sparkline" title="Explore captures for this URL" style="position: relative">
+              <canvas id="wm-sparkline-canvas" width="775" height="27" border="0"></canvas>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="n">
+      <table>
+        <tbody>
+          <!-- NEXT/PREV MONTH NAV AND MONTH INDICATOR -->
+          <tr class="m">
+            <td class="b" nowrap="nowrap">Jan</td>
+            <td class="c" id="displayMonthEl" title="You are here: 23:54:35 Feb 22, 2020">FEB</td>
+            <td class="f" nowrap="nowrap">Mar</td>
+          </tr>
+          <!-- NEXT/PREV CAPTURE NAV AND DAY OF MONTH INDICATOR -->
+          <tr class="d">
+            <td class="b" nowrap="nowrap"><span class="ta"></span></td>
+            <td class="c" id="displayDayEl" style="width:34px;font-size:22px;white-space:nowrap;" title="You are here: 23:54:35 Feb 22, 2020">22</td>
+            <td class="f" nowrap="nowrap"><span class="ta"></span></td>
+          </tr>
+          <!-- NEXT/PREV YEAR NAV AND YEAR INDICATOR -->
+          <tr class="y">
+            <td class="b" nowrap="nowrap">2019</td>
+            <td class="c" id="displayYearEl" title="You are here: 23:54:35 Feb 22, 2020">2020</td>
+            <td class="f" nowrap="nowrap">2021</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="r" style="display:flex;flex-flow:column nowrap;align-items:flex-end;justify-content:space-between;">
+      <div id="wm-btns" style="text-align:right;height:23px;">
+                <span class="xxs">
+          <div id="wm-save-snapshot-success">success</div>
+          <div id="wm-save-snapshot-fail">fail</div>
+          <a id="wm-save-snapshot-open" href="#" title="Share via My Web Archive" >
+            <span class="iconochive-web"></span>
+          </a>
+          <a href="https://archive.org/account/login.php" title="Sign In" id="wm-sign-in">
+            <span class="iconochive-person"></span>
+          </a>
+          <span id="wm-save-snapshot-in-progress" class="iconochive-web"></span>
+        </span>
+                <a class="xxs" href="https://help.archive.org/help/category/the-wayback-machine/" title="Get some help using the Wayback Machine" style="top:-6px;"><span class="iconochive-question" style="color:rgb(87,186,244);font-size:160%;"></span></a>
+        <a id="wm-tb-close" href="#close" style="top:-2px;" title="Close the toolbar"><span class="iconochive-remove-circle" style="color:#888888;font-size:240%;"></span></a>
+      </div>
+      <div id="wm-share" class="xxs">
+        <a href="/web/20200222235435/http://web.archive.org/screenshot/http://drgutman.org/the-blog-page/"
+           id="wm-screenshot"
+           title="screenshot">
+          <span class="wm-icon-screen-shot"></span>
+        </a>
+        <a href="#" id="wm-video" title="video">
+          <span class="iconochive-movies"></span>
+        </a>
+        <a id="wm-share-facebook" href="#" data-url="https://web.archive.org/web/20200222235435/http://drgutman.org:80/the-blog-page/" title="Share on Facebook" style="margin-right:5px;" target="_blank"><span class="iconochive-facebook" style="color:#3b5998;font-size:160%;"></span></a>
+        <a id="wm-share-twitter" href="#" data-url="https://web.archive.org/web/20200222235435/http://drgutman.org:80/the-blog-page/" title="Share on Twitter" style="margin-right:5px;" target="_blank"><span class="iconochive-twitter" style="color:#1dcaff;font-size:160%;"></span></a>
+      </div>
+      <div style="padding-right:2px;text-align:right;white-space:nowrap;">
+        <a id="wm-expand" class="wm-btn wm-closed" href="#expand"><span id="wm-expand-icon" class="iconochive-down-solid"></span> <span class="xxs" style="font-size:80%;">About this capture</span></a>
+      </div>
+    </div>
+  </div>
+    <div id="wm-capinfo" style="border-top:1px solid #777;display:none; overflow: hidden">
+        <div id="wm-capinfo-notice" source="api"></div>
+                <div id="wm-capinfo-collected-by">
+    <div style="background-color:#666;color:#fff;font-weight:bold;text-align:center;padding:2px 0;">COLLECTED BY</div>
+    <div style="padding:3px;position:relative" id="wm-collected-by-content">
+            <div style="display:inline-block;vertical-align:top;width:50%;">
+			<span class="c-logo" style="background-image:url(https://archive.org/services/img/alexacrawls);"></span>
+		Organization: <a style="color:#33f;" href="https://archive.org/details/alexacrawls" target="_new"><span class="wm-title">Alexa Crawls</span></a>
+		<div style="max-height:75px;overflow:hidden;position:relative;">
+	  <div style="position:absolute;top:0;left:0;width:100%;height:75px;background:linear-gradient(to bottom,rgba(255,255,255,0) 0%,rgba(255,255,255,0) 90%,rgba(255,255,255,255) 100%);"></div>
+	  Starting in 1996, <a href="http://www.alexa.com/">Alexa Internet</a> has been donating their crawl data to the Internet Archive.  Flowing in every day, these data are added to the <a href="http://web.archive.org/">Wayback Machine</a> after an embargo period.
+	</div>
+	      </div>
+      <div style="display:inline-block;vertical-align:top;width:49%;">
+			<span class="c-logo" style="background-image:url(https://archive.org/services/img/alexacrawls)"></span>
+		<div>Collection: <a style="color:#33f;" href="https://archive.org/details/alexacrawls" target="_new"><span class="wm-title">Alexa Crawls</span></a></div>
+		<div style="max-height:75px;overflow:hidden;position:relative;">
+	  <div style="position:absolute;top:0;left:0;width:100%;height:75px;background:linear-gradient(to bottom,rgba(255,255,255,0) 0%,rgba(255,255,255,0) 90%,rgba(255,255,255,255) 100%);"></div>
+	  Starting in 1996, <a href="http://www.alexa.com/">Alexa Internet</a> has been donating their crawl data to the Internet Archive.  Flowing in every day, these data are added to the <a href="http://web.archive.org/">Wayback Machine</a> after an embargo period.
+	</div>
+	      </div>
+    </div>
+    </div>
+    <div id="wm-capinfo-timestamps">
+    <div style="background-color:#666;color:#fff;font-weight:bold;text-align:center;padding:2px 0;" title="Timestamps for the elements of this page">TIMESTAMPS</div>
+    <div>
+      <div id="wm-capresources" style="margin:0 5px 5px 5px;max-height:250px;overflow-y:scroll !important"></div>
+      <div id="wm-capresources-loading" style="text-align:left;margin:0 20px 5px 5px;display:none"><img src="https://web-static.archive.org/_static/images/loading.gif" alt="loading" /></div>
+    </div>
+    </div>
+  </div></div></div></div><div id="wm-ipp-print">The Wayback Machine - https://web.archive.org/web/20200222235435/http://drgutman.org:80/the-blog-page/</div>
+<script type="text/javascript">//<![CDATA[
+__wm.bt(775,27,25,2,"web","http://drgutman.org/the-blog-page/","20200222235435",1996,"https://web-static.archive.org/_static/",["https://web-static.archive.org/_static/css/banner-styles.css?v=1utQkbB3","https://web-static.archive.org/_static/css/iconochive.css?v=3PDvdIFv"], false);
+  __wm.rw(1);
+//]]></script>
+<!-- END WAYBACK TOOLBAR INSERT -->
+ 
+
+
+<div id="page" class="hfeed site">
+
+	    
+	<header id="masthead" role="banner">
+    
+    	 
+         
+    	<div id="hgroup-wrap" class="container">
+        
+       		    
+        <div id="header-left">
+            <div id="hgroup">                 
+        <h1 id="site-title"><a href="https://web.archive.org/web/20200222235435/http://drgutman.org/" title="The Gutman Lab" rel="home">The Gutman Lab</a></h1>
+        <h2 id="site-description"></h2>
+    </div><!-- #hgroup -->       
+        </div><!-- #header-left -->
+
+ 
+    <div id="header-right" class="header-sidebar widget-area">
+    	                <aside class="widget widget_catcheverest_social_widget">
+                                    </aside>
+			            <aside class="widget widget_search" id="search-5">	
+                	<form method="get" class="searchform" action="https://web.archive.org/web/20200222235435/http://drgutman.org/" role="search">
+		<label for="s" class="assistive-text">Search</label>
+		<input type="text" class="field" name="s" value="" id="s" placeholder="Search …"/>
+		<input type="submit" class="submit" name="submit" id="searchsubmit" value="Search"/>
+	</form>
+            </aside>
+      	    </div><!-- #header-right .widget-area -->
+             
+        </div><!-- #hgroup-wrap -->
+        
+        <!-- Disable Header Image -->	<div id="header-menu">
+        <nav id="access" role="navigation">
+            <h2 class="assistive-text">Primary Menu</h2>
+            <div class="assistive-text skip-link"><a href="#content" title="Skip to content">Skip to content</a></div>
+            <div class="menu-header-container"><ul class="menu"><li><a href="https://web.archive.org/web/20200222235435/http://drgutman.org/">Home</a></li><li class="page_item page-item-361 current-menu-item"><a href="https://web.archive.org/web/20200222235435/http://drgutman.org/the-blog-page/">Lab Blog</a></li><li class="page_item page-item-440 page_item_has_children"><a href="https://web.archive.org/web/20200222235435/http://drgutman.org/people/">People</a><ul class="children"><li class="page_item page-item-4"><a href="https://web.archive.org/web/20200222235435/http://drgutman.org/people/about/">David Gutman, M.D., Ph.D.</a></li></ul></li><li class="page_item page-item-7 page_item_has_children"><a href="https://web.archive.org/web/20200222235435/http://drgutman.org/research-areas/">Research Areas</a><ul class="children"><li class="page_item page-item-15"><a href="https://web.archive.org/web/20200222235435/http://drgutman.org/research-areas/cancer-informatics/">Cancer Informatics</a></li><li class="page_item page-item-388"><a href="https://web.archive.org/web/20200222235435/http://drgutman.org/research-areas/clinical-informatics-2/">Clinical Informatics</a></li><li class="page_item page-item-11"><a href="https://web.archive.org/web/20200222235435/http://drgutman.org/research-areas/computational-neuroscience/">Computational Neuroscience</a></li><li class="page_item page-item-13"><a href="https://web.archive.org/web/20200222235435/http://drgutman.org/research-areas/digital-pathology/">Digital Pathology</a></li><li class="page_item page-item-209"><a href="https://web.archive.org/web/20200222235435/http://drgutman.org/research-areas/neurogenomics/">NeuroGenomics</a></li><li class="page_item page-item-100"><a href="https://web.archive.org/web/20200222235435/http://drgutman.org/research-areas/non-human-mri-analysis/">Non-human MRI Analysis</a></li><li class="page_item page-item-17"><a href="https://web.archive.org/web/20200222235435/http://drgutman.org/research-areas/clinical-informatics/">Pathology image analysis</a></li><li class="page_item page-item-469"><a href="https://web.archive.org/web/20200222235435/http://drgutman.org/research-areas/redcap/">REDCap</a></li></ul></li><li class="page_item page-item-8 page_item_has_children"><a href="https://web.archive.org/web/20200222235435/http://drgutman.org/publications/">Publications</a><ul class="children"><li class="page_item page-item-39"><a href="https://web.archive.org/web/20200222235435/http://drgutman.org/publications/papers/">Papers</a></li><li class="page_item page-item-339"><a href="https://web.archive.org/web/20200222235435/http://drgutman.org/publications/presentations/">Presentations</a></li><li class="page_item page-item-41"><a href="https://web.archive.org/web/20200222235435/http://drgutman.org/publications/chapters/">Chapters</a></li><li class="page_item page-item-44"><a href="https://web.archive.org/web/20200222235435/http://drgutman.org/publications/posters-abstracts/">Posters &#038; Abstracts</a></li></ul></li><li class="page_item page-item-112"><a href="https://web.archive.org/web/20200222235435/http://drgutman.org/resources/">Resources</a></li><li class="default-menu"><a href="https://web.archive.org/web/20200222235435/http://drgutman.org/" title="Menu">Menu</a></li></ul></div> 	         
+        </nav><!-- .site-navigation .main-navigation -->  
+	</div>
+        
+	</header><!-- #masthead .site-header -->
+    
+	 
+        
+	    
+    <div id="main" class="container">
+    
+		
+    <div id="primary" class="content-area">
+        <div id="content" class="site-content" role="main">
+        
+                
+                    
+                                
+                
+<article id="post-522" class="post-522 post type-post status-publish format-standard hentry category-uncategorized">
+
+	    
+        
+    <div class="entry-container">
+    
+		<header class="entry-header">
+    		<h1 class="entry-title"><a href="https://web.archive.org/web/20200222235435/http://drgutman.org/cluster-part-1/" title="Permalink to Cluster Part 1…." rel="bookmark">Cluster Part 1&#8230;.</a></h1>
+			                <div class="entry-meta">
+                    <span class="on-date">Posted on <a href="https://web.archive.org/web/20200222235435/http://drgutman.org/cluster-part-1/" title="8:09 pm" rel="bookmark"><time class="entry-date" datetime="2016-11-17T20:09:16+00:00">November 17, 2016</time></a></span><span class="by-author"> by <span class="author vcard"><a class="url fn n" href="https://web.archive.org/web/20200222235435/http://drgutman.org/author/admin/" title="View all posts by admin" rel="author">admin</a></span></span>                </div><!-- .entry-meta -->
+					</header><!-- .entry-header -->
+
+		            <div class="entry-summary">
+                <p>So given the constraints of my research budget, I did not (nor expect to have) $250,000+ to buy a new HPC cluster. While Cloud Computing is also exciting, and I&#8217;ll <a class="more-link" href="https://web.archive.org/web/20200222235435/http://drgutman.org/cluster-part-1/">Continue Reading &rarr;</a></p>
+            </div><!-- .entry-summary -->     
+		
+        <footer class="entry-meta">
+        	<span class="in-category">Posted in <a href="https://web.archive.org/web/20200222235435/http://drgutman.org/category/uncategorized/" rel="category tag">Uncategorized</a></span>			            
+            			            
+        </footer><!-- .entry-meta -->
+        
+  	</div><!-- .entry-container -->
+    
+</article><!-- #post-522 -->        
+                    
+                
+<article id="post-520" class="post-520 post type-post status-publish format-standard hentry category-uncategorized">
+
+	    
+        
+    <div class="entry-container">
+    
+		<header class="entry-header">
+    		<h1 class="entry-title"><a href="https://web.archive.org/web/20200222235435/http://drgutman.org/hpc-on-the-cheapish-background/" title="Permalink to HPC on the Cheap(ish)  Background" rel="bookmark">HPC on the Cheap(ish)  Background</a></h1>
+			                <div class="entry-meta">
+                    <span class="on-date">Posted on <a href="https://web.archive.org/web/20200222235435/http://drgutman.org/hpc-on-the-cheapish-background/" title="7:26 pm" rel="bookmark"><time class="entry-date" datetime="2016-11-17T19:26:24+00:00">November 17, 2016</time></a></span><span class="by-author"> by <span class="author vcard"><a class="url fn n" href="https://web.archive.org/web/20200222235435/http://drgutman.org/author/admin/" title="View all posts by admin" rel="author">admin</a></span></span>                </div><!-- .entry-meta -->
+					</header><!-- .entry-header -->
+
+		            <div class="entry-summary">
+                <p>One of my hobbies has been building/tinkering with computers. This goes back to when I was about 5 years old, and I remember we purchased an IBM PC 8080 Clone. <a class="more-link" href="https://web.archive.org/web/20200222235435/http://drgutman.org/hpc-on-the-cheapish-background/">Continue Reading &rarr;</a></p>
+            </div><!-- .entry-summary -->     
+		
+        <footer class="entry-meta">
+        	<span class="in-category">Posted in <a href="https://web.archive.org/web/20200222235435/http://drgutman.org/category/uncategorized/" rel="category tag">Uncategorized</a></span>			            
+            			            
+        </footer><!-- .entry-meta -->
+        
+  	</div><!-- .entry-container -->
+    
+</article><!-- #post-520 -->        
+                    
+                
+<article id="post-519" class="post-519 post type-post status-publish format-standard hentry category-uncategorized">
+
+	    
+        
+    <div class="entry-container">
+    
+		<header class="entry-header">
+    		<h1 class="entry-title"><a href="https://web.archive.org/web/20200222235435/http://drgutman.org/gluster-performance-testing-tuning-part-1/" title="Permalink to Gluster Performance Testing &amp; Tuning Part 1" rel="bookmark">Gluster Performance Testing &#038; Tuning Part 1</a></h1>
+			                <div class="entry-meta">
+                    <span class="on-date">Posted on <a href="https://web.archive.org/web/20200222235435/http://drgutman.org/gluster-performance-testing-tuning-part-1/" title="12:59 am" rel="bookmark"><time class="entry-date" datetime="2016-08-10T00:59:09+00:00">August 10, 2016</time></a></span><span class="by-author"> by <span class="author vcard"><a class="url fn n" href="https://web.archive.org/web/20200222235435/http://drgutman.org/author/admin/" title="View all posts by admin" rel="author">admin</a></span></span>                </div><!-- .entry-meta -->
+					</header><!-- .entry-header -->
+
+		            <div class="entry-summary">
+                <p>After several weeks of experimentation and testing, I&#8217;ve been setting up glusterfs between some of my cluster nodes. The current system consists of 16 nodes connected by 1Gib Ethernet. The <a class="more-link" href="https://web.archive.org/web/20200222235435/http://drgutman.org/gluster-performance-testing-tuning-part-1/">Continue Reading &rarr;</a></p>
+            </div><!-- .entry-summary -->     
+		
+        <footer class="entry-meta">
+        	<span class="in-category">Posted in <a href="https://web.archive.org/web/20200222235435/http://drgutman.org/category/uncategorized/" rel="category tag">Uncategorized</a></span>			            
+            			            
+        </footer><!-- .entry-meta -->
+        
+  	</div><!-- .entry-container -->
+    
+</article><!-- #post-519 -->        
+                    
+                
+<article id="post-516" class="post-516 post type-post status-publish format-standard hentry category-uncategorized">
+
+	    
+        
+    <div class="entry-container">
+    
+		<header class="entry-header">
+    		<h1 class="entry-title"><a href="https://web.archive.org/web/20200222235435/http://drgutman.org/sublimetext-on-ubuntu-with-prettyprinting/" title="Permalink to SublimeText on Ubuntu with PrettyPrinting" rel="bookmark">SublimeText on Ubuntu with PrettyPrinting</a></h1>
+			                <div class="entry-meta">
+                    <span class="on-date">Posted on <a href="https://web.archive.org/web/20200222235435/http://drgutman.org/sublimetext-on-ubuntu-with-prettyprinting/" title="6:50 pm" rel="bookmark"><time class="entry-date" datetime="2016-05-09T18:50:59+00:00">May 9, 2016</time></a></span><span class="by-author"> by <span class="author vcard"><a class="url fn n" href="https://web.archive.org/web/20200222235435/http://drgutman.org/author/admin/" title="View all posts by admin" rel="author">admin</a></span></span>                </div><!-- .entry-meta -->
+					</header><!-- .entry-header -->
+
+		            <div class="entry-summary">
+                <p>I&#8217;ve fallen in love with Sublime Text Editor, in particular the ability to do HTML and Python formatting, and it also works on my MAC (dev @ home) as well <a class="more-link" href="https://web.archive.org/web/20200222235435/http://drgutman.org/sublimetext-on-ubuntu-with-prettyprinting/">Continue Reading &rarr;</a></p>
+            </div><!-- .entry-summary -->     
+		
+        <footer class="entry-meta">
+        	<span class="in-category">Posted in <a href="https://web.archive.org/web/20200222235435/http://drgutman.org/category/uncategorized/" rel="category tag">Uncategorized</a></span>			            
+            			            
+        </footer><!-- .entry-meta -->
+        
+  	</div><!-- .entry-container -->
+    
+</article><!-- #post-516 -->        
+                    
+                
+<article id="post-506" class="post-506 post type-post status-publish format-standard hentry category-uncategorized">
+
+	    
+        
+    <div class="entry-container">
+    
+		<header class="entry-header">
+    		<h1 class="entry-title"><a href="https://web.archive.org/web/20200222235435/http://drgutman.org/installing-fsl-on-ubuntu-14-04-without-overwriting-torque/" title="Permalink to Installing FSL on Ubuntu 14.04 without overwriting torque" rel="bookmark">Installing FSL on Ubuntu 14.04 without overwriting torque</a></h1>
+			                <div class="entry-meta">
+                    <span class="on-date">Posted on <a href="https://web.archive.org/web/20200222235435/http://drgutman.org/installing-fsl-on-ubuntu-14-04-without-overwriting-torque/" title="3:19 am" rel="bookmark"><time class="entry-date" datetime="2016-03-17T03:19:04+00:00">March 17, 2016</time></a></span><span class="by-author"> by <span class="author vcard"><a class="url fn n" href="https://web.archive.org/web/20200222235435/http://drgutman.org/author/admin/" title="View all posts by admin" rel="author">admin</a></span></span>                </div><!-- .entry-meta -->
+					</header><!-- .entry-header -->
+
+		            <div class="entry-summary">
+                <p>I have installed Torque on our cluster, and we had decided to build this from source as the maintained version was a bit old. However, when I went to install <a class="more-link" href="https://web.archive.org/web/20200222235435/http://drgutman.org/installing-fsl-on-ubuntu-14-04-without-overwriting-torque/">Continue Reading &rarr;</a></p>
+            </div><!-- .entry-summary -->     
+		
+        <footer class="entry-meta">
+        	<span class="in-category">Posted in <a href="https://web.archive.org/web/20200222235435/http://drgutman.org/category/uncategorized/" rel="category tag">Uncategorized</a></span>			            
+            			            
+        </footer><!-- .entry-meta -->
+        
+  	</div><!-- .entry-container -->
+    
+</article><!-- #post-506 -->        
+                    
+                
+<article id="post-503" class="post-503 post type-post status-publish format-standard hentry category-uncategorized">
+
+	    
+        
+    <div class="entry-container">
+    
+		<header class="entry-header">
+    		<h1 class="entry-title"><a href="https://web.archive.org/web/20200222235435/http://drgutman.org/science-isnt-broken-fivethirtyeight/" title="Permalink to Science Isn’t Broken | FiveThirtyEight" rel="bookmark">Science Isn’t Broken | FiveThirtyEight</a></h1>
+			                <div class="entry-meta">
+                    <span class="on-date">Posted on <a href="https://web.archive.org/web/20200222235435/http://drgutman.org/science-isnt-broken-fivethirtyeight/" title="4:07 am" rel="bookmark"><time class="entry-date" datetime="2015-11-30T04:07:30+00:00">November 30, 2015</time></a></span><span class="by-author"> by <span class="author vcard"><a class="url fn n" href="https://web.archive.org/web/20200222235435/http://drgutman.org/author/admin/" title="View all posts by admin" rel="author">admin</a></span></span>                </div><!-- .entry-meta -->
+					</header><!-- .entry-header -->
+
+		            <div class="entry-summary">
+                <p>http://fivethirtyeight.com/features/science-isnt-broken/#part3</p>
+            </div><!-- .entry-summary -->     
+		
+        <footer class="entry-meta">
+        	<span class="in-category">Posted in <a href="https://web.archive.org/web/20200222235435/http://drgutman.org/category/uncategorized/" rel="category tag">Uncategorized</a></span>			            
+            			            
+        </footer><!-- .entry-meta -->
+        
+  	</div><!-- .entry-container -->
+    
+</article><!-- #post-503 -->        
+                    
+                
+<article id="post-502" class="post-502 post type-post status-publish format-standard hentry category-uncategorized">
+
+	    
+        
+    <div class="entry-container">
+    
+		<header class="entry-header">
+    		<h1 class="entry-title"><a href="https://web.archive.org/web/20200222235435/http://drgutman.org/why-we-need-to-create-careers-for-research-software-engineers-scientific-computing-world/" title="Permalink to Why we need to create careers for research software engineers – Scientific Computing World" rel="bookmark">Why we need to create careers for research software engineers &#8211; Scientific Computing World</a></h1>
+			                <div class="entry-meta">
+                    <span class="on-date">Posted on <a href="https://web.archive.org/web/20200222235435/http://drgutman.org/why-we-need-to-create-careers-for-research-software-engineers-scientific-computing-world/" title="9:49 pm" rel="bookmark"><time class="entry-date" datetime="2015-11-12T21:49:39+00:00">November 12, 2015</time></a></span><span class="by-author"> by <span class="author vcard"><a class="url fn n" href="https://web.archive.org/web/20200222235435/http://drgutman.org/author/admin/" title="View all posts by admin" rel="author">admin</a></span></span>                </div><!-- .entry-meta -->
+					</header><!-- .entry-header -->
+
+		            <div class="entry-summary">
+                <p>http://www.scientific-computing.com/news/news_story.php?news_id=2737</p>
+            </div><!-- .entry-summary -->     
+		
+        <footer class="entry-meta">
+        	<span class="in-category">Posted in <a href="https://web.archive.org/web/20200222235435/http://drgutman.org/category/uncategorized/" rel="category tag">Uncategorized</a></span>			            
+            			            
+        </footer><!-- .entry-meta -->
+        
+  	</div><!-- .entry-container -->
+    
+</article><!-- #post-502 -->        
+                    
+                
+<article id="post-496" class="post-496 post type-post status-publish format-standard hentry category-uncategorized">
+
+	    
+        
+    <div class="entry-container">
+    
+		<header class="entry-header">
+    		<h1 class="entry-title"><a href="https://web.archive.org/web/20200222235435/http://drgutman.org/cdsa-in-the-news/" title="Permalink to XNATView" rel="bookmark">XNATView</a></h1>
+			                <div class="entry-meta">
+                    <span class="on-date">Posted on <a href="https://web.archive.org/web/20200222235435/http://drgutman.org/cdsa-in-the-news/" title="12:47 am" rel="bookmark"><time class="entry-date" datetime="2014-04-16T00:47:03+00:00">April 16, 2014</time></a></span><span class="by-author"> by <span class="author vcard"><a class="url fn n" href="https://web.archive.org/web/20200222235435/http://drgutman.org/author/admin/" title="View all posts by admin" rel="author">admin</a></span></span>                </div><!-- .entry-meta -->
+					</header><!-- .entry-header -->
+
+		            <div class="entry-summary">
+                <p>&#8220;Web based tools for visualizing imaging data and development of XNATView, a zero footprint image viewer&#8221; has recently been published in the Frontiers in Neuroinformatics Journal. The paper outlines the <a class="more-link" href="https://web.archive.org/web/20200222235435/http://drgutman.org/cdsa-in-the-news/">Continue Reading &rarr;</a></p>
+            </div><!-- .entry-summary -->     
+		
+        <footer class="entry-meta">
+        	<span class="in-category">Posted in <a href="https://web.archive.org/web/20200222235435/http://drgutman.org/category/uncategorized/" rel="category tag">Uncategorized</a></span>			            
+            			            
+        </footer><!-- .entry-meta -->
+        
+  	</div><!-- .entry-container -->
+    
+</article><!-- #post-496 -->        
+                    
+                
+<article id="post-492" class="post-492 post type-post status-publish format-standard hentry category-uncategorized">
+
+	    
+        
+    <div class="entry-container">
+    
+		<header class="entry-header">
+    		<h1 class="entry-title"><a href="https://web.archive.org/web/20200222235435/http://drgutman.org/cancer-digital-slide-archive-featured-in-tcga/" title="Permalink to Cancer Digital Slide Archive featured in TCGA" rel="bookmark">Cancer Digital Slide Archive featured in TCGA</a></h1>
+			                <div class="entry-meta">
+                    <span class="on-date">Posted on <a href="https://web.archive.org/web/20200222235435/http://drgutman.org/cancer-digital-slide-archive-featured-in-tcga/" title="2:35 pm" rel="bookmark"><time class="entry-date" datetime="2014-03-20T14:35:17+00:00">March 20, 2014</time></a></span><span class="by-author"> by <span class="author vcard"><a class="url fn n" href="https://web.archive.org/web/20200222235435/http://drgutman.org/author/admin/" title="View all posts by admin" rel="author">admin</a></span></span>                </div><!-- .entry-meta -->
+					</header><!-- .entry-header -->
+
+		            <div class="entry-summary">
+                <p>In a recent article by the NIH&#8217;s TCGA, the cancer digital slide archive (CDSA) was featured. The CDSA is an online resource one can use to access thousands of pathology <a class="more-link" href="https://web.archive.org/web/20200222235435/http://drgutman.org/cancer-digital-slide-archive-featured-in-tcga/">Continue Reading &rarr;</a></p>
+            </div><!-- .entry-summary -->     
+		
+        <footer class="entry-meta">
+        	<span class="in-category">Posted in <a href="https://web.archive.org/web/20200222235435/http://drgutman.org/category/uncategorized/" rel="category tag">Uncategorized</a></span>			            
+            			            
+        </footer><!-- .entry-meta -->
+        
+  	</div><!-- .entry-container -->
+    
+</article><!-- #post-492 -->        
+                    
+                
+<article id="post-485" class="post-485 post type-post status-publish format-standard hentry category-uncategorized">
+
+	    
+        
+    <div class="entry-container">
+    
+		<header class="entry-header">
+    		<h1 class="entry-title"><a href="https://web.archive.org/web/20200222235435/http://drgutman.org/openjpeg-and-vipsopenslide/" title="Permalink to OpenJPEG and VIPS/Openslide" rel="bookmark">OpenJPEG and VIPS/Openslide</a></h1>
+			                <div class="entry-meta">
+                    <span class="on-date">Posted on <a href="https://web.archive.org/web/20200222235435/http://drgutman.org/openjpeg-and-vipsopenslide/" title="3:07 pm" rel="bookmark"><time class="entry-date" datetime="2014-03-18T15:07:03+00:00">March 18, 2014</time></a></span><span class="by-author"> by <span class="author vcard"><a class="url fn n" href="https://web.archive.org/web/20200222235435/http://drgutman.org/author/admin/" title="View all posts by admin" rel="author">admin</a></span></span>                </div><!-- .entry-meta -->
+					</header><!-- .entry-header -->
+
+		            <div class="entry-summary">
+                <p>A recent bug/reversion in the openjpeg library caused several hundred of the images in the CDSA to.. turn black.  Basically when the library tried to read the images, it crashed <a class="more-link" href="https://web.archive.org/web/20200222235435/http://drgutman.org/openjpeg-and-vipsopenslide/">Continue Reading &rarr;</a></p>
+            </div><!-- .entry-summary -->     
+		
+        <footer class="entry-meta">
+        	<span class="in-category">Posted in <a href="https://web.archive.org/web/20200222235435/http://drgutman.org/category/uncategorized/" rel="category tag">Uncategorized</a></span>			            
+            			            
+        </footer><!-- .entry-meta -->
+        
+  	</div><!-- .entry-container -->
+    
+</article><!-- #post-485 -->        
+                    
+                
+<article id="post-306" class="post-306 post type-post status-publish format-standard hentry category-blog category-html5-and-css category-whole-slide-imaging">
+
+	    
+        
+    <div class="entry-container">
+    
+		<header class="entry-header">
+    		<h1 class="entry-title"><a href="https://web.archive.org/web/20200222235435/http://drgutman.org/more-on-svg-color-filtering/" title="Permalink to More on SVG Color Filtering" rel="bookmark">More on SVG Color Filtering</a></h1>
+			                <div class="entry-meta">
+                    <span class="on-date">Posted on <a href="https://web.archive.org/web/20200222235435/http://drgutman.org/more-on-svg-color-filtering/" title="1:46 pm" rel="bookmark"><time class="entry-date" datetime="2014-03-18T13:46:08+00:00">March 18, 2014</time></a></span><span class="by-author"> by <span class="author vcard"><a class="url fn n" href="https://web.archive.org/web/20200222235435/http://drgutman.org/author/admin/" title="View all posts by admin" rel="author">admin</a></span></span>                </div><!-- .entry-meta -->
+					</header><!-- .entry-header -->
+
+		            <div class="entry-summary">
+                <p>These are just some article on CSS and SVG &nbsp; Found another great article at http://docs.webplatform.org/wiki/svg/tutorials/smarter_svg_filters Goes over the CSS and SVG elements, and generally a helpful guide &nbsp; http://www.w3.org/Graphics/SVG/IG/resources/svgprimer.html#SVG_web pixel <a class="more-link" href="https://web.archive.org/web/20200222235435/http://drgutman.org/more-on-svg-color-filtering/">Continue Reading &rarr;</a></p>
+            </div><!-- .entry-summary -->     
+		
+        <footer class="entry-meta">
+        	<span class="in-category">Posted in <a href="https://web.archive.org/web/20200222235435/http://drgutman.org/category/blog/" rel="category tag">Blog</a>, <a href="https://web.archive.org/web/20200222235435/http://drgutman.org/category/html5-and-css/" rel="category tag">HTML5 and CSS</a>, <a href="https://web.archive.org/web/20200222235435/http://drgutman.org/category/whole-slide-imaging/" rel="category tag">Whole Slide Imaging</a></span>			            
+            			            
+        </footer><!-- .entry-meta -->
+        
+  	</div><!-- .entry-container -->
+    
+</article><!-- #post-306 -->        
+                    
+                
+<article id="post-353" class="post-353 post type-post status-publish format-standard hentry category-uncategorized">
+
+	    
+        
+    <div class="entry-container">
+    
+		<header class="entry-header">
+    		<h1 class="entry-title"><a href="https://web.archive.org/web/20200222235435/http://drgutman.org/ubuntu-and-redhat/" title="Permalink to Ubuntu and RedHat" rel="bookmark">Ubuntu and RedHat</a></h1>
+			                <div class="entry-meta">
+                    <span class="on-date">Posted on <a href="https://web.archive.org/web/20200222235435/http://drgutman.org/ubuntu-and-redhat/" title="5:36 pm" rel="bookmark"><time class="entry-date" datetime="2013-10-26T17:36:46+00:00">October 26, 2013</time></a></span><span class="by-author"> by <span class="author vcard"><a class="url fn n" href="https://web.archive.org/web/20200222235435/http://drgutman.org/author/admin/" title="View all posts by admin" rel="author">admin</a></span></span>                </div><!-- .entry-meta -->
+					</header><!-- .entry-header -->
+
+		            <div class="entry-summary">
+                <p>I use Ubuntu and RedHat / CentOS to help manage and organize a lot of the data I need for my research.  As I come across useful command or tricks, <a class="more-link" href="https://web.archive.org/web/20200222235435/http://drgutman.org/ubuntu-and-redhat/">Continue Reading &rarr;</a></p>
+            </div><!-- .entry-summary -->     
+		
+        <footer class="entry-meta">
+        	<span class="in-category">Posted in <a href="https://web.archive.org/web/20200222235435/http://drgutman.org/category/uncategorized/" rel="category tag">Uncategorized</a></span>			            
+            			            
+        </footer><!-- .entry-meta -->
+        
+  	</div><!-- .entry-container -->
+    
+</article><!-- #post-353 -->        
+                    
+                
+<article id="post-307" class="post-307 post type-post status-publish format-standard hentry category-data-accessibility">
+
+	    
+        
+    <div class="entry-container">
+    
+		<header class="entry-header">
+    		<h1 class="entry-title"><a href="https://web.archive.org/web/20200222235435/http://drgutman.org/slashdot/" title="Permalink to Slashdot" rel="bookmark">Slashdot</a></h1>
+			                <div class="entry-meta">
+                    <span class="on-date">Posted on <a href="https://web.archive.org/web/20200222235435/http://drgutman.org/slashdot/" title="3:45 pm" rel="bookmark"><time class="entry-date" datetime="2013-07-28T15:45:36+00:00">July 28, 2013</time></a></span><span class="by-author"> by <span class="author vcard"><a class="url fn n" href="https://web.archive.org/web/20200222235435/http://drgutman.org/author/admin/" title="View all posts by admin" rel="author">admin</a></span></span>                </div><!-- .entry-meta -->
+					</header><!-- .entry-header -->
+
+		            <div class="entry-summary">
+                <p>http://m.slashdot.org/story/189473</p>
+            </div><!-- .entry-summary -->     
+		
+        <footer class="entry-meta">
+        	<span class="in-category">Posted in <a href="https://web.archive.org/web/20200222235435/http://drgutman.org/category/data-accessibility/" rel="category tag">data accessibility</a></span>			            
+            			            
+        </footer><!-- .entry-meta -->
+        
+  	</div><!-- .entry-container -->
+    
+</article><!-- #post-307 -->        
+                    
+                
+<article id="post-264" class="post-264 post type-post status-publish format-standard hentry category-uncategorized">
+
+	    
+        
+    <div class="entry-container">
+    
+		<header class="entry-header">
+    		<h1 class="entry-title"><a href="https://web.archive.org/web/20200222235435/http://drgutman.org/improving-html5-canvas-performance-html5-rocks/" title="Permalink to Improving HTML5 Canvas Performance – HTML5 Rocks" rel="bookmark">Improving HTML5 Canvas Performance &#8211; HTML5 Rocks</a></h1>
+			                <div class="entry-meta">
+                    <span class="on-date">Posted on <a href="https://web.archive.org/web/20200222235435/http://drgutman.org/improving-html5-canvas-performance-html5-rocks/" title="2:54 am" rel="bookmark"><time class="entry-date" datetime="2013-03-04T02:54:26+00:00">March 4, 2013</time></a></span><span class="by-author"> by <span class="author vcard"><a class="url fn n" href="https://web.archive.org/web/20200222235435/http://drgutman.org/author/admin/" title="View all posts by admin" rel="author">admin</a></span></span>                </div><!-- .entry-meta -->
+					</header><!-- .entry-header -->
+
+		            <div class="entry-summary">
+                <p>http://www.html5rocks.com/en/tutorials/canvas/performance/</p>
+            </div><!-- .entry-summary -->     
+		
+        <footer class="entry-meta">
+        	<span class="in-category">Posted in <a href="https://web.archive.org/web/20200222235435/http://drgutman.org/category/uncategorized/" rel="category tag">Uncategorized</a></span>			            
+            			            
+        </footer><!-- .entry-meta -->
+        
+  	</div><!-- .entry-container -->
+    
+</article><!-- #post-264 -->        
+                    
+                
+<article id="post-239" class="post-239 post type-post status-publish format-standard hentry category-blog category-linux-2 category-whole-slide-imaging">
+
+	    
+        
+    <div class="entry-container">
+    
+		<header class="entry-header">
+    		<h1 class="entry-title"><a href="https://web.archive.org/web/20200222235435/http://drgutman.org/compiling-libtiff-on-ubuntu/" title="Permalink to Compiling Libtiff on Ubuntu" rel="bookmark">Compiling Libtiff on Ubuntu</a></h1>
+			                <div class="entry-meta">
+                    <span class="on-date">Posted on <a href="https://web.archive.org/web/20200222235435/http://drgutman.org/compiling-libtiff-on-ubuntu/" title="4:00 pm" rel="bookmark"><time class="entry-date" datetime="2013-02-28T16:00:30+00:00">February 28, 2013</time></a></span><span class="by-author"> by <span class="author vcard"><a class="url fn n" href="https://web.archive.org/web/20200222235435/http://drgutman.org/author/admin/" title="View all posts by admin" rel="author">admin</a></span></span>                </div><!-- .entry-meta -->
+					</header><!-- .entry-header -->
+
+		            <div class="entry-summary">
+                <p>libTIFF can be installed via the package repository in Ubuntu, however the most recent version is not currently available in the repository, and the packaged version is missing a key <a class="more-link" href="https://web.archive.org/web/20200222235435/http://drgutman.org/compiling-libtiff-on-ubuntu/">Continue Reading &rarr;</a></p>
+            </div><!-- .entry-summary -->     
+		
+        <footer class="entry-meta">
+        	<span class="in-category">Posted in <a href="https://web.archive.org/web/20200222235435/http://drgutman.org/category/blog/" rel="category tag">Blog</a>, <a href="https://web.archive.org/web/20200222235435/http://drgutman.org/category/linux-2/" rel="category tag">Linux</a>, <a href="https://web.archive.org/web/20200222235435/http://drgutman.org/category/whole-slide-imaging/" rel="category tag">Whole Slide Imaging</a></span>			            
+            			            
+        </footer><!-- .entry-meta -->
+        
+  	</div><!-- .entry-container -->
+    
+</article><!-- #post-239 -->        
+                    
+                
+<article id="post-219" class="post-219 post type-post status-publish format-standard hentry category-blog category-uncategorized">
+
+	    
+        
+    <div class="entry-container">
+    
+		<header class="entry-header">
+    		<h1 class="entry-title"><a href="https://web.archive.org/web/20200222235435/http://drgutman.org/fun-in-the-sun-grid-engine-or-son-of-grid-engine/" title="Permalink to Fun in the Sun Grid Engine…. or Son of Grid Engine" rel="bookmark">Fun in the Sun Grid Engine&#8230;. or Son of Grid Engine</a></h1>
+			                <div class="entry-meta">
+                    <span class="on-date">Posted on <a href="https://web.archive.org/web/20200222235435/http://drgutman.org/fun-in-the-sun-grid-engine-or-son-of-grid-engine/" title="4:00 pm" rel="bookmark"><time class="entry-date" datetime="2013-02-28T16:00:14+00:00">February 28, 2013</time></a></span><span class="by-author"> by <span class="author vcard"><a class="url fn n" href="https://web.archive.org/web/20200222235435/http://drgutman.org/author/admin/" title="View all posts by admin" rel="author">admin</a></span></span>                </div><!-- .entry-meta -->
+					</header><!-- .entry-header -->
+
+		            <div class="entry-summary">
+                <p>Just various sites related to setting up SGE on Ubuntu&#8230; which can be a huge pain &nbsp; http://helms-deep.cable.nu/~rwh/blog/?p=159</p>
+            </div><!-- .entry-summary -->     
+		
+        <footer class="entry-meta">
+        	<span class="in-category">Posted in <a href="https://web.archive.org/web/20200222235435/http://drgutman.org/category/blog/" rel="category tag">Blog</a>, <a href="https://web.archive.org/web/20200222235435/http://drgutman.org/category/uncategorized/" rel="category tag">Uncategorized</a></span>			            
+            			            
+        </footer><!-- .entry-meta -->
+        
+  	</div><!-- .entry-container -->
+    
+</article><!-- #post-219 -->        
+                    
+                
+<article id="post-226" class="post-226 post type-post status-publish format-standard has-post-thumbnail hentry category-front-page">
+
+	    
+    		<figure class="featured-image">
+            <a href="https://web.archive.org/web/20200222235435/http://drgutman.org/example-1/" title="Permalink to Example 1">
+                <img width="549" height="462" src="https://web.archive.org/web/20200222235435im_/http://drgutman.org/dglab_wordpress/wp-content/uploads/2013/02/pic4.png" class="attachment-featured size-featured wp-post-image" alt="" srcset="https://web.archive.org/web/20200222235435im_/http://drgutman.org/dglab_wordpress/wp-content/uploads/2013/02/pic4.png 779w, https://web.archive.org/web/20200222235435im_/http://drgutman.org/dglab_wordpress/wp-content/uploads/2013/02/pic4-300x252.png 300w" sizes="(max-width: 549px) 100vw, 549px"/>			</a>
+        </figure>
+   	    
+    <div class="entry-container">
+    
+		<header class="entry-header">
+    		<h1 class="entry-title"><a href="https://web.archive.org/web/20200222235435/http://drgutman.org/example-1/" title="Permalink to Example 1" rel="bookmark">Example 1</a></h1>
+			                <div class="entry-meta">
+                    <span class="on-date">Posted on <a href="https://web.archive.org/web/20200222235435/http://drgutman.org/example-1/" title="7:18 pm" rel="bookmark"><time class="entry-date" datetime="2013-02-26T19:18:10+00:00">February 26, 2013</time></a></span><span class="by-author"> by <span class="author vcard"><a class="url fn n" href="https://web.archive.org/web/20200222235435/http://drgutman.org/author/admin/" title="View all posts by admin" rel="author">admin</a></span></span>                </div><!-- .entry-meta -->
+					</header><!-- .entry-header -->
+
+		            <div class="entry-summary">
+                <p>Testing 1 2 3</p>
+            </div><!-- .entry-summary -->     
+		
+        <footer class="entry-meta">
+        	<span class="in-category">Posted in <a href="https://web.archive.org/web/20200222235435/http://drgutman.org/category/front-page/" rel="category tag">Front Page</a></span>			            
+            			            
+        </footer><!-- .entry-meta -->
+        
+  	</div><!-- .entry-container -->
+    
+</article><!-- #post-226 -->        
+                    
+                
+<article id="post-223" class="post-223 post type-post status-publish format-standard hentry category-blog category-uncategorized">
+
+	    
+        
+    <div class="entry-container">
+    
+		<header class="entry-header">
+    		<h1 class="entry-title"><a href="https://web.archive.org/web/20200222235435/http://drgutman.org/html5-drawing-images-and-adding-text-to-the-canvas-element-techrepublic/" title="Permalink to HTML5: Drawing images and adding text to the canvas element | TechRepublic" rel="bookmark">HTML5: Drawing images and adding text to the canvas element | TechRepublic</a></h1>
+			                <div class="entry-meta">
+                    <span class="on-date">Posted on <a href="https://web.archive.org/web/20200222235435/http://drgutman.org/html5-drawing-images-and-adding-text-to-the-canvas-element-techrepublic/" title="1:12 pm" rel="bookmark"><time class="entry-date" datetime="2013-02-17T13:12:09+00:00">February 17, 2013</time></a></span><span class="by-author"> by <span class="author vcard"><a class="url fn n" href="https://web.archive.org/web/20200222235435/http://drgutman.org/author/admin/" title="View all posts by admin" rel="author">admin</a></span></span>                </div><!-- .entry-meta -->
+					</header><!-- .entry-header -->
+
+		            <div class="entry-summary">
+                <p>http://m.techrepublic.com/blog/webmaster/html5-drawing-images-and-adding-text-to-the-canvas-element/586</p>
+            </div><!-- .entry-summary -->     
+		
+        <footer class="entry-meta">
+        	<span class="in-category">Posted in <a href="https://web.archive.org/web/20200222235435/http://drgutman.org/category/blog/" rel="category tag">Blog</a>, <a href="https://web.archive.org/web/20200222235435/http://drgutman.org/category/uncategorized/" rel="category tag">Uncategorized</a></span>			            
+            			            
+        </footer><!-- .entry-meta -->
+        
+  	</div><!-- .entry-container -->
+    
+</article><!-- #post-223 -->        
+                    
+                
+<article id="post-215" class="post-215 post type-post status-publish format-standard hentry category-asrn-2013 category-blog category-radiogenomics">
+
+	    
+        
+    <div class="entry-container">
+    
+		<header class="entry-header">
+    		<h1 class="entry-title"><a href="https://web.archive.org/web/20200222235435/http://drgutman.org/tcga-genomics-working-group-web-site/" title="Permalink to TCGA Genomics working group web site.." rel="bookmark">TCGA Genomics working group web site..</a></h1>
+			                <div class="entry-meta">
+                    <span class="on-date">Posted on <a href="https://web.archive.org/web/20200222235435/http://drgutman.org/tcga-genomics-working-group-web-site/" title="9:38 pm" rel="bookmark"><time class="entry-date" datetime="2013-02-13T21:38:44+00:00">February 13, 2013</time></a></span><span class="by-author"> by <span class="author vcard"><a class="url fn n" href="https://web.archive.org/web/20200222235435/http://drgutman.org/author/admin/" title="View all posts by admin" rel="author">admin</a></span></span>                </div><!-- .entry-meta -->
+					</header><!-- .entry-header -->
+
+		            <div class="entry-summary">
+                <p>To keep track of all the random VASARI / Glioma related work, Justin Kirby set up a very helpful wiki. &nbsp; &nbsp; https://wiki.cancerimagingarchive.net/display/Public/TCGA+Glioma+Phenotype+Research+Group</p>
+            </div><!-- .entry-summary -->     
+		
+        <footer class="entry-meta">
+        	<span class="in-category">Posted in <a href="https://web.archive.org/web/20200222235435/http://drgutman.org/category/radiogenomics/asrn-2013/" rel="category tag">ASRN 2013</a>, <a href="https://web.archive.org/web/20200222235435/http://drgutman.org/category/blog/" rel="category tag">Blog</a>, <a href="https://web.archive.org/web/20200222235435/http://drgutman.org/category/radiogenomics/" rel="category tag">RadioGenomics</a></span>			            
+            			            
+        </footer><!-- .entry-meta -->
+        
+  	</div><!-- .entry-container -->
+    
+</article><!-- #post-215 -->        
+                    
+                
+<article id="post-205" class="post-205 post type-post status-publish format-standard hentry category-blog category-uncategorized">
+
+	    
+        
+    <div class="entry-container">
+    
+		<header class="entry-header">
+    		<h1 class="entry-title"><a href="https://web.archive.org/web/20200222235435/http://drgutman.org/neurogenomics/" title="Permalink to NeuroGenomics" rel="bookmark">NeuroGenomics</a></h1>
+			                <div class="entry-meta">
+                    <span class="on-date">Posted on <a href="https://web.archive.org/web/20200222235435/http://drgutman.org/neurogenomics/" title="6:25 pm" rel="bookmark"><time class="entry-date" datetime="2013-02-13T18:25:03+00:00">February 13, 2013</time></a></span><span class="by-author"> by <span class="author vcard"><a class="url fn n" href="https://web.archive.org/web/20200222235435/http://drgutman.org/author/admin/" title="View all posts by admin" rel="author">admin</a></span></span>                </div><!-- .entry-meta -->
+					</header><!-- .entry-header -->
+
+		            <div class="entry-summary">
+                <p>Here&#8217;s a list of TCGA abstracts me and other colleagues have for this year&#8217;s ASNR meeting in San Diego 2013 My presentation (aka 6 minutes of glory) Control #: 1471 Title: Imaging <a class="more-link" href="https://web.archive.org/web/20200222235435/http://drgutman.org/neurogenomics/">Continue Reading &rarr;</a></p>
+            </div><!-- .entry-summary -->     
+		
+        <footer class="entry-meta">
+        	<span class="in-category">Posted in <a href="https://web.archive.org/web/20200222235435/http://drgutman.org/category/blog/" rel="category tag">Blog</a>, <a href="https://web.archive.org/web/20200222235435/http://drgutman.org/category/uncategorized/" rel="category tag">Uncategorized</a></span>			            
+            			            
+        </footer><!-- .entry-meta -->
+        
+  	</div><!-- .entry-container -->
+    
+</article><!-- #post-205 -->        
+                    
+                
+<article id="post-189" class="post-189 post type-post status-publish format-standard hentry category-blog category-data-accessibility tag-data-sharing tag-metadata">
+
+	    
+        
+    <div class="entry-container">
+    
+		<header class="entry-header">
+    		<h1 class="entry-title"><a href="https://web.archive.org/web/20200222235435/http://drgutman.org/watch-data-sharing-and-management-snafu-in-3-short-acts-on-youtube/" title="Permalink to Watch “Data Sharing and Management Snafu in 3 Short Acts” on YouTube" rel="bookmark">Watch &#8220;Data Sharing and Management Snafu in 3 Short Acts&#8221; on YouTube</a></h1>
+			                <div class="entry-meta">
+                    <span class="on-date">Posted on <a href="https://web.archive.org/web/20200222235435/http://drgutman.org/watch-data-sharing-and-management-snafu-in-3-short-acts-on-youtube/" title="9:52 am" rel="bookmark"><time class="entry-date" datetime="2013-02-10T09:52:43+00:00">February 10, 2013</time></a></span><span class="by-author"> by <span class="author vcard"><a class="url fn n" href="https://web.archive.org/web/20200222235435/http://drgutman.org/author/admin/" title="View all posts by admin" rel="author">admin</a></span></span>                </div><!-- .entry-meta -->
+					</header><!-- .entry-header -->
+
+		            <div class="entry-content">
+                <p><object width="480" height="385" classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" codebase="https://web.archive.org/web/20200222235435oe_/http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,40,0"><param name="allowFullScreen" value="true"/><param name="allowscriptaccess" value="always"/><param name="src" value="http://www.youtube.com/v/N2zK3sAtr-4"/><param name="allowfullscreen" value="true"/><embed width="480" height="385" type="application/x-shockwave-flash" src="https://web.archive.org/web/20200222235435oe_/http://www.youtube.com/v/N2zK3sAtr-4" allowfullscreen="true" allowscriptaccess="always" allowfullscreen="true"/></object></p>
+                            </div><!-- .entry-content -->
+        
+        <footer class="entry-meta">
+        	<span class="in-category">Posted in <a href="https://web.archive.org/web/20200222235435/http://drgutman.org/category/blog/" rel="category tag">Blog</a>, <a href="https://web.archive.org/web/20200222235435/http://drgutman.org/category/data-accessibility/" rel="category tag">data accessibility</a></span><span class="sep"> | </span><span class="in-tag">Tagged <a href="https://web.archive.org/web/20200222235435/http://drgutman.org/tag/data-sharing/" rel="tag">data sharing</a>, <a href="https://web.archive.org/web/20200222235435/http://drgutman.org/tag/metadata/" rel="tag">metadata</a></span>			            
+            			            
+        </footer><!-- .entry-meta -->
+        
+  	</div><!-- .entry-container -->
+    
+</article><!-- #post-189 -->        
+                    
+                
+<article id="post-185" class="post-185 post type-post status-publish format-standard hentry category-blog category-linux-2 category-tips-and-tricks tag-grid-engine tag-linux tag-sge tag-ubuntu">
+
+	    
+        
+    <div class="entry-container">
+    
+		<header class="entry-header">
+    		<h1 class="entry-title"><a href="https://web.archive.org/web/20200222235435/http://drgutman.org/deleting-old-sge-output-and-error-files/" title="Permalink to Deleting old SGE output and error files" rel="bookmark">Deleting old SGE output and error files</a></h1>
+			                <div class="entry-meta">
+                    <span class="on-date">Posted on <a href="https://web.archive.org/web/20200222235435/http://drgutman.org/deleting-old-sge-output-and-error-files/" title="11:11 pm" rel="bookmark"><time class="entry-date" datetime="2013-02-09T23:11:01+00:00">February 9, 2013</time></a></span><span class="by-author"> by <span class="author vcard"><a class="url fn n" href="https://web.archive.org/web/20200222235435/http://drgutman.org/author/admin/" title="View all posts by admin" rel="author">admin</a></span></span>                </div><!-- .entry-meta -->
+					</header><!-- .entry-header -->
+
+		            <div class="entry-summary">
+                <p>I use SGE&#8211; Son of Grid Engine, to run many batch jobs needed for my research.  It&#8217;s possible to send all of your log files directly to the garbage ( <a class="more-link" href="https://web.archive.org/web/20200222235435/http://drgutman.org/deleting-old-sge-output-and-error-files/">Continue Reading &rarr;</a></p>
+            </div><!-- .entry-summary -->     
+		
+        <footer class="entry-meta">
+        	<span class="in-category">Posted in <a href="https://web.archive.org/web/20200222235435/http://drgutman.org/category/blog/" rel="category tag">Blog</a>, <a href="https://web.archive.org/web/20200222235435/http://drgutman.org/category/linux-2/" rel="category tag">Linux</a>, <a href="https://web.archive.org/web/20200222235435/http://drgutman.org/category/linux-2/tips-and-tricks/" rel="category tag">Tips and Tricks</a></span><span class="sep"> | </span><span class="in-tag">Tagged <a href="https://web.archive.org/web/20200222235435/http://drgutman.org/tag/grid-engine/" rel="tag">grid engine</a>, <a href="https://web.archive.org/web/20200222235435/http://drgutman.org/tag/linux/" rel="tag">linux</a>, <a href="https://web.archive.org/web/20200222235435/http://drgutman.org/tag/sge/" rel="tag">sge</a>, <a href="https://web.archive.org/web/20200222235435/http://drgutman.org/tag/ubuntu/" rel="tag">ubuntu</a></span>			            
+            			            
+        </footer><!-- .entry-meta -->
+        
+  	</div><!-- .entry-container -->
+    
+</article><!-- #post-185 -->        
+                    
+                    
+                
+        </div><!-- #content .site-content -->
+        
+    </div><!-- #primary .content-area -->
+
+	
+
+
+		<div id="secondary" class="widget-area" role="complementary">
+			<aside id="categories-2" class="widget widget_categories"><h3 class="widget-title">Search Posts by Category</h3><form action="https://web.archive.org/web/20200222235435/http://drgutman.org/" method="get"><label class="screen-reader-text" for="cat">Search Posts by Category</label><select name="cat" id="cat" class="postform">
+	<option value="-1">Select Category</option>
+	<option class="level-0" value="21">Blog</option>
+	<option class="level-0" value="14">data accessibility</option>
+	<option class="level-0" value="20">Front Page</option>
+	<option class="level-0" value="23">HTML5 and CSS</option>
+	<option class="level-0" value="12">Linux</option>
+	<option class="level-1" value="13">&nbsp;&nbsp;&nbsp;Tips and Tricks</option>
+	<option class="level-0" value="18">RadioGenomics</option>
+	<option class="level-1" value="19">&nbsp;&nbsp;&nbsp;ASRN 2013</option>
+	<option class="level-0" value="1">Uncategorized</option>
+	<option class="level-0" value="22">Whole Slide Imaging</option>
+</select>
+</form>
+<script type="text/javascript">
+/* <![CDATA[ */
+(function() {
+	var dropdown = document.getElementById( "cat" );
+	function onCatChange() {
+		if ( dropdown.options[ dropdown.selectedIndex ].value > 0 ) {
+			dropdown.parentNode.submit();
+		}
+	}
+	dropdown.onchange = onCatChange;
+})();
+/* ]]> */
+</script>
+
+</aside><aside id="calendar-3" class="widget widget_calendar"><h3 class="widget-title">Search Posts by Date</h3><div id="calendar_wrap" class="calendar_wrap"><table id="wp-calendar">
+	<caption>February 2020</caption>
+	<thead>
+	<tr>
+		<th scope="col" title="Monday">M</th>
+		<th scope="col" title="Tuesday">T</th>
+		<th scope="col" title="Wednesday">W</th>
+		<th scope="col" title="Thursday">T</th>
+		<th scope="col" title="Friday">F</th>
+		<th scope="col" title="Saturday">S</th>
+		<th scope="col" title="Sunday">S</th>
+	</tr>
+	</thead>
+
+	<tfoot>
+	<tr>
+		<td colspan="3" id="prev"><a href="https://web.archive.org/web/20200222235435/http://drgutman.org/2016/11/">&laquo; Nov</a></td>
+		<td class="pad">&nbsp;</td>
+		<td colspan="3" id="next" class="pad">&nbsp;</td>
+	</tr>
+	</tfoot>
+
+	<tbody>
+	<tr>
+		<td colspan="5" class="pad">&nbsp;</td><td>1</td><td>2</td>
+	</tr>
+	<tr>
+		<td>3</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td><td>9</td>
+	</tr>
+	<tr>
+		<td>10</td><td>11</td><td>12</td><td>13</td><td>14</td><td>15</td><td>16</td>
+	</tr>
+	<tr>
+		<td>17</td><td>18</td><td>19</td><td>20</td><td>21</td><td id="today">22</td><td>23</td>
+	</tr>
+	<tr>
+		<td>24</td><td>25</td><td>26</td><td>27</td><td>28</td><td>29</td>
+		<td class="pad" colspan="1">&nbsp;</td>
+	</tr>
+	</tbody>
+	</table></div></aside>			
+			    
+		</div><!-- #secondary .widget-area -->
+        
+		
+	</div><!-- #main .site-main -->
+    
+	 
+    
+	<footer id="colophon" role="contentinfo">
+		
+   
+           
+        <div id="site-generator" class="container">
+			  
+                    
+        	<div class="site-info">
+            	<div class="copyright">Copyright &copy; 2020 <a href="https://web.archive.org/web/20200222235435/http://drgutman.org/" title="The Gutman Lab"><span>The Gutman Lab</span></a>. All Rights Reserved.</div><div class="powered">Powered by: <a href="https://web.archive.org/web/20200222235435/http://wordpress.org/" target="_blank" title="WordPress"><span>WordPress</span></a> 
+          	</div><!-- .site-info -->
+            
+			              
+       	</div><!-- #site-generator --> 
+        
+          
+               
+	</footer><!-- #colophon .site-footer -->
+    
+     
+    
+</div><!-- #page .hfeed .site -->
+
+<!-- refreshing cache --><script type="text/javascript" src="https://web.archive.org/web/20200222235435js_/http://drgutman.org/dglab_wordpress/wp-content/themes/catch-everest-pro/js/jquery.fitvids.min.js?ver=20130324"></script>
+<script type="text/javascript" src="https://web.archive.org/web/20200222235435js_/http://drgutman.org/dglab_wordpress/wp-includes/js/wp-embed.min.js?ver=4.9.13"></script>
+
+</body>
+</html><!--
+     FILE ARCHIVED ON 23:54:35 Feb 22, 2020 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 13:43:10 Mar 31, 2026.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->
+<!--
+playback timings (ms):
+  captures_list: 0.626
+  exclusion.robots: 0.069
+  exclusion.robots.policy: 0.03
+  esindex: 0.009
+  cdx.remote: 32.878
+  LoadShardBlock: 325.052 (3)
+  PetaboxLoader3.datanode: 283.093 (4)
+  PetaboxLoader3.resolve: 142.044 (2)
+  load_resource: 180.219
+  nav: 0.133 (6)
+-->

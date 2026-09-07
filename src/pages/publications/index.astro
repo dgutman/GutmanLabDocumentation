@@ -1,0 +1,51 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import GoogleScholarLinks from "../../components/GoogleScholarLinks.astro";
+import { loadFragment } from "../../lib/fragments";
+
+const html = loadFragment("publications");
+---
+
+<Layout title="Publications">
+  <GoogleScholarLinks variant="compact" />
+  <p class="pub-index-note">
+    <a href="/publications/pubmed-review/">PubMed bibliography</a> (search,
+    abstracts, exclude mis-attributed papers) ·{" "}
+    <a href="/publications/unified/">PubMed + Scholar (unified)</a> ·{" "}
+    <a href="/publications/coverage/">OpenAlex vs PubMed coverage</a> ·{" "}
+    <a href="/publications/scholar-bibtex/">Scholar BibTeX export</a>
+  </p>
+  {
+    html ? (
+      <div class="content-recovered" set:html={html} />
+    ) : (
+      <>
+        <h1 class="page-title">Publications</h1>
+        <ul class="pub-list">
+          <li>
+            <a href="/publications/papers/">Peer reviewed journal articles</a>
+          </li>
+          <li>
+            <a href="/publications/presentations/">Presentations</a>
+          </li>
+          <li>
+            <a href="/publications/chapters/">Book chapters</a>
+          </li>
+          <li>
+            <a href="/publications/posters-abstracts/">Posters and abstracts</a>
+          </li>
+        </ul>
+      </>
+    )
+  }
+</Layout>
+
+<style>
+  .pub-index-note {
+    margin: 0 0 1.25rem;
+    font-size: 0.95rem;
+  }
+  .pub-index-note a {
+    font-weight: 600;
+  }
+</style>

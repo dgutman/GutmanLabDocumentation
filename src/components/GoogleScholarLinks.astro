@@ -1,0 +1,150 @@
+---
+import { existsSync } from "node:fs";
+import { join } from "node:path";
+import { googleScholar } from "../data/site";
+
+/** Optional static screenshot of citation chart (iframes from Scholar are blocked). */
+const chartImagePath = join(
+  process.cwd(),
+  "public/images/google-scholar-citations.png",
+);
+const hasChartImage = existsSync(chartImagePath);
+
+interface Props {
+  /** "default" | "compact" */
+  variant?: "default" | "compact";
+}
+
+const { variant = "default" } = Astro.props;
+---
+
+<section
+  class:list={["scholar-panel", variant === "compact" && "scholar-panel--compact"]}
+  aria-labelledby="scholar-heading"
+>
+  <h2 id="scholar-heading" class="scholar-panel__title">Google Scholar</h2>
+  <p class="scholar-panel__note">
+    This lab site does <strong>not</strong> import data from Google Scholar
+    (there is no supported API). Peer-reviewed lists here come from PubMed
+    sync. For live citation counts, h-index, and interactive charts, use your
+    Scholar profile.
+  </p>
+  <p class="scholar-panel__compare">
+    <a href="/publications/coverage/">OpenAlex vs PubMed gaps</a> — we cannot
+    query Scholar automatically; this compares your PubMed cache to the{" "}
+    <a href="https://openalex.org/">OpenAlex</a> author graph (run{" "}
+    <code>npm run compare:openalex</code> to refresh).
+  </p>
+  <p class="scholar-panel__compare">
+    <strong>Manual Scholar export:</strong> save BibTeX from Scholar as{" "}
+    <code>content/publications/scholar-export.bib</code>, then run{" "}
+    <code>npm run sanity:scholar</code> for a quick check against PubMed cache
+    (writes <code>scholar-sanity-check.json</code>).{" "}
+    <a href="/publications/scholar-bibtex/">View BibTeX in the site</a> (after
+    rebuild).
+  </p>
+  <p class="scholar-panel__links">
+    <a
+      href={googleScholar.profileUrl}
+      class="scholar-panel__cta"
+      rel="noopener noreferrer"
+      target="_blank"
+      >Google Scholar profile &amp; metrics</a
+    >
+    <span class="scholar-panel__sep" aria-hidden="true">·</span>
+    <a
+      href={googleScholar.libraryUrl}
+      rel="noopener noreferrer"
+      target="_blank"
+      >My library</a
+    >
+  </p>
+  {
+    hasChartImage ? (
+      <figure class="scholar-panel__figure">
+        <img
+          src="/images/google-scholar-citations.png"
+          alt="Citation metrics snapshot from Google Scholar"
+          width="640"
+          height="360"
+          loading="lazy"
+        />
+        <figcaption class="scholar-panel__cap">
+          Static snapshot; replace{" "}
+          <code>public/images/google-scholar-citations.png</code> to update.
+        </figcaption>
+      </figure>
+    ) : (
+      <p class="scholar-panel__chart-hint">
+        To show a citation chart here, save a screenshot from your Scholar
+        profile as{" "}
+        <code>public/images/google-scholar-citations.png</code> and rebuild.
+      </p>
+    )
+  }
+</section>
+
+<style>
+  .scholar-panel {
+    margin: 2rem 0;
+    padding: 1.25rem 1.35rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    max-width: 52rem;
+  }
+  .scholar-panel--compact {
+    margin: 1.25rem 0;
+    padding: 1rem 1.15rem;
+  }
+  .scholar-panel__title {
+    font-size: 1.05rem;
+    margin: 0 0 0.65rem;
+  }
+  .scholar-panel__note {
+    font-size: 0.92rem;
+    color: var(--muted);
+    margin: 0 0 0.85rem;
+    line-height: 1.45;
+    max-width: 58ch;
+  }
+  .scholar-panel__compare {
+    font-size: 0.88rem;
+    color: var(--muted);
+    margin: 0 0 0.9rem;
+    line-height: 1.45;
+    max-width: 58ch;
+  }
+  .scholar-panel__links {
+    margin: 0;
+    font-size: 0.95rem;
+  }
+  .scholar-panel__cta {
+    font-weight: 600;
+  }
+  .scholar-panel__sep {
+    margin: 0 0.35rem;
+    color: var(--muted);
+  }
+  .scholar-panel__figure {
+    margin: 1rem 0 0;
+  }
+  .scholar-panel__figure img {
+    max-width: 100%;
+    height: auto;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+  }
+  .scholar-panel__cap {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin: 0.4rem 0 0;
+  }
+  .scholar-panel__chart-hint {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin: 0.75rem 0 0;
+    font-style: italic;
+    max-width: 52ch;
+  }
+</style>

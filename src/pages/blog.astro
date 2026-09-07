@@ -1,0 +1,22 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { loadFragment } from "../lib/fragments";
+
+const html = loadFragment("the-blog-page");
+---
+
+<Layout title="Lab blog">
+  <h1 class="page-title">Lab blog</h1>
+  {
+    html ? (
+      <div class="content-recovered" set:html={html} />
+    ) : (
+      <p class="placeholder">
+        The original site linked to a WordPress blog. Recover archived posts with{" "}
+        <code>npm run recover</code> (adds{" "}
+        <code>the-blog-page.html.fragment</code> when available), or replace
+        this page with your current blog platform.
+      </p>
+    )
+  }
+</Layout>

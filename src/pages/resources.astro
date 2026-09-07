@@ -1,0 +1,22 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { loadFragment } from "../lib/fragments";
+
+const html = loadFragment("resources");
+---
+
+<Layout title="Resources">
+  <h1 class="page-title">Resources</h1>
+  {
+    html ? (
+      <div class="content-recovered" set:html={html} />
+    ) : (
+      <p class="placeholder">
+        No recovered content for this page yet. Run{" "}
+        <code>npm run recover</code> to pull the archived Resources page from the
+        Wayback Machine, or add content manually under{" "}
+        <code>content/recovered/resources.html.fragment</code>.
+      </p>
+    )
+  }
+</Layout>
