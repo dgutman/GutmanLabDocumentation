@@ -3,10 +3,10 @@ import Layout from "../../layouts/Layout.astro";
 import { loadFragment } from "../../lib/fragments";
 import { publicationSections } from "../../data/site";
 
-const BASE = import.meta.env.BASE_URL || "/";
+const BASE = import.meta.env.BASE_URL?.replace(/\/$/, "") || "";
 function link(href: string) {
   if (href === "/") return BASE;
-  return BASE + href.replace(/^\//, "");
+  return BASE + href;
 }
 
 export function getStaticPaths() {
