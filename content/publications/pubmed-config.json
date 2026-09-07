@@ -1,6 +1,6 @@
 {
-  "_readme": "excludedPmids / approvedPmids: canonical lists. openalexAuthorId → npm run compare:openalex. Manual Scholar BibTeX → content/publications/scholar-export.bib then npm run sanity:scholar. Optional browser duplicate links: /publications/unified/ (export JSON).",
-  "pubmedQuery": "(Gutman DA[Author] OR Gutman David A[Author] OR Gutman D[Author])",
+  "_readme": "excludedPmids / approvedPmids: canonical lists. openalexAuthorId \u2192 npm run compare:openalex. Manual Scholar BibTeX \u2192 content/publications/scholar-export.bib then npm run sanity:scholar. Optional browser duplicate links: /publications/unified/ (export JSON).",
+  "pubmedQuery": "(\"Gutman, David A\"[Author] OR \"Gutman DA\"[Author]) AND (\"Emory\"[Affiliation] OR \"Harvard\"[Affiliation] OR \"National Institute of Mental Health\"[Affiliation] OR \"NYU\"[Affiliation] OR \"Columbia\"[Affiliation])",
   "openalexAuthorId": "A5073937900",
   "excludedPmids": [
     "26090237",
@@ -104,5 +104,5 @@
   ],
   "maxResults": 400,
   "toolName": "gutman-lab-website",
-  "email": "REPLACE_WITH_YOUR_EMAIL@example.com"
+  "email": "dgutman@emory.edu"
 }

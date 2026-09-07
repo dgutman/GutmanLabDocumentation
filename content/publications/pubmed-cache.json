@@ -1,10 +1,47 @@
 {
-  "generatedAt": "2026-03-31T15:09:59Z",
-  "query": "(Gutman DA[Author] OR Gutman David A[Author])",
-  "pmidCount": 97,
-  "includedCount": 97,
+  "generatedAt": "2026-09-07T19:11:06Z",
+  "query": "(\"Gutman, David A\"[Author] OR \"Gutman DA\"[Author]) AND (\"Emory\"[Affiliation] OR \"Harvard\"[Affiliation] OR \"National Institute of Mental Health\"[Affiliation] OR \"NYU\"[Affiliation] OR \"Columbia\"[Affiliation])",
+  "pmidCount": 81,
+  "includedCount": 81,
   "excludedCount": 0,
+  "excludedPmids": [
+    "26090237",
+    "30676418",
+    "31567272",
+    "32784327",
+    "34434365",
+    "34870251",
+    "35464325",
+    "35646401",
+    "37035846"
+  ],
   "articles": [
+    {
+      "pmid": "42035704",
+      "title": "Data-driven thresholds for standardized classification of severe Alzheimer's disease neuropathology using digital neuropathology.",
+      "authors": "Shahidehpour Ryan K, Neltner Allison M, Klusty Mitchell A, Corbett Cole, Gonzalez Angelique D, Gutman David A, Fardo David W, Bachstetter Adam D, Bumgardner Cody, Flanagan Margaret E, Nelson Peter T",
+      "journal": "Brain Pathol",
+      "year": 2026,
+      "pubMonth": "Apr",
+      "abstract": "Alzheimer's disease neuropathological changes (ADNC)-operationalized with semi-quantitative parameters-represent the consensus-based gold standard for diagnostic evaluation of disease severity. Although useful, ADNC diagnostic frameworks have limitations, particularly in advanced disease stages where pathological severity varies widely within a given diagnostic category. Further, some individuals lacking cognitive impairment are inappropriately categorized as having severe ADNC. In this study, quantitative pathology metrics and alternative tissue sampling schemes were integrated with data about premortem cognitive status, in order to derive clinically informed neuropathologic diagnostic thresholds. Specific goals of the current study were to generate data-driven, standardized diagnostic cut-points, with the most severe stages of ADNC having consistent implications: Braak neurofibrillary tangle (NFT) stage V cases being always impaired (MCI or demented) and Braak NFT stage VI cases being always demented. Utilizing whole-slide imaging and AI-based image analysis, object-based (NFT counts) and pixel-based (phosphorylated tau [pTau] burden) quantifications were compared across neoco...",
+      "publicationTypes": [
+        "Journal Article"
+      ],
+      "pubmedUrl": "https://pubmed.ncbi.nlm.nih.gov/42035704/"
+    },
+    {
+      "pmid": "42322148",
+      "title": "High interobserver variability exists in grading appendiceal goblet cell adenocarcinoma using World Health Organization 5th edition criteria.",
+      "authors": "Marins Lidiane Vieira, Murden Raphiel, Misdraji Joseph, Reid Michelle D, Tang Laura, Umetsu Sarah, Wang Hanlin L, Wen Kwun Wah, Yantiss Rhonda K, Nizam Azhar, Gutman David A, Gonzalez Raul S",
+      "journal": "Histopathology",
+      "year": 2026,
+      "pubMonth": "Jun",
+      "abstract": "AIMS: Appendiceal goblet cell adenocarcinoma (GCA) is an uncommon malignancy that has been described under various names and grading schemes. The 5th Edition of the World Health Organization (WHO) Classification of Digestive System Tumours provides a three-tiered system for grading these neoplasms, but the reproducibility of this classification scheme has not been studied.\n\nMETHODS AND RESULTS: We scanned 58 H&E-stained slides from 20 GCA and circulated the whole-slide images among seven pathologists with interest in appendiceal pathology. They evaluated each slide for the presence of 15 histological patterns defined by the WHO as criteria for low-grade (n = 5) and high-grade (n = 10) GCA. Cases were also evaluated for the presence of extracellular mucin. Participants also reported the percentage of high-grade features in each whole slide image and each case. Interobserver variability was assessed statistically. All seven observers agreed on the WHO grade for four of the 20 cases (20%; one grade 1, three grade 3). Using Fleiss's kappa statistic, overall agreement for cases was fair at 0.29 (95% confidence interval [CI]: 0.14-0.44), and pairwise agreement between observers ranged...",
+      "publicationTypes": [
+        "Journal Article"
+      ],
+      "pubmedUrl": "https://pubmed.ncbi.nlm.nih.gov/42322148/"
+    },
     {
       "pmid": "40683248",
       "title": "Accelerating biomedical discoveries in brain health through transformative neuropathology of aging and neurodegeneration.",
@@ -29,7 +66,8 @@
       "abstract": "A neuropathology examination after death remains the gold standard for differentiating between Alzheimer disease (AD) and AD and related dementias (ADRD). Increasing interest and familiarity with digital imaging highlights recent shifts to modernize pathology workflows by leveraging technology that automates imaging and analysis. This review provides an overview of digital pathology technologies and their associated infrastructure, available open-source and proprietary digital pathology software, relevant background on neurodegenerative histopathological features, and computational research. It further examines recent developments in digital pathology in neurodegenerative disease research with an emphasis on machine learning. We discuss evidence supporting how recently developed technologies and methodologies can enhance our understanding of histopathologic features of neurodegeneration and correlations of histopathologic features with cognitive performance and age at death. Finally, we review potential directions for neurodegenerative disease digital pathology research given trends in technological infrastructure development and other digital pathology research. HIGHLIGHTS: Pro...",
       "publicationTypes": [
         "Journal Article",
-        "Review"
+        "Review",
+        "Research Support, N.I.H., Extramural"
       ],
       "pubmedUrl": "https://pubmed.ncbi.nlm.nih.gov/41200792/"
     },
@@ -55,7 +93,8 @@
       "pubMonth": "Feb",
       "abstract": "BACKGROUND: Preclinical data suggest antifungal azole derivatives have antitumor efficacy that may modulate response to immune checkpoint inhibitors (ICIs). We aimed to evaluate the association of azole drugs with overall survival (OS) in a population of patients with non-small cell lung cancer (NSCLC) treated with ICI within the Veterans Health Administration (VHA).\n\nMETHODS: In this retrospective study, the VA Corporate Data Warehouse was queried for patients diagnosed with NSCLC and treated with ICI from 2010 to 2018. Concomitant oral azole use was defined as dispensation by a VA pharmacy within 90 days of the first ICI infusion. Patients who received azole after 30 days were excluded from the analysis to mitigate immortal time bias. OS was measured from the start of ICI. Cox regression and propensity score matching were used to adjust for confounders.\n\nRESULTS: We identified 3413 patients with NSCLC receiving ICI; 324 (9.5%) were exposed to concomitant azoles. As a group, azole use was not associated with OS (hazard ratio [HR] = 0.96; 95% CI, 0.84-1.09; P = .51). After stratification by azole type, clotrimazole had an association with better OS on univariable (HR = 0.75; 95%...",
       "publicationTypes": [
-        "Journal Article"
+        "Journal Article",
+        "Research Support, U.S. Gov't, Non-P.H.S."
       ],
       "pubmedUrl": "https://pubmed.ncbi.nlm.nih.gov/39321212/"
     },
@@ -102,19 +141,6 @@
         "Journal Article"
       ],
       "pubmedUrl": "https://pubmed.ncbi.nlm.nih.gov/39691750/"
-    },
-    {
-      "pmid": "37035846",
-      "title": "A Trial of Adding Lung Protective Strategies to Existing Enhanced Recovery After Surgery Protocols and Its Effect on Improving Postoperative Lung Function.",
-      "authors": "Gutman David A, Bailey Victoria, Wilson Phillip, Fisher Andrew, Skorke Christopher A, Brewbaker Carey, Pecha Travis, Wilson Dulaney A, Butler John",
-      "journal": "J Clin Med Res",
-      "year": 2023,
-      "pubMonth": "Mar",
-      "abstract": "BACKGROUND: With this rising popularization of enhanced recovery after surgery (ERAS) protocols, it is important to ask if the current and developing pathways are fully comprehensive for the patient's perioperative experience. Many current pathways discuss aspects of care including fluid management, pain management, and anti-emetic medication regiments, but few delineate recommendations for lung protective strategies. The hypothesis was that intraoperative lung protective strategies would results in improved postoperative lung function.\n\nMETHODS: One hundred patients at the Medical University of South Carolina undergoing hepatobiliary and colorectal surgeries were randomized to receive intraoperative lung protective techniques or a standard intraoperative ventilation management. Three maximum vital capacity breaths were recorded preoperatively, and postoperatively 30 min, 1 h, and 2 h after anesthesia stop time. Average maximum capacity breaths from all four data collection interactions were analyzed between both study and control cohorts.\n\nRESULTS: There was no significant difference in the preoperative inspiratory capacity between the control and the ERAS group (2,043.3 ± 628....",
-      "publicationTypes": [
-        "Journal Article"
-      ],
-      "pubmedUrl": "https://pubmed.ncbi.nlm.nih.gov/37035846/"
     },
     {
       "pmid": "36853796",
@@ -201,20 +227,6 @@
       "pubmedUrl": "https://pubmed.ncbi.nlm.nih.gov/38110981/"
     },
     {
-      "pmid": "35464325",
-      "title": "A Diagnosis of Choriocarcinoma in a Parturient Presenting With Intracranial Hemorrhage.",
-      "authors": "Romeo Deborah A, Gutman David A, Sirianni Joel, Marotta Michael",
-      "journal": "J Med Cases",
-      "year": 2022,
-      "pubMonth": "Apr",
-      "abstract": "Choriocarcinoma in a viable pregnancy is uncommon. The diagnosis can easily be missed when there is an explanation for the clinical symptoms that the cancer can mimic. We present the case of a primigravid patient whose choriocarcinoma was initially missed as a result of seemingly obvious explanations for her atypical history and disease manifestation. The patient is a Caucasian female at 30 weeks and 5 days of gestation who presented with persistent headaches and new-onset tonic-clonic seizures found on brain magnetic resonance imaging (MRI) to have a left intracranial hematoma, a 5 mm midline shift, and multiple foci of restricted diffusion. Cerebral angiogram demonstrated arteriovenous malformations (AVMs). The fetus was emergently delivered 1 week into hospitalization for non-reassuring fetal heart tracings in the setting of maternal lethargy secondary to continued AVM hemorrhage. The patient's hospital course was complicated by four episodes of intracranial bleeding and edema requiring neurosurgical intervention. Three weeks after hospitalization she was discharged to a rehabilitation center, shortly after which placental biopsy demonstrated choriocarcinoma. MRI after readmi...",
-      "publicationTypes": [
-        "Case Reports",
-        "Journal Article"
-      ],
-      "pubmedUrl": "https://pubmed.ncbi.nlm.nih.gov/35464325/"
-    },
-    {
       "pmid": "34586355",
       "title": "Explainable nucleus classification using Decision Tree Approximation of Learned Embeddings.",
       "authors": "Amgad Mohamed, Atteya Lamees A, Hussein Hagar, Mohammed Kareem Hosny, Hafiz Ehab, Elsebaie Maha A T, Mobadersany Pooya, Manthey David, Gutman David A, Elfandy Habiba, Cooper Lee A D",
@@ -258,20 +270,6 @@
       "pubmedUrl": "https://pubmed.ncbi.nlm.nih.gov/35579553/"
     },
     {
-      "pmid": "35646401",
-      "title": "Reexpansion Pulmonary Edema following Tube Thoracostomy in a Pediatric Patient with Anterior Mediastinal Mass.",
-      "authors": "Choi Sung-Wook, Romeo Deborah A, Gutman David A, Smith Jennifer V",
-      "journal": "Case Rep Anesthesiol",
-      "year": 2022,
-      "pubMonth": "",
-      "abstract": "Reexpansion pulmonary edema (RPE) is an exceedingly rare and potentially fatal complication of a rapidly reexpanded lung following evacuation of air or fluid from the pleural space secondary to conditions such as a mediastinal mass, pleural effusion, or pneumothorax. Clinical presentations can range from mild radiographic changes to acute respiratory failure and hemodynamic instability. The rapidly progressive nature of the disease makes it important for clinicians to appropriately diagnose and manage patients who develop RPE. We present a case of a child with a large malignant pleural effusion who developed severe RPE after tube thoracostomy and ultimately required venoarterial extracorporeal membrane oxygenation (VA-ECMO). The patient was 7-year-old Caucasian male with newly diagnosed ambiguous T cell myeloid leukemia. A chest computerized tomography (CT) demonstrated a large pleural effusion causing tracheal shift and left bronchus compression as well as an anterior mediastinal mass causing compression of the right atria and right ventricle. Tube thoracostomy was performed in the operating room (OR) with deep sedation. The procedure was complicated with hypoxemia, bradycardia...",
-      "publicationTypes": [
-        "Case Reports",
-        "Journal Article"
-      ],
-      "pubmedUrl": "https://pubmed.ncbi.nlm.nih.gov/35646401/"
-    },
-    {
       "pmid": "33355190",
       "title": "Interactive Classification of Whole-Slide Imaging Data for Cancer Researchers.",
       "authors": "Lee Sanghoon, Amgad Mohamed, Mobadersany Pooya, McCormick Matt, Pollack Brian P, Elfandy Habiba, Hussein Hagar, Gutman David A, Cooper Lee A D",
@@ -313,33 +311,6 @@
       "pubmedUrl": "https://pubmed.ncbi.nlm.nih.gov/34127519/"
     },
     {
-      "pmid": "34870251",
-      "title": "Paravertebral anesthetic nerve block for pain control after peroral endoscopic myotomy.",
-      "authors": "Elmunzer B Joseph, Lewis Briana R, Miller Kristen F, Wolf Bethany J, Zeiler Lydia, Gutman David A, Elias Pooja, Tansel Aylin, Moran Robert A, Bolin Eric D",
-      "journal": "Tech Innov Gastrointest Endosc",
-      "year": 2021,
-      "pubMonth": "",
-      "abstract": "BACKGROUND: Excess post-operative opioid medication use can delay recovery and is associated with long-term misuse, addiction, and overdose. We aimed to explore the effect of pre-procedural thoracic paravertebral nerve block (PNB) on pain-related outcomes after POEM.\n\nMETHODS: In this retrospective cohort study, consecutive patients who did and did not receive a PNB prior to POEM were compared. The outcomes were peak and cumulative pain scores, total opioid use during hospitalization, and length of stay. After adjusting for confounders, the associations between nerve block and the outcomes of interest were explored.\n\nRESULTS: Forty-nine consecutive patients were enrolled; 25 patients received a block whereas the subsequent 24 did not. There were no differences in baseline characteristics between the study groups. In unadjusted analyses, there was no significant difference between patients who did and did not undergo PNB in peak pain score (7.8 vs. 8.7, p=0.14), cumulative pain score in the first 12 hours (area under curve 66.5 vs. 75.8, p=0.22), median total opioid use (38.9 mg morphine equivalent dosing vs. 42, p=1.00), and median length of hospitalization (26.5 hours vs. 24, p...",
-      "publicationTypes": [
-        "Journal Article"
-      ],
-      "pubmedUrl": "https://pubmed.ncbi.nlm.nih.gov/34870251/"
-    },
-    {
-      "pmid": "34434365",
-      "title": "A Challenging Cesarean Delivery and Perioperative Course in a Former Polysubstance Abuser Without the Use of Traditional Opioids.",
-      "authors": "Gutman David A, Matos Jennifer R, Skorke Christopher A",
-      "journal": "J Med Cases",
-      "year": 2020,
-      "pubMonth": "Mar",
-      "abstract": "Substance abuse is a major challenge in the United States. According to the Human Resources and Services Administration, we are in an opioid crisis with over 130 people a day dying from opioid-related drug overdoses. As awareness of this epidemic has grown, there has been an increase in patients coming in for surgery requesting a narcotic-free anesthetic. This presents both a challenge and an opportunity for the anesthesiologist who has a duty to respect the patient's autonomy while simultaneously achieving the appropriate perioperative outcome. The considerations are especially important in the vulnerable population of pregnant women.",
-      "publicationTypes": [
-        "Case Reports",
-        "Journal Article"
-      ],
-      "pubmedUrl": "https://pubmed.ncbi.nlm.nih.gov/34434365/"
-    },
-    {
       "pmid": "31306724",
       "title": "Computer algorithms show potential for improving dermatologists' accuracy to diagnose cutaneous melanoma: Results of the International Skin Imaging Collaboration 2017.",
       "authors": "Marchetti Michael A, Liopyris Konstantinos, Dusza Stephen W, Codella Noel C F, Gutman David A, Helba Brian, Kalloo Aadi, Halpern Allan C, International Skin Imaging Collaboration",
@@ -366,20 +337,6 @@
         "Validation Study"
       ],
       "pubmedUrl": "https://pubmed.ncbi.nlm.nih.gov/31570774/"
-    },
-    {
-      "pmid": "32784327",
-      "title": "Prophylactic Physostigmine for Extreme and Refractory Adult Emergence Delirium, Aimed at Increasing Patient Safety and Reducing Health Care Workplace Violence: A Case Report.",
-      "authors": "Gutman David A, Hassid Marc, Jeanes Zachary, Redding Amanda T, Romeo Deborah",
-      "journal": "A A Pract",
-      "year": 2020,
-      "pubMonth": "Apr",
-      "abstract": "Emergence delirium is a well-known phenomenon that may be encountered after general anesthesia. A common approach to this issue is to risk stratify patients preoperatively and treat them postoperatively if emergence delirium occurs. We present the case of a patient with Barrett esophagus and a history of severe and refractory emergence delirium, who was successfully treated prophylactically with physostigmine, resulting in decreased risk of harm to the patient, trauma to the perioperative staff, and a safer and more positive recovery.",
-      "publicationTypes": [
-        "Case Reports",
-        "Journal Article"
-      ],
-      "pubmedUrl": "https://pubmed.ncbi.nlm.nih.gov/32784327/"
     },
     {
       "pmid": "32345363",
@@ -410,20 +367,6 @@
         "Review"
       ],
       "pubmedUrl": "https://pubmed.ncbi.nlm.nih.gov/31051023/"
-    },
-    {
-      "pmid": "31567272",
-      "title": "Paravertebral Block for a Patient With Achalasia Undergoing a Peroral Endoscopic Myotomy Procedure: A Case Report.",
-      "authors": "Gutman David A, George Renuka, Moore Lauren",
-      "journal": "A A Pract",
-      "year": 2019,
-      "pubMonth": "Dec",
-      "abstract": "In 2016, the American Medical Association officially dismissed pain as a vital sign quoting the opioid epidemic as a major reason. Clinically, pain remains very relevant and we present the case of a patient with achalasia treated via peroral endoscopic myotomy procedure (POEM). Given that similar patients previously failed traditional pain management modalities, regional anesthesia was used in this patient's pain management. The positive outcomes yielded from this technique convinced our gastroenterological colleagues to request regional anesthesia for future patients, altering their approach to pain management.",
-      "publicationTypes": [
-        "Case Reports",
-        "Journal Article"
-      ],
-      "pubmedUrl": "https://pubmed.ncbi.nlm.nih.gov/31567272/"
     },
     {
       "pmid": "31548239",
@@ -483,19 +426,6 @@
         "Journal Article"
       ],
       "pubmedUrl": "https://pubmed.ncbi.nlm.nih.gov/31633109/"
-    },
-    {
-      "pmid": "30676418",
-      "title": "The Pager Goes Off.",
-      "authors": "Gutman David A",
-      "journal": "Anesthesiology",
-      "year": 2019,
-      "pubMonth": "Mar",
-      "abstract": "",
-      "publicationTypes": [
-        "Journal Article"
-      ],
-      "pubmedUrl": "https://pubmed.ncbi.nlm.nih.gov/30676418/"
     },
     {
       "pmid": "29531073",
@@ -680,19 +610,6 @@
       "pubmedUrl": "https://pubmed.ncbi.nlm.nih.gov/27396629/"
     },
     {
-      "pmid": "26090237",
-      "title": "A Multidisciplinary Approach to Anesthetic Management of a Parturient with Severe Aortic Stenosis.",
-      "authors": "Tyagaraj Kalpana, Gutman David A, Belliveau Lynn, Sadiq Adnan, Bhutada Alok, Feierman Dennis E",
-      "journal": "Case Rep Anesthesiol",
-      "year": 2015,
-      "pubMonth": "",
-      "abstract": "In order to optimize anesthetic management and avoid adverse maternal and fetal outcomes, a clear understanding of the changes in cardiovascular physiology that occur during pregnancy is paramount. The effects of normal gestation on the cardiovascular system are particularly significant in a parturient with cardiac valvular pathology. We present a case of a 27-year-old G2P0 at 37 weeks with a past medical history of diabetes, macrosomia, congenital bicuspid aortic valve with severe stenosis (valve area 0.7 cm(2)) who was scheduled for elective C-section. A multidisciplinary discussion involving cardiologists, cardiac surgeons, obstetric surgeons, neonatal intensivists, perfusion staff, anesthesiologists, and nursing staff was held to formulate a plan for the perioperative management of this parturient. Also, contingency plans were formulated and discussed with the care providers, in the event of acute decompensation of the mother and baby and possible need for emergency aortic valvuloplasty and/or aortic valve replacement.",
-      "publicationTypes": [
-        "Journal Article"
-      ],
-      "pubmedUrl": "https://pubmed.ncbi.nlm.nih.gov/26090237/"
-    },
-    {
       "pmid": "25450110",
       "title": "A comparative analysis of mouse and human medial geniculate nucleus connectivity: a DTI and anterograde tracing study.",
       "authors": "Keifer Orion P, Gutman David A, Hecht Erin E, Keilholz Shella D, Ressler Kerry J",
@@ -837,21 +754,6 @@
         "Research Support, Non-U.S. Gov't"
       ],
       "pubmedUrl": "https://pubmed.ncbi.nlm.nih.gov/26151911/"
-    },
-    {
-      "pmid": "24889866",
-      "title": "Imaging genomic mapping of an invasive MRI phenotype predicts patient outcome and metabolic dysfunction: a TCGA glioma phenotype research group project.",
-      "authors": "Colen Rivka R, Vangel Mark, Wang Jixin, Gutman David A, Hwang Scott N, Wintermark Max, Jain Rajan, Jilwan-Nicolas Manal, Chen James Y, Raghavan Prashant, Holder Chad A, Rubin Daniel, Huang Eric, Kirby Justin, Freymann John, Jaffe Carl C, Flanders Adam, TCGA Glioma Phenotype Research Group, Zinn Pascal O",
-      "journal": "BMC Med Genomics",
-      "year": 2014,
-      "pubMonth": "Jun",
-      "abstract": "BACKGROUND: Invasion of tumor cells into adjacent brain parenchyma is a major cause of treatment failure in glioblastoma. Furthermore, invasive tumors are shown to have a different genomic composition and metabolic abnormalities that allow for a more aggressive GBM phenotype and resistance to therapy. We thus seek to identify those genomic abnormalities associated with a highly aggressive and invasive GBM imaging-phenotype.\n\nMETHODS: We retrospectively identified 104 treatment-naïve glioblastoma patients from The Cancer Genome Atlas (TCGA) whom had gene expression profiles and corresponding MR imaging available in The Cancer Imaging Archive (TCIA). The standardized VASARI feature-set criteria were used for the qualitative visual assessments of invasion. Patients were assigned to classes based on the presence (Class A) or absence (Class B) of statistically significant invasion parameters to create an invasive imaging signature; imaging genomic analysis was subsequently performed using GenePattern Comparative Marker Selection module (Broad Institute).\n\nRESULTS: Our results show that patients with a combination of deep white matter tracts and ependymal invasion (Class A) on imaging...",
-      "publicationTypes": [
-        "Journal Article",
-        "Research Support, N.I.H., Extramural",
-        "Research Support, Non-U.S. Gov't"
-      ],
-      "pubmedUrl": "https://pubmed.ncbi.nlm.nih.gov/24889866/"
     },
     {
       "pmid": "24811070",
@@ -1044,22 +946,6 @@
       "pubmedUrl": "https://pubmed.ncbi.nlm.nih.gov/22278382/"
     },
     {
-      "pmid": "22213770",
-      "title": "Subcallosal cingulate deep brain stimulation for treatment-resistant unipolar and bipolar depression.",
-      "authors": "Holtzheimer Paul E, Kelley Mary E, Gross Robert E, Filkowski Megan M, Garlow Steven J, Barrocas Andrea, Wint Dylan, Craighead Margaret C, Kozarsky Julie, Chismar Ronald, Moreines Jared L, Mewes Klaus, Posse Patricio Riva, Gutman David A, Mayberg Helen S",
-      "journal": "Arch Gen Psychiatry",
-      "year": 2012,
-      "pubMonth": "Feb",
-      "abstract": "CONTEXT: Deep brain stimulation (DBS) may be an effective intervention for treatment-resistant depression (TRD), but available data are limited.\n\nOBJECTIVE: To assess the efficacy and safety of subcallosal cingulate DBS in patients with TRD with either major depressive disorder (MDD) or bipolar II disorder (BP).\n\nDESIGN: Open-label trial with a sham lead-in phase.\n\nSETTING: Academic medical center. Patients  Men and women aged 18 to 70 years with a moderate-to-severe major depressive episode after at least 4 adequate antidepressant treatments. Ten patients with MDD and 7 with BP were enrolled from a total of 323 patients screened. Intervention  Deep brain stimulation electrodes were implanted bilaterally in the subcallosal cingulate white matter. Patients received single-blind sham stimulation for 4 weeks followed by active stimulation for 24 weeks. Patients then entered a single-blind discontinuation phase; this phase was stopped after the first 3 patients because of ethical concerns. Patients were evaluated for up to 2 years after the onset of active stimulation.\n\nMAIN OUTCOME MEASURES: Change in depression severity and functioning over time, and response and remission rates a...",
-      "publicationTypes": [
-        "Clinical Trial",
-        "Journal Article",
-        "Research Support, N.I.H., Extramural",
-        "Research Support, Non-U.S. Gov't"
-      ],
-      "pubmedUrl": "https://pubmed.ncbi.nlm.nih.gov/22213770/"
-    },
-    {
       "pmid": "22440258",
       "title": "The tumor microenvironment strongly impacts master transcriptional regulators and gene expression class of glioblastoma.",
       "authors": "Cooper Lee A D, Gutman David A, Chisolm Candace, Appin Christina, Kong Jun, Rong Yuan, Kurc Tahsin, Van Meir Erwin G, Saltz Joel H, Moreno Carlos S, Brat Daniel J",
@@ -1163,21 +1049,6 @@
       "pubmedUrl": "https://pubmed.ncbi.nlm.nih.gov/19013554/"
     },
     {
-      "pmid": "17928332",
-      "title": "Anatomical connectivity of the subgenual cingulate region targeted with deep brain stimulation for treatment-resistant depression.",
-      "authors": "Johansen-Berg H, Gutman D A, Behrens T E J, Matthews P M, Rushworth M F S, Katz E, Lozano A M, Mayberg H S",
-      "journal": "Cereb Cortex",
-      "year": 2008,
-      "pubMonth": "Jun",
-      "abstract": "Chronic deep brain stimulation (DBS) of subgenual cingulate white matter results in dramatic remission of symptoms in some previously treatment-resistant depression patients. The effects of stimulation may be mediated locally or via corticocortical or corticosubcortical connections. We use tractography to define the likely connectivity of cingulate regions stimulated in DBS-responsive patients using diffusion imaging data acquired in healthy control subjects. We defined 2 distinct regions within anterior cingulate cortex based on anatomical connectivity: a pregenual region strongly connected to medial prefrontal and anterior midcingulate cortex and a subgenual region with strongest connections to nucleus accumbens, amygdala, hypothalamus, and orbitofrontal cortex. The location of electrode contact points from 9 patients successfully treated with DBS lies within this subgenual region. The anatomical connectivity of the subgenual cingulate region targeted with DBS for depression supports the hypothesis that treatment efficacy is mediated via effects on a distributed network of frontal, limbic, and visceromotor brain regions. At present, targeting of DBS for depression is based on ...",
-      "publicationTypes": [
-        "Comparative Study",
-        "Journal Article",
-        "Research Support, Non-U.S. Gov't"
-      ],
-      "pubmedUrl": "https://pubmed.ncbi.nlm.nih.gov/17928332/"
-    },
-    {
       "pmid": "18676086",
       "title": "Behavioral effects of the CRF1 receptor antagonist R121919 in rats selectively bred for high and low activity in the swim test.",
       "authors": "Gutman David A, Coyer Megan J, Boss-Williams Katherine A, Owens Michael J, Nemeroff Charles B, Weiss Jay M",
@@ -1253,20 +1124,6 @@
       "pubmedUrl": "https://pubmed.ncbi.nlm.nih.gov/15741000/"
     },
     {
-      "pmid": "12827150",
-      "title": "Cellular and behavioral effects of D2 dopamine receptor hydrophobic eigenmode-targeted peptide ligands.",
-      "authors": "Mandell Arnold J, Selz Karen A, Owens Michael J, Kinkead Becky, Shlesinger Michael F, Gutman David A, Arguragi Vani",
-      "journal": "Neuropsychopharmacology",
-      "year": 2003,
-      "pubMonth": "Jul",
-      "abstract": "Patterns in G-protein-coupled receptors' hydrophobically transformed amino-acid sequences can be computationally characterized as hierarchies of autocorrelation waves, \"hydrophobic eigenmodes\", using autocovariance matrix decomposition and all poles power spectral and wavelet transformations. L- or D-amino acid (retro-inverso) 12-18 residue peptides targeting these modes can be designed using eigenvector templates derived from these computations. In all, 12 human long-form D(2) dopamine receptor eigenmode-targeted 15 mer peptides were designed, synthesized, and shown to modulate and/or indirectly activate the extracellular acidification response, EAR, in stably receptor-transfected CHO and LtK cells, with an 83% hit rate. Representative L- and D-amino-acid retro-inverso peptides injected bilaterally in the nucleus accumbens demonstrated changes in rat exploratory behavior and prepulse inhibition similar to those observed following parenteral amphetamine. In contrast with geometric models used for ligand design, such as pharmacophores, the hydrophobic eigenmode approach to lead modulatory peptide design targets hydrophobic eigenmode-bearing subsequences, including those not visib...",
-      "publicationTypes": [
-        "Journal Article",
-        "Research Support, U.S. Gov't, P.H.S."
-      ],
-      "pubmedUrl": "https://pubmed.ncbi.nlm.nih.gov/12827150/"
-    },
-    {
       "pmid": "12954441",
       "title": "Persistent central nervous system effects of an adverse early environment: clinical and preclinical studies.",
       "authors": "Gutman David A, Nemeroff Charles B",
@@ -1323,80 +1180,6 @@
         "Research Support, U.S. Gov't, P.H.S."
       ],
       "pubmedUrl": "https://pubmed.ncbi.nlm.nih.gov/11164761/"
-    },
-    {
-      "pmid": "10389661",
-      "title": "Demonstration of two distributions of vesicle radius in the dopamine neuron of Planorbis corneus from electrochemical data.",
-      "authors": "Anderson B B, Chen G, Gutman D A, Ewing A G",
-      "journal": "J Neurosci Methods",
-      "year": 1999,
-      "pubMonth": "May",
-      "abstract": "An electrochemical model to calculate the relative size and neurotransmitter concentration of individual nerve cell vesicles is presented to examine potentially different types of vesicles in Planorbis corneus. Amperometric current transients resulting from individual exocytosis events detected from single cells contain the information necessary to quantify vesicular neurotransmitter amount and to estimate other important cellular properties such as vesicular neurotransmitter concentration and vesicle radius. Use of a simplifying assumption that the cross-sectional area of the contents of each release event is the apparent electroactive area of the electrode and that the shape of the decreasing phase of each current transient follows Cottrell-like behavior, the Cottrell equation and Faraday's law can be combined to yield expressions for relative vesicle radius and neurotransmitter concentration. This analysis has been applied to data obtained from the cell body of the giant dopamine neuron of the pond snail P. corneus. The histogram of vesicular dopamine concentration reveals a single wide distribution and the histogram of vesicle radius reveals a bimodal radius distribution. Th...",
-      "publicationTypes": [
-        "Journal Article",
-        "Research Support, U.S. Gov't, P.H.S."
-      ],
-      "pubmedUrl": "https://pubmed.ncbi.nlm.nih.gov/10389661/"
-    },
-    {
-      "pmid": "9555063",
-      "title": "Dopamine levels of two classes of vesicles are differentially depleted by amphetamine.",
-      "authors": "Anderson B B, Chen G, Gutman D A, Ewing A G",
-      "journal": "Brain Res",
-      "year": 1998,
-      "pubMonth": "Mar",
-      "abstract": "Differential depletion of neurotransmitter by amphetamine in two classes of vesicles, termed large vesicles and small vesicles, has been studied with amperometry. Carbon fiber microelectrodes have been used to monitor and quantify exocytotic events. Current transients, corresponding to individual exocytotic events, have been obtained from the cell body of the dopamine-containing neuron of Planorbis corneus. The dopamine released from individual vesicles of these cells has been compared for cells treated with D-amphetamine vs. control cells. Our results show that amphetamine has differential effects on the release of dopamine from the two classes of vesicles. Thus, it is concluded that at low concentrations, amphetamine preferentially depletes the large vesicles with a minimal effect on the small vesicles. At high concentrations, amphetamine depletes small vesicles more strongly than large vesicles although amphetamine continues to deplete the large vesicles in a dose-dependent manner. Our data appear to indicate that the two classes of vesicles observed in the Planorbis dopamine neuron might have different mechanisms associated with transmitter depletion.",
-      "publicationTypes": [
-        "Comparative Study",
-        "Journal Article",
-        "Research Support, U.S. Gov't, Non-P.H.S."
-      ],
-      "pubmedUrl": "https://pubmed.ncbi.nlm.nih.gov/9555063/"
-    },
-    {
-      "pmid": "11013717",
-      "title": "Voltammetric and pharmacological characterization of dopamine release from single exocytotic events at rat pheochromocytoma (PC12) cells.",
-      "authors": "Kozminski K D, Gutman D A, Davila V, Sulzer D, Ewing A G",
-      "journal": "Anal Chem",
-      "year": 1998,
-      "pubMonth": "Aug",
-      "abstract": "Although rat pheochromocytoma (PC12) neurotransmitter storage vesicles are known to contain a variety of neurotransmitters including catecholamines, there is little evidence that the molecular species detected during amperometric monitoring of exocytosis is a catecholamine. Rather, as these are catecholamine-containing cells, one assumes catecholamines are released. Additionally, although the total amount of transmitter released can be quantified, it has been extremely difficult to evaluate the concentration at the point of release for each exocytosis event. Interpreting voltammograms obtained in the attoliter volume affected between the electrode and the cell and defined by the size of the exocytosis pore during exocytosis is an extreme analytical challenge. Here we use voltammetry of approximately 10(-19) mol released from individual exocytosis events to identify, along with pharmacological evidence, the released compound at PC12 cells as a catecholamine, most likely dopamine. The area of the electrode at which oxidation occurs following an exocytosis event is proportional to the temporal delay prior to acquisition of a voltammogram. This model allows determination of relative...",
-      "publicationTypes": [
-        "Journal Article",
-        "Research Support, Non-U.S. Gov't",
-        "Research Support, U.S. Gov't, Non-P.H.S.",
-        "Research Support, U.S. Gov't, P.H.S."
-      ],
-      "pubmedUrl": "https://pubmed.ncbi.nlm.nih.gov/11013717/"
-    },
-    {
-      "pmid": "9212703",
-      "title": "Ultrathin slab gel separations of DNA using a single capillary sample introduction system.",
-      "authors": "Hietpas P B, Bullard K M, Gutman D A, Ewing A G",
-      "journal": "Anal Chem",
-      "year": 1997,
-      "pubMonth": "Jul",
-      "abstract": "We demonstrate here a novel method for DNA separations which combines the parallel processing capabilities of slab gels with the advantages of sample introduction obtained with a single capillary. This sample introduction format allows rapid sequential separations or continuous analysis to be carried out on ultrathin slab gels with efficient heat dissipation. Ultrathin slab gels have been fabricated by using 57-micron spacers between quartz plates, and a single capillary has been used to introduce plugs of dsDNA fragments into the ultrathin gel. These fragment plugs were deposited along the entrance to the ultrathin gel at spatially discrete locations by micromanipulation of the capillary. Spatially resolved detection has been accomplished with an argon ion laser focused to a line for excitation and a CCD for collection of fluorescence. Double-stranded DNA separations are demonstrated in a plug injection format. This approach allows multiple unique samples to be rapidly deposited on the ultrathin slab gels for separation.",
-      "publicationTypes": [
-        "Journal Article",
-        "Research Support, U.S. Gov't, P.H.S."
-      ],
-      "pubmedUrl": "https://pubmed.ncbi.nlm.nih.gov/9212703/"
-    },
-    {
-      "pmid": "8891256",
-      "title": "Electrochemical monitoring of bursting exocytotic events from the giant dopamine neuron of Planorbis corneus.",
-      "authors": "Chen G, Gutman D A, Zerby S E, Ewing A G",
-      "journal": "Brain Res",
-      "year": 1996,
-      "pubMonth": "Sep",
-      "abstract": "We have discovered a neuronal system that fires bursting exocytotic events. In the giant dopamine neuron of the fresh water snail Planorbis corneus, bursting exocytotic events are evoked following in situ stimulation with elevated potassium. Amperometric detection using carbon fiber microelectrodes, which provides high temporal resolution, has been used to record exocytotic events released from the neuron. Evaluation of the time interval between consecutive exocytotic events (inter-spike interval) recorded from about 80% of the neurons reveals the occurrence of distinct bursting patterns defined by transients having an equal interval among them. Statistical analysis of these bursting exocytotic events shows three distinct distributions of inter-spike intervals with mid points occurring at 5, 22 and 45 ms. This bursting release behavior is not observed from cultured pheochromocytoma cells although they show calcium-dependent exocytosis following in situ stimulation with elevated potassium. Our data appear to indicate that the Planorbis dopamine neuron in vivo is actively involved in specific modes of neural communication and may represent an important phenomenon in understanding ...",
-      "publicationTypes": [
-        "Journal Article",
-        "Research Support, U.S. Gov't, Non-P.H.S.",
-        "Research Support, U.S. Gov't, P.H.S."
-      ],
-      "pubmedUrl": "https://pubmed.ncbi.nlm.nih.gov/8891256/"
     }
   ]
 }
