@@ -1,5 +1,6 @@
 ---
 import Layout from "../../layouts/Layout.astro";
+import { withBase } from "astro:routing";
 import { loadFragment } from "../../lib/fragments";
 import { publicationSections } from "../../data/site";
 
@@ -15,61 +16,22 @@ interface Props {
   fragment: string;
 }
 
+const { slug } = Astro.params;
 const { title, fragment } = Astro.props;
-const html = loadFragment(fragment);
 
-const isPapers = Astro.params.slug === "papers";
+const html = loadFragment(fragment);
 ---
 
 <Layout title={title}>
+  <a href={withBase("/publications/")}>&larr; Back to Publications</a>
   <h1 class="page-title">{title}</h1>
-
   {
-    isPapers ? (
-      <>
-        <p class="pubmed-panel-link">
-          <a href="/publications/pubmed-review/">
-            PubMed bibliography (live search + exclude)
-          </a>
-          — curated list with optional “not mine” flags; kept on a separate page
-          until an admin UI exists.
-        </p>
-        {html ? (
-          <div class="content-recovered" set:html={html} />
-        ) : (
-          <p class="placeholder">
-            Archived list not found. Run <code>npm run recover</code> or add the
-            fragment file.
-          </p>
-        )}
-      </>
+    html ? (
+      <div class="content-recovered" set:html={html} />
     ) : (
-      <>
-        {html ? (
-          <div class="content-recovered" set:html={html} />
-        ) : (
-          <p class="placeholder">
-            This section was not recovered yet. Run <code>npm run recover</code>{" "}
-            or add <code>content/recovered/{fragment}.html.fragment</code>.
-          </p>
-        )}
-      </>
+      <p class="placeholder">
+        No recovered content for this topic yet. This is a holding page.
+      </p>
     )
   }
 </Layout>
-
-<style>
-  .pubmed-panel-link {
-    max-width: 62ch;
-    margin: 0 0 1.5rem;
-    padding: 1rem 1.15rem;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    font-size: 0.95rem;
-    color: var(--muted);
-  }
-  .pubmed-panel-link a {
-    font-weight: 600;
-  }
-</style>

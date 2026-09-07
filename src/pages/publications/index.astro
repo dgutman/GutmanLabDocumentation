@@ -1,43 +1,45 @@
 ---
 import Layout from "../../layouts/Layout.astro";
+import { withBase } from "astro:routing";
 import GoogleScholarLinks from "../../components/GoogleScholarLinks.astro";
-import { loadFragment } from "../../lib/fragments";
 
-const html = loadFragment("publications");
+const subsections = [
+  { href: "/publications/coverage/", title: "OpenAlex vs PubMed coverage" },
+  { href: "/publications/pubmed-review/", title: "PubMed bibliography" },
+  { href: "/publications/unified/", title: "PubMed + Scholar (unified)" },
+  { href: "/publications/scholar-bibtex/", title: "Scholar BibTeX export" },
+];
+
+const categories = [
+  { href: "/publications/papers/", title: "Peer reviewed journal articles" },
+  { href: "/publications/presentations/", title: "Presentations" },
+  { href: "/publications/chapters/", title: "Book chapters" },
+  { href: "/publications/posters-abstracts/", title: "Posters and abstracts" },
+];
 ---
 
 <Layout title="Publications">
   <GoogleScholarLinks variant="compact" />
+
   <p class="pub-index-note">
-    <a href="/publications/pubmed-review/">PubMed bibliography</a> (search,
-    abstracts, exclude mis-attributed papers) ·{" "}
-    <a href="/publications/unified/">PubMed + Scholar (unified)</a> ·{" "}
-    <a href="/publications/coverage/">OpenAlex vs PubMed coverage</a> ·{" "}
-    <a href="/publications/scholar-bibtex/">Scholar BibTeX export</a>
+    {
+      subsections.map((s) => (
+        <a href={withBase(s.href)}>{s.title}</a>
+      ))
+    }
   </p>
-  {
-    html ? (
-      <div class="content-recovered" set:html={html} />
-    ) : (
-      <>
-        <h1 class="page-title">Publications</h1>
-        <ul class="pub-list">
-          <li>
-            <a href="/publications/papers/">Peer reviewed journal articles</a>
-          </li>
-          <li>
-            <a href="/publications/presentations/">Presentations</a>
-          </li>
-          <li>
-            <a href="/publications/chapters/">Book chapters</a>
-          </li>
-          <li>
-            <a href="/publications/posters-abstracts/">Posters and abstracts</a>
-          </li>
-        </ul>
-      </>
-    )
-  }
+
+  <ul class="pub-list">
+    {
+      categories.map((c) => (
+        <li>
+          <a href={withBase(c.href)}>{c.title}</a>
+        </li>
+      ))
+    }
+  </ul>
+
+  <p class="placeholder">Publication content is being migrated from the original WordPress site.</p>
 </Layout>
 
 <style>

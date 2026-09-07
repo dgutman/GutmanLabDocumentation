@@ -1,33 +1,23 @@
 ---
 import { nav, siteTitle } from "../data/site";
+import { withBase } from "astro:routing";
 
-const pathname = Astro.url.pathname.replace(/\/$/, "") || "/";
 const siteVersion = "v0.5.0";
 ---
 
 <header class="site-header">
   <div class="site-header__inner">
     <h1 class="site-title">
-      <a href="/">{siteTitle}</a>
+      <a href={withBase("/")}>{siteTitle}</a>
     </h1>
     <nav aria-label="Primary">
       <ul class="site-nav">
         {
-          nav.map(({ href, label }) => {
-            const normalized = href.replace(/\/$/, "") || "/";
-            const current =
-              normalized === "/"
-                ? pathname === "/"
-                : pathname === normalized ||
-                  pathname.startsWith(normalized + "/");
-            return (
-              <li>
-                <a href={href} aria-current={current ? "page" : undefined}>
-                  {label}
-                </a>
-              </li>
-            );
-          })
+          nav.map(({ href, label }) => (
+            <li>
+              <a href={withBase(href)}>{label}</a>
+            </li>
+          ))
         }
       </ul>
     </nav>

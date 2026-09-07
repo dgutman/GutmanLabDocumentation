@@ -1,21 +1,33 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import { loadFragment } from "../../lib/fragments";
+import { withBase } from "astro:routing";
+import { researchAreas } from "../../data/site";
 
-const html = loadFragment("research-areas");
+const areaLinks = [
+  { href: "/research/cancer-informatics/", title: "Cancer Informatics" },
+  { href: "/research/non-human-mri-analysis/", title: "Non-human MRI Analysis" },
+  { href: "/research/neurogenomics/", title: "NeuroGenomics" },
+  { href: "/research/computational-neuroscience/", title: "Computational Neuroscience" },
+  { href: "/research/digital-pathology/", title: "Digital Pathology" },
+  { href: "/research/clinical-informatics/", title: "Clinical Informatics" },
+  { href: "/research/redcap/", title: "REDCap" },
+];
 ---
 
-<Layout title="Research areas">
-  {
-    html ? (
-      <div class="content-recovered" set:html={html} />
-    ) : (
-      <>
-        <h1 class="page-title">Research areas</h1>
-        <p class="placeholder">
-          Overview not found. Run <code>npm run recover</code>.
-        </p>
-      </>
-    )
-  }
+<Layout title="Research">
+  <h1 class="page-title">Research</h1>
+  <div class="card-grid">
+    {
+      areaLinks.map((a) => (
+        <article class="card">
+          <div class="card__body">
+            <h2>
+              <a href={withBase(a.href)}>{a.title}</a>
+            </h2>
+          </div>
+        </article>
+      ))
+    }
+  </div>
+  <p class="placeholder">Detailed content for each research area is being updated.</p>
 </Layout>

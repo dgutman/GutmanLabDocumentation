@@ -1,6 +1,7 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import GoogleScholarLinks from "../components/GoogleScholarLinks.astro";
+import { withBase } from "astro:routing";
 import {
   siteTitle,
   siteTagline,
@@ -35,7 +36,7 @@ const contactText = [
           <img src={h.image} alt="" width="400" height="250" loading="lazy" />
           <div class="card__body">
             <h2>
-              <a href={h.href}>{h.title}</a>
+              <a href={withBase(h.href)}>{h.title}</a>
             </h2>
             <p>{h.blurb}</p>
           </div>

@@ -1,5 +1,6 @@
 ---
 import Layout from "../../layouts/Layout.astro";
+import { withBase } from "astro:routing";
 import { loadFragment } from "../../lib/fragments";
 import { researchAreas } from "../../data/site";
 
@@ -22,15 +23,14 @@ const html = loadFragment(fragmentName);
 ---
 
 <Layout title={title}>
+  <a href={withBase("/research/")}>&larr; Back to Research</a>
   <h1 class="page-title">{title}</h1>
   {
     html ? (
       <div class="content-recovered" set:html={html} />
     ) : (
       <p class="placeholder">
-        No recovered HTML for this topic yet. Run{" "}
-        <code>npm run recover</code> or add{" "}
-        <code>content/recovered/{fragmentName}.html.fragment</code>.
+        No recovered content for this topic yet. This is a holding page.
       </p>
     )
   }

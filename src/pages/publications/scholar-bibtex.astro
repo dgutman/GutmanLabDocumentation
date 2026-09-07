@@ -1,6 +1,7 @@
 ---
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
+import { withBase } from "astro:routing";
 import Layout from "../../layouts/Layout.astro";
 import {
   bibEntryAnchorId,
@@ -36,7 +37,7 @@ const bibEntries = hasBib ? splitBibtexEntries(bibText) : [];
     refresh while <code>npm run dev</code> is running). Run{" "}
     <code>npm run sanity:scholar</code> to compare against the PubMed cache. Each
     entry has an <code>id</code> so links from{" "}
-    <a href="/publications/unified/">Unified publications</a> jump here.
+    <a href={withBase("/publications/unified/")}>Unified publications</a> jump here.
   </p>
 
   {

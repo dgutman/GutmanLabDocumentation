@@ -1,6 +1,5 @@
 ---
-import { existsSync, readFileSync } from "node:fs";
-import { join } from "node:path";
+import { withBase } from "astro:routing";
 import Layout from "../../layouts/Layout.astro";
 import { loadPubMedCache } from "../../lib/pubmed";
 import {
@@ -87,7 +86,7 @@ const unifiedPayload = cache
     canonical id when the same paper appears twice. Duplicate links and Scholar
     exclusions live in this browser only—use <strong>Export browser state</strong>{" "}
     to save a JSON snapshot. PubMed “Exclude” uses the same storage as{" "}
-    <a href="/publications/pubmed-review/">PubMed bibliography</a>.
+    <a href={withBase("/publications/pubmed-review/")}>PubMed bibliography</a>.
   </p>
 
   {
