@@ -25,11 +25,11 @@ export const googleScholar = {
 
 export const nav = [
   { href: "/", label: "Home" },
-  { href: "/people/about", label: "People" },
-  { href: "/research", label: "Research" },
-  { href: "/publications", label: "Publications" },
-  { href: "/resources", label: "Resources" },
-  { href: "/blog", label: "Lab Blog" },
+  { href: "/people/about/", label: "People" },
+  { href: "/research/", label: "Research" },
+  { href: "/publications/", label: "Publications" },
+  { href: "/resources/", label: "Resources" },
+  { href: "/blog/", label: "Lab Blog" },
 ] as const;
 
 /** URL slug → fragment file basename under `research-areas__` */
