@@ -1,4 +1,8 @@
 ---
+const BASE = import.meta.env.BASE_URL || "/";
+function link(href: string) {
+  return href === "/" ? BASE : BASE + href;
+}
 const BASE_URL = import.meta.env.BASE_URL;
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";

@@ -1,8 +1,13 @@
 ---
-const BASE_URL = import.meta.env.BASE_URL;
 import Layout from "../../layouts/Layout.astro";
 import { loadFragment } from "../../lib/fragments";
 import { researchAreas } from "../../data/site";
+
+const BASE = import.meta.env.BASE_URL || "/";
+
+function link(href: string) {
+  return href === "/" ? BASE : BASE + href;
+}
 
 export function getStaticPaths() {
   return researchAreas.map(({ slug, title }) => ({
@@ -23,7 +28,7 @@ const html = loadFragment(fragmentName);
 ---
 
 <Layout title={title}>
-  <a href={BASE_URL + ""}>&larr; Back to Research</a>
+  <a href={link("/research/")}>&larr; Back to Research</a>
   <h1 class="page-title">{title}</h1>
   {
     html ? (
