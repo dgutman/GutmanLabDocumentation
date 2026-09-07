@@ -1,8 +1,12 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import { withBase } from "astro:routing";
 import { loadFragment } from "../../lib/fragments";
 import { publicationSections } from "../../data/site";
+
+const BASE = import.meta.env.BASE_URL || "/";
+function link(href: string) {
+  return href === "/" ? BASE : BASE + href;
+}
 
 export function getStaticPaths() {
   return publicationSections.map(({ slug, title, fragment }) => ({
@@ -23,7 +27,7 @@ const html = loadFragment(fragment);
 ---
 
 <Layout title={title}>
-  <a href={withBase("/publications/")}>&larr; Back to Publications</a>
+  <a href={link("/publications/")}>&larr; Back to Publications</a>
   <h1 class="page-title">{title}</h1>
   {
     html ? (
