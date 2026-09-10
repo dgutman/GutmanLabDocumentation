@@ -1,6 +1,8 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import GoogleScholarLinks from "../../components/GoogleScholarLinks.astro";
+import { loadFragment } from "../../lib/fragments";
+import { readFileSync } from "node:fs";
 
 const BASE = import.meta.env.BASE_URL?.replace(/\/$/, "") || "";
 function link(href: string) {
@@ -8,19 +10,34 @@ function link(href: string) {
   return BASE + href;
 }
 
-const subsections = [
-  { href: "/publications/coverage/", title: "OpenAlex vs PubMed coverage" },
-  { href: "/publications/pubmed-review/", title: "PubMed bibliography" },
-  { href: "/publications/unified/", title: "PubMed + Scholar (unified)" },
-  { href: "/publications/scholar-bibtex/", title: "Scholar BibTeX export" },
+// Load all recovered content sections
+const sections = [
+  { key: "papers", title: "Peer reviewed journal articles", fragment: loadFragment("publications__papers") },
+  { key: "presentations", title: "Presentations", fragment: loadFragment("publications__presentations") },
+  { key: "chapters", title: "Book chapters", fragment: loadFragment("publications__chapters") },
+  { key: "posters-abstracts", title: "Posters and abstracts", fragment: loadFragment("publications__posters-abstracts") },
 ];
 
-const categories = [
-  { href: "/publications/papers/", title: "Peer reviewed journal articles" },
-  { href: "/publications/presentations/", title: "Presentations" },
-  { href: "/publications/chapters/", title: "Book chapters" },
-  { href: "/publications/posters-abstracts/", title: "Posters and abstracts" },
-];
+// Count items in a section's fragment
+function countNumbered(html: string): number {
+  if (!html) return 0;
+  return (html.match(/<p>\d+\.?/g) || []).length;
+}
+
+function countPresentations(html: string): number {
+  if (!html) return 0;
+  return (html.match(/<h4>/g) || []).length;
+}
+
+function getSectionCount(key: string, content: string): number {
+  switch (key) {
+    case "papers": return countNumbered(content);
+    case "presentations": return countPresentations(content);
+    case "chapters": return countNumbered(content);
+    case "posters-abstracts": return countNumbered(content);
+    default: return 0;
+  }
+}
 ---
 
 <Layout title="Publications">
@@ -28,23 +45,32 @@ const categories = [
 
   <p class="pub-index-note">
     {
-      subsections.map((s) => (
+      [
+        { href: "/publications/coverage/", title: "OpenAlex vs PubMed coverage" },
+        { href: "/publications/pubmed-review/", title: "PubMed bibliography" },
+        { href: "/publications/unified/", title: "PubMed + Scholar (unified)" },
+        { href: "/publications/scholar-bibtex/", title: "Scholar BibTeX export" },
+      ].map((s) => (
         <a href={link(s.href)}>{s.title}</a>
       ))
     }
   </p>
 
-  <ul class="pub-list">
-    {
-      categories.map((c) => (
-        <li>
-          <a href={link(c.href)}>{c.title}</a>
-        </li>
-      ))
-    }
-  </ul>
+  {
+    sections.map((section) => {
+      const content = section.fragment || "";
+      const count = getSectionCount(section.key, content);
 
-  <p class="placeholder">Publication content is being migrated from the original WordPress site.</p>
+      return (
+        <details class="pub-section" open>
+          <summary>
+            <h2 class="pub-section-title">{section.title} <span class="pub-count">({count})</span></h2>
+          </summary>
+          <div class="pub-section-content" set:html={content} />
+        </details>
+      );
+    })
+  }
 </Layout>
 
 <style>
@@ -54,5 +80,126 @@ const categories = [
   }
   .pub-index-note a {
     font-weight: 600;
+  }
+
+  /* Collapsible publication sections */
+  .pub-section {
+    margin-bottom: 2rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .pub-section[open] {
+    border-color: var(--accent);
+  }
+
+  .pub-section summary {
+    cursor: pointer;
+    list-style: none;
+    padding: 1rem 1.25rem;
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    user-select: none;
+    transition: background 0.15s ease;
+  }
+
+  .pub-section summary:hover {
+    background: var(--surface);
+  }
+
+  .pub-section summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .pub-section summary::before {
+    content: "▸";
+    display: inline-block;
+    margin-right: 0.75rem;
+    transition: transform 0.2s ease;
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+
+  .pub-section[open] summary::before {
+    transform: rotate(90deg);
+  }
+
+  .pub-section-title {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 600;
+    flex: 1;
+  }
+
+  .pub-count {
+    font-weight: 400;
+    color: var(--muted);
+    font-size: 0.95rem;
+    margin-left: 0.5rem;
+  }
+
+  .pub-section-content {
+    padding: 0 1.25rem 1.25rem 1.25rem;
+  }
+
+  .pub-section-content .content-recovered {
+    max-width: 75ch;
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--text);
+  }
+
+  .pub-section-content .content-recovered p {
+    margin: 0.75rem 0;
+    line-height: 1.6;
+  }
+
+  .pub-section-content .content-recovered a {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .pub-section-content .content-recovered a:hover {
+    color: var(--accent-hover);
+  }
+
+  .pub-section-content .content-recovered h4 {
+    font-weight: 600;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .pub-section-content .content-recovered strong {
+    font-weight: 600;
+  }
+
+  .pub-section-content .content-recovered em {
+    font-style: italic;
+  }
+
+  .pub-section-content .content-recovered iframe {
+    max-width: 100%;
+    margin: 1rem 0;
+  }
+
+  .pub-section-content .content-recovered sup {
+    font-size: 0.75rem;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .pub-section summary {
+      padding: 0.75rem 1rem;
+    }
+    .pub-section-content {
+      padding: 0 1rem 1rem 1rem;
+    }
+    .pub-section-title {
+      font-size: 1rem;
+    }
   }
 </style>
