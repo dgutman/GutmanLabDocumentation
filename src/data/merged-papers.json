@@ -1,0 +1,649 @@
+{
+  "count": 92,
+  "papers": [
+    {
+      "pmid": "42035704",
+      "type": "pubmed",
+      "citation": "Shahidehpour Ryan K, Neltner Allison M, Klusty Mitchell A, Corbett Cole, Gonzalez Angelique D, Gutman David A, Fardo David W, Bachstetter Adam D, Bumgardner Cody, Flanagan Margaret E, Nelson Peter T. Data-driven thresholds for standardized classification of severe Alzheimer's disease neuropathology using digital neuropathology.. Brain Pathol. 2026. Apr.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/42035704/",
+      "year": 2026
+    },
+    {
+      "pmid": "42322148",
+      "type": "pubmed",
+      "citation": "Marins Lidiane Vieira, Murden Raphiel, Misdraji Joseph, Reid Michelle D, Tang Laura, Umetsu Sarah, Wang Hanlin L, Wen Kwun Wah, Yantiss Rhonda K, Nizam Azhar, Gutman David A, Gonzalez Raul S. High interobserver variability exists in grading appendiceal goblet cell adenocarcinoma using World Health Organization 5th edition criteria.. Histopathology. 2026. Jun.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/42322148/",
+      "year": 2026
+    },
+    {
+      "pmid": "40683248",
+      "type": "pubmed",
+      "citation": "Murray Melissa E, Smith Colin, Menon Vilas, Keene C Dirk, Lein Ed, Hawrylycz Michael, Aguzzi Adriano, Benedetti Brett, Brose Katja, Caetano-Anolles Kelsey, Sillero Maria Inmaculada Cobos, Crary John F, De Jager Philip L, Faustin Arline, Flanagan Margaret E, Gokce Ozgun, Grant Seth G N, Grinberg Lea T, Gutman David A, Hillman Elizabeth M C, Huang Zhi, Irwin David J, Jones David T, Kapasi Alifiya, Karch Celeste M, Kukull Walter T, Lashley Tammaryn, Lee Edward B, Lehner Thomas, Parkkinen Laura, et al.. Accelerating biomedical discoveries in brain health through transformative neuropathology of aging and neurodegeneration.. Neuron. 2025. Nov.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/40683248/",
+      "year": 2025
+    },
+    {
+      "pmid": "41200792",
+      "type": "pubmed",
+      "citation": "Rosado Aaron M, Vizcarra Juan C, Sharma Shivam R Rai, Keene Cristopher Dirk, White Charles L, Kim Ain, Forrest Shelley L, Kovacs Gabor G, Chuah Chen-Nee, Flanagan Margaret E, Pearce Thomas M, Dugger Brittany N, Gutman David A. Digital neuropathology of neurodegenerative disorders: Foundations, research advances, and future directions.. Alzheimers Dement. 2025. Nov.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/41200792/",
+      "year": 2025
+    },
+    {
+      "pmid": "41048402",
+      "type": "pubmed",
+      "citation": "Pourakpour Fattaneh, Sz\u00f6lgy\u00e9n \u00c1kos, Nateghi Ramin, Gutman David A, Manthey David, Cooper Lee Ad. HistomicsTK: A Python toolkit for pathology image analysis algorithms.. SoftwareX. 2025. Sep.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/41048402/",
+      "year": 2025
+    },
+    {
+      "pmid": "39321212",
+      "type": "pubmed",
+      "citation": "Sebastian Nikhil T, Stokes William A, Behera Madhusmita, Jiang Renjian, Gutman David A, Huang Zhonglu, Burns Abigail, Sukhatme Vidula, Lowe Michael C, Ramalingam Suresh S, Sukhatme Vikas P, Moghanaki Drew. The association of azole antifungals with overall survival in patients with non-small cell lung cancer receiving immune checkpoint inhibitors.. Oncologist. 2025. Feb.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/39321212/",
+      "year": 2025
+    },
+    {
+      "pmid": "38012314",
+      "type": "pubmed",
+      "citation": "Amgad Mohamed, Hodge James M, Elsebaie Maha A T, Bodelon Clara, Puvanesarajah Samantha, Gutman David A, Siziopikou Kalliopi P, Goldstein Jeffery A, Gaudet Mia M, Teras Lauren R, Cooper Lee A D. A population-level digital histologic biomarker for enhanced prognosis of invasive breast cancer.. Nat Med. 2024. Jan.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/38012314/",
+      "year": 2024
+    },
+    {
+      "pmid": "37689267",
+      "type": "pubmed",
+      "citation": "Liopyris Konstantinos, Navarrete-Dechent Cristian, Marchetti Michael A, Rotemberg Veronica, Apalla Zoe, Argenziano Giuseppe, Blum Andreas, Braun Ralph P, Carrera Cristina, Codella Noel C F, Combalia Marc, Dusza Stephen W, Gutman David A, Helba Brian, Hofmann-Wellenhof Rainer, Jaimes Natalia, Kittler Harald, Kose Kivanc, Lallas Aimilios, Longo Caterina, Malvehy Josep, Menzies Scott, Nelson Kelly C, Paoli John, Puig Susana, Rabinovitz Harold S, Rishpon Ayelet, Russo Teresa, Scope Alon, Soyer H Peter, et al.. Expert Agreement on the Presence and Spatial Localization of Melanocytic Features in Dermoscopy.. J Invest Dermatol. 2024. Mar.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/37689267/",
+      "year": 2024
+    },
+    {
+      "pmid": "39691750",
+      "type": "pubmed",
+      "citation": "Zia Ul Haq Muhammad, Hornback Andrew, Harzand Arash, Gutman David Andrew, Gallaher Bradley, Schoenberg Evan D, Zhu Yuanda, Wang May D, Anderson Blake. Graph theoretic visualization of patient and health worker messaging in the EHR.. Front Artif Intell. 2024.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/39691750/",
+      "year": 2024
+    },
+    {
+      "pmid": "36853796",
+      "type": "pubmed",
+      "citation": "Lewis Joshua E, Shebelut Conrad W, Drumheller Bradley R, Zhang Xuebao, Shanmugam Nithya, Attieh Michel, Horwath Michael C, Khanna Anurag, Smith Geoffrey H, Gutman David A, Aljudi Ahmed, Cooper Lee A D, Jaye David L. An Automated Pipeline for Differential Cell Counts on Whole-Slide Bone Marrow Aspirate Smears.. Mod Pathol. 2023. Feb.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/36853796/",
+      "year": 2023
+    },
+    {
+      "pmid": "35607930",
+      "type": "pubmed",
+      "citation": "Stokes William A, Behera Madhusmita, Jiang Renjian, Gutman David A, Huang Zhonglu, Burns Abigail, Sebastian Nikhil T, Sukhatme Vidula, Lowe Michael C, Ramalingam Suresh S, Sukhatme Vikas P, Moghanaki Drew. Impact of concomitant fibrates on immunotherapy outcomes for advanced non-small cell lung cancer.. Cancer Med. 2023. Jan.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/35607930/",
+      "year": 2023
+    },
+    {
+      "pmid": "37347036",
+      "type": "pubmed",
+      "citation": "Vizcarra Juan C, Teich Andrew F, Dugger Brittany N, Gutman David A, Alzheimer\u2019s Disease Research Center Digital Pathology Working Group. Survey of Neuroanatomic Sampling and Staining Procedures in Alzheimer Disease Research Center Brain Banks.. Free Neuropathol. 2023. Jan.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/37347036/",
+      "year": 2023
+    },
+    {
+      "pmid": "36804711",
+      "type": "pubmed",
+      "citation": "Sebastian Nikhil T, Stokes William A, Behera Madhusmita, Jiang Renjian, Gutman David A, Huang Zhonglu, Burns Abigail, Sukhatme Vidula, Lowe Michael C, Ramalingam Suresh S, Sukhatme Vikas P, Moghanaki Drew. The Association of Improved Overall Survival with NSAIDs in Non-Small Cell Lung Cancer Patients Receiving Immune Checkpoint Inhibitors.. Clin Lung Cancer. 2023. May.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/36804711/",
+      "year": 2023
+    },
+    {
+      "pmid": "36692179",
+      "type": "pubmed",
+      "citation": "Scalco Rebeca, Hamsafar Yamah, White Charles L, Schneider Julie A, Reichard Robert Ross, Prokop Stefan, Perrin Richard J, Nelson Peter T, Mooney Sean, Lieberman Andrew P, Kukull Walter A, Kofler Julia, Keene Christopher Dirk, Kapasi Alifiya, Irwin David J, Gutman David A, Flanagan Margaret E, Crary John F, Chan Kwun C, Murray Melissa E, Dugger Brittany N. The status of digital pathology and associated infrastructure within Alzheimer's Disease Centers.. J Neuropathol Exp Neurol. 2023. Feb.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/36692179/",
+      "year": 2023
+    },
+    {
+      "pmid": "38110981",
+      "type": "pubmed",
+      "citation": "Vizcarra Juan C, Pearce Thomas M, Dugger Brittany N, Keiser Michael J, Gearing Marla, Crary John F, Kiely Evan J, Morris Meaghan, White Bartholomew, Glass Jonathan D, Farrell Kurt, Gutman David A. Toward a generalizable machine learning workflow for neurodegenerative\u00a0disease staging with focus on neurofibrillary tangles.. Acta Neuropathol Commun. 2023. Dec.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/38110981/",
+      "year": 2023
+    },
+    {
+      "pmid": "34586355",
+      "type": "pubmed",
+      "citation": "Amgad Mohamed, Atteya Lamees A, Hussein Hagar, Mohammed Kareem Hosny, Hafiz Ehab, Elsebaie Maha A T, Mobadersany Pooya, Manthey David, Gutman David A, Elfandy Habiba, Cooper Lee A D. Explainable nucleus classification using Decision Tree Approximation of Learned Embeddings.. Bioinformatics. 2022. Jan.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/34586355/",
+      "year": 2022
+    },
+    {
+      "pmid": "35277708",
+      "type": "pubmed",
+      "citation": "Schapiro Denis, Yapp Clarence, Sokolov Artem, Reynolds Sheila M, Chen Yu-An, Sudar Damir, Xie Yubin, Muhlich Jeremy, Arias-Camison Raquel, Arena Sarah, Taylor Adam J, Nikolov Milen, Tyler Madison, Lin Jia-Ren, Burlingame Erik A, Human Tumor Atlas Network, Chang Young H, Farhi Samouil L, Thorsson V\u00e9steinn, Venkatamohan Nithya, Drewes Julia L, Pe'er Dana, Gutman David A, Herrmann Markus D, Gehlenborg Nils, Bankhead Peter, Roland Joseph T, Herndon John M, Snyder Michael P, Angelo Michael, et al.. MITI minimum information guidelines for highly multiplexed tissue images.. Nat Methods. 2022. Mar.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/35277708/",
+      "year": 2022
+    },
+    {
+      "pmid": "35579553",
+      "type": "pubmed",
+      "citation": "Amgad Mohamed, Atteya Lamees A, Hussein Hagar, Mohammed Kareem Hosny, Hafiz Ehab, Elsebaie Maha A T, Alhusseiny Ahmed M, AlMoslemany Mohamed Atef, Elmatboly Abdelmagid M, Pappalardo Philip A, Sakr Rokia Adel, Mobadersany Pooya, Rachid Ahmad, Saad Anas M, Alkashash Ahmad M, Ruhban Inas A, Alrefai Anas, Elgazar Nada M, Abdulkarim Ali, Farag Abo-Alela, Etman Amira, Elsaeed Ahmed G, Alagha Yahya, Amer Yomna A, Raslan Ahmed M, Nadim Menatalla K, Elsebaie Mai A T, Ayad Ahmed, Hanna Liza E, Gadallah Ahmed, et al.. NuCLS: A scalable crowdsourcing approach and dataset for nucleus classification and segmentation in breast cancer.. Gigascience. 2022. May.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/35579553/",
+      "year": 2022
+    },
+    {
+      "pmid": "33355190",
+      "type": "pubmed",
+      "citation": "Lee Sanghoon, Amgad Mohamed, Mobadersany Pooya, McCormick Matt, Pollack Brian P, Elfandy Habiba, Hussein Hagar, Gutman David A, Cooper Lee A D. Interactive Classification of Whole-Slide Imaging Data for Cancer Researchers.. Cancer Res. 2021. Feb.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/33355190/",
+      "year": 2021
+    },
+    {
+      "pmid": "34455497",
+      "type": "pubmed",
+      "citation": "Hecht E E, Zapata I, Alvarez C E, Gutman D A, Preuss T M, Kent M, Serpell J A. Neurodevelopmental scaling is a major driver of brain-behavior differences in temperament across dog breeds.. Brain Struct Funct. 2021. Nov.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/34455497/",
+      "year": 2021
+    },
+    {
+      "pmid": "34127519",
+      "type": "pubmed",
+      "citation": "Hecht Erin E, Kukekova Anna V, Gutman David A, Acland Gregory M, Preuss Todd M, Trut Lyudmila N. Neuromorphological Changes following Selection for Tameness and Aggression in the Russian Farm-Fox experiment.. J Neurosci. 2021. Jul.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/34127519/",
+      "year": 2021
+    },
+    {
+      "pmid": "31306724",
+      "type": "pubmed",
+      "citation": "Marchetti Michael A, Liopyris Konstantinos, Dusza Stephen W, Codella Noel C F, Gutman David A, Helba Brian, Kalloo Aadi, Halpern Allan C, International Skin Imaging Collaboration. Computer algorithms show potential for improving dermatologists' accuracy to diagnose cutaneous melanoma: Results of the International Skin Imaging Collaboration 2017.. J Am Acad Dermatol. 2020. Mar.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/31306724/",
+      "year": 2020
+    },
+    {
+      "pmid": "31570774",
+      "type": "pubmed",
+      "citation": "Chandradevan Ramraj, Aljudi Ahmed A, Drumheller Bradley R, Kunananthaseelan Nilakshan, Amgad Mohamed, Gutman David A, Cooper Lee A D, Jaye David L. Machine-based detection and classification for bone marrow aspirate differential counts: initial development focusing on nonneoplastic cells.. Lab Invest. 2020. Jan.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/31570774/",
+      "year": 2020
+    },
+    {
+      "pmid": "32345363",
+      "type": "pubmed",
+      "citation": "Vizcarra Juan C, Gearing Marla, Keiser Michael J, Glass Jonathan D, Dugger Brittany N, Gutman David A. Validation of machine learning models to detect amyloid pathologies across institutions.. Acta Neuropathol Commun. 2020. Apr.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/32345363/",
+      "year": 2020
+    },
+    {
+      "pmid": "31051023",
+      "type": "pubmed",
+      "citation": "Giuste Felipe, Vizcarra Juan Carlos, Gutman David A. Digital imaging applications and informatics in dermatology.. Semin Cutan Med Surg. 2019. Mar.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/31051023/",
+      "year": 2019
+    },
+    {
+      "pmid": "31548239",
+      "type": "pubmed",
+      "citation": "Chandrasekaran Sanjay, Sasaki Maiko, Scharer Christopher D, Kissick Haydn T, Patterson Dillon G, Magliocca Kelly R, Seykora John T, Sapkota Bishu, Gutman David A, Cooper Lee A, Lesinski Gregory B, Waller Edmund K, Thomas Susan N, Kotenko Sergei V, Boss Jeremy M, Moreno Carlos S, Swerlick Robert A, Pollack Brian P. Phosphoinositide 3-Kinase Signaling Can Modulate MHC Class I and II Expression.. Mol Cancer Res. 2019. Dec.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/31548239/",
+      "year": 2019
+    },
+    {
+      "pmid": "31477568",
+      "type": "pubmed",
+      "citation": "Hecht Erin E, Smaers Jeroen B, Dunn William D, Kent Marc, Preuss Todd M, Gutman David A. Significant Neuroanatomical Variation Among Domestic Dog Breeds.. J Neurosci. 2019. Sep.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/31477568/",
+      "year": 2019
+    },
+    {
+      "pmid": "30726865",
+      "type": "pubmed",
+      "citation": "Amgad Mohamed, Elfandy Habiba, Hussein Hagar, Atteya Lamees A, Elsebaie Mai A T, Abo Elnasr Lamia S, Sakr Rokia A, Salem Hazem S E, Ismail Ahmed F, Saad Anas M, Ahmed Joumana, Elsebaie Maha A T, Rahman Mustafijur, Ruhban Inas A, Elgazar Nada M, Alagha Yahya, Osman Mohamed H, Alhusseiny Ahmed M, Khalaf Mariam M, Younes Abo-Alela F, Abdulkarim Ali, Younes Duaa M, Gadallah Ahmed M, Elkashash Ahmad M, Fala Salma Y, Zaki Basma M, Beezley Jonathan, Chittajallu Deepak R, Manthey David, Gutman David A, et al.. Structured crowdsourcing enables convolutional segmentation of histology images.. Bioinformatics. 2019. Sep.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/30726865/",
+      "year": 2019
+    },
+    {
+      "pmid": "31633109",
+      "type": "pubmed",
+      "citation": "Lee Samuel M, Asress Seneshaw, Hales Chadwick M, Gearing Marla, Vizcarra Juan C, Fournier Christina N, Gutman David A, Chin Lih-Shen, Li Lian, Glass Jonathan D. TDP-43 cytoplasmic inclusion formation is disrupted in C9orf72-associated amyotrophic lateral sclerosis/frontotemporal lobar degeneration.. Brain Commun. 2019.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/31633109/",
+      "year": 2019
+    },
+    {
+      "pmid": "29531073",
+      "type": "pubmed",
+      "citation": "Mobadersany Pooya, Yousefi Safoora, Amgad Mohamed, Gutman David A, Barnholtz-Sloan Jill S, Vel\u00e1zquez Vega Jos\u00e9 E, Brat Daniel J, Cooper Lee A D. Predicting cancer outcomes from histology and genomics using convolutional networks.. Proc Natl Acad Sci U S A. 2018. Mar.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/29531073/",
+      "year": 2018
+    },
+    {
+      "pmid": "28969863",
+      "type": "pubmed",
+      "citation": "Marchetti Michael A, Codella Noel C F, Dusza Stephen W, Gutman David A, Helba Brian, Kalloo Aadi, Mishra Nabin, Carrera Cristina, Celebi M Emre, DeFazio Jennifer L, Jaimes Natalia, Marghoob Ashfaq A, Quigley Elizabeth, Scope Alon, Y\u00e9lamos Oriol, Halpern Allan C, International Skin Imaging Collaboration. Results of the 2016 International Skin Imaging Collaboration International Symposium on Biomedical Imaging challenge: Comparison of the accuracy of computer algorithms to dermatologists for the diagnosis of melanoma from dermoscopic images.. J Am Acad Dermatol. 2018. Feb.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/28969863/",
+      "year": 2018
+    },
+    {
+      "pmid": "29109450",
+      "type": "pubmed",
+      "citation": "Nalisnik Michael, Amgad Mohamed, Lee Sanghoon, Halani Sameer H, Velazquez Vega Jose Enrique, Brat Daniel J, Gutman David A, Cooper Lee A D. Interactive phenotyping of large-scale histology imaging data with HistomicsML.. Sci Rep. 2017. Nov.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/29109450/",
+      "year": 2017
+    },
+    {
+      "pmid": "28916782",
+      "type": "pubmed",
+      "citation": "Yousefi Safoora, Amrollahi Fatemeh, Amgad Mohamed, Dong Chengliang, Lewis Joshua E, Song Congzheng, Gutman David A, Halani Sameer H, Velazquez Vega Jose Enrique, Brat Daniel J, Cooper Lee A D. Predicting clinical outcomes from large scale cancer genomic profiles with deep survival models.. Sci Rep. 2017. Sep.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/28916782/",
+      "year": 2017
+    },
+    {
+      "pmid": "29092945",
+      "type": "pubmed",
+      "citation": "Gutman David A, Khalilia Mohammed, Lee Sanghoon, Nalisnik Michael, Mullen Zach, Beezley Jonathan, Chittajallu Deepak R, Manthey David, Cooper Lee A D. The Digital Slide Archive: A Software Platform for Management, Integration, and Analysis of Histology for Cancer Research.. Cancer Res. 2017. Nov.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/29092945/",
+      "year": 2017
+    },
+    {
+      "pmid": "27861902",
+      "type": "pubmed",
+      "citation": "Heng Yujing J, Lester Susan C, Tse Gary Mk, Factor Rachel E, Allison Kimberly H, Collins Laura C, Chen Yunn-Yi, Jensen Kristin C, Johnson Nicole B, Jeong Jong Cheol, Punjabi Rahi, Shin Sandra J, Singh Kamaljeet, Krings Gregor, Eberhard David A, Tan Puay Hoon, Korski Konstanty, Waldman Frederic M, Gutman David A, Sanders Melinda, Reis-Filho Jorge S, Flanagan Sydney R, Gendoo Deena Ma, Chen Gregory M, Haibe-Kains Benjamin, Ciriello Giovanni, Hoadley Katherine A, Perou Charles M, Beck Andrew H. The molecular basis of breast cancer pathological phenotypes.. J Pathol. 2017. Feb.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/27861902/",
+      "year": 2017
+    },
+    {
+      "pmid": "27867354",
+      "type": "pubmed",
+      "citation": "Shadi Kamal, Bakhshi Saideh, Gutman David A, Mayberg Helen S, Dovrolis Constantine. A Symmetry-Based Method to Infer Structural Brain Networks from Probabilistic Tractography Data.. Front Neuroinform. 2016.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/27867354/",
+      "year": 2016
+    },
+    {
+      "pmid": "26473782",
+      "type": "pubmed",
+      "citation": "Rao Arvind, Rao Ganesh, Gutman David A, Flanders Adam E, Hwang Scott N, Rubin Daniel L, Colen Rivka R, Zinn Pascal O, Jain Rajan, Wintermark Max, Kirby Justin S, Jaffe C Carl, Freymann John, TCGA Glioma Phenotype Research Group. A combinatorial radiographic phenotype may stratify patient survival and be associated with invasion and proliferation characteristics in glioblastoma.. J Neurosurg. 2016. Apr.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/26473782/",
+      "year": 2016
+    },
+    {
+      "pmid": "26577803",
+      "type": "pubmed",
+      "citation": "Dunn William D, Gearing Marla, Park Yuna, Zhang Lifan, Hanfelt John, Glass Jonathan D, Gutman David A. Applicability of digital analysis and imaging technology in neuropathology assessment.. Neuropathology. 2016. Jun.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/26577803/",
+      "year": 2016
+    },
+    {
+      "pmid": "29600296",
+      "type": "pubmed",
+      "citation": "Dunn William D, Aerts Hugo J W L, Cooper Lee A, Holder Chad A, Hwang Scott N, Jaffe Carle C, Brat Daniel J, Jain Rajan, Flanders Adam E, Zinn Pascal O, Colen Rivka R, Gutman David A. Assessing the Effects of Software Platforms on Volumetric Segmentation of Glioblastoma.. J Neuroimaging Psychiatry Neurol. 2016.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/29600296/",
+      "year": 2016
+    },
+    {
+      "pmid": "26826710",
+      "type": "pubmed",
+      "citation": "Kowalski Jeanne, Dwivedi Bhakti, Newman Scott, Switchenko Jeffery M, Pauly Rini, Gutman David A, Arora Jyoti, Gandhi Khanjan, Ainslie Kylie, Doho Gregory, Qin Zhaohui, Moreno Carlos S, Rossi Michael R, Vertino Paula M, Lonial Sagar, Bernal-Mizrachi Leon, Boise Lawrence H. Gene integrated set profile analysis: a context-based approach for inferring biological endpoints.. Nucleic Acids Res. 2016. Apr.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/26826710/",
+      "year": 2016
+    },
+    {
+      "pmid": "27502180",
+      "type": "pubmed",
+      "citation": "Grossmann Patrick, Gutman David A, Dunn William D, Holder Chad A, Aerts Hugo J W L. Imaging-genomics reveals driving pathways of MRI derived volumetric tumor phenotype features in Glioblastoma.. BMC Cancer. 2016. Aug.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/27502180/",
+      "year": 2016
+    },
+    {
+      "pmid": "27396629",
+      "type": "pubmed",
+      "citation": "Dunn William D, Cobb Jake, Levey Allan I, Gutman David A. REDLetr: Workflow and tools to support the migration of legacy clinical data capture systems to REDCap.. Int J Med Inform. 2016. Sep.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/27396629/",
+      "year": 2016
+    },
+    {
+      "pmid": "25450110",
+      "type": "pubmed",
+      "citation": "Keifer Orion P, Gutman David A, Hecht Erin E, Keilholz Shella D, Ressler Kerry J. A comparative analysis of mouse and human medial geniculate nucleus connectivity: a DTI and anterograde tracing study.. Neuroimage. 2015. Jan.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/25450110/",
+      "year": 2015
+    },
+    {
+      "pmid": "24859884",
+      "type": "pubmed",
+      "citation": "Hecht E E, Gutman D A, Khreisheh N, Taylor S V, Kilner J, Faisal A A, Bradley B A, Chaminade T, Stout D. Acquisition of Paleolithic toolmaking abilities involves structural remodeling to inferior frontoparietal regions.. Brain Struct Funct. 2015. Jul.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/24859884/",
+      "year": 2015
+    },
+    {
+      "pmid": "27796014",
+      "type": "pubmed",
+      "citation": "Nalisnik Michael, Gutman David A, Kong Jun, Cooper Lee Ad. An Interactive Learning Framework for Scalable Classification of Pathology Images.. Proc IEEE Int Conf Big Data. 2015.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/27796014/",
+      "year": 2015
+    },
+    {
+      "pmid": "26576732",
+      "type": "pubmed",
+      "citation": "Rios Velazquez Emmanuel, Meier Raphael, Dunn William D, Alexander Brian, Wiest Roland, Bauer Stefan, Gutman David A, Reyes Mauricio, Aerts Hugo J W L. Fully automatic GBM segmentation in the TCGA-GBM dataset: Prognosis and correlation with VASARI features.. Sci Rep. 2015. Nov.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/26576732/",
+      "year": 2015
+    },
+    {
+      "pmid": "25490189",
+      "type": "pubmed",
+      "citation": "Colen Rivka R, Wang Jixin, Singh Sanjay K, Gutman David A, Zinn Pascal O. Glioblastoma: imaging genomic mapping reveals sex-specific oncogenic associations of cell death.. Radiology. 2015. Apr.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/25490189/",
+      "year": 2015
+    },
+    {
+      "pmid": "25599536",
+      "type": "pubmed",
+      "citation": "Cooper Lee A D, Kong Jun, Gutman David A, Dunn William D, Nalisnik Michael, Brat Daniel J. Novel genotype-phenotype associations in human cancers enabled by advanced molecular platforms and computational analysis of whole slide images.. Lab Invest. 2015. Apr.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/25599536/",
+      "year": 2015
+    },
+    {
+      "pmid": "26166191",
+      "type": "pubmed",
+      "citation": "C\u00e1ceda Ricardo, James G Andrew, Gutman David A, Kilts Clinton D. Organization of intrinsic functional brain connectivity predicts decisions to reciprocate social behavior.. Behav Brain Res. 2015. Oct.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/26166191/",
+      "year": 2015
+    },
+    {
+      "pmid": "26337765",
+      "type": "pubmed",
+      "citation": "Gutman David A, Dunn William D, Grossmann Patrick, Cooper Lee A D, Holder Chad A, Ligon Keith L, Alexander Brian M, Aerts Hugo J W L. Somatic mutations associated with MRI-derived volumetric features in glioblastoma.. Neuroradiology. 2015. Dec.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/26337765/",
+      "year": 2015
+    },
+    {
+      "pmid": "25534109",
+      "type": "pubmed",
+      "citation": "Hecht Erin E, Gutman David A, Bradley Bruce A, Preuss Todd M, Stout Dietrich. Virtual dissection and comparative connectivity of the superior longitudinal fasciculus in chimpanzees and humans.. Neuroimage. 2015. Mar.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/25534109/",
+      "year": 2015
+    },
+    {
+      "pmid": "26151911",
+      "type": "pubmed",
+      "citation": "Keifer O P, Hurt R C, Gutman D A, Keilholz S D, Gourley S L, Ressler K J. Voxel-based morphometry predicts shifts in dendritic spine density and morphology with auditory fear conditioning.. Nat Commun. 2015. Jul.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/26151911/",
+      "year": 2015
+    },
+    {
+      "pmid": "24811070",
+      "type": "pubmed",
+      "citation": "Nemeth Christina L, Gutman David A, Majeed Waqas, Keilholz Shella D, Neigh Gretchen N. Microembolism induces anhedonia but no detectable changes in white matter integrity in aged rats.. PLoS One. 2014.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/24811070/",
+      "year": 2014
+    },
+    {
+      "pmid": "24516127",
+      "type": "pubmed",
+      "citation": "Stevens Jennifer Strafford, Almli Lynn M, Fani Negar, Gutman David A, Bradley Bekh, Norrholm Seth D, Reiser Emily, Ely Timothy D, Dhanani Rahim, Glover Ebony M, Jovanovic Tanja, Ressler Kerry J. PACAP receptor gene polymorphism impacts fear responses in the amygdala and hippocampus.. Proc Natl Acad Sci U S A. 2014. Feb.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/24516127/",
+      "year": 2014
+    },
+    {
+      "pmid": "23908263",
+      "type": "pubmed",
+      "citation": "Howell Brittany R, Godfrey Jodi, Gutman David A, Michopoulos Vasiliki, Zhang Xiaodong, Nair Govind, Hu Xiaoping, Wilson Mark E, Sanchez Mar M. Social subordination stress and serotonin transporter polymorphisms: associations with brain white matter tract integrity and behavior in juvenile female macaques.. Cereb Cortex. 2014. Dec.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/23908263/",
+      "year": 2014
+    },
+    {
+      "pmid": "24904399",
+      "type": "pubmed",
+      "citation": "Gutman David A, Dunn William D, Cobb Jake, Stoner Richard M, Kalpathy-Cramer Jayashree, Erickson Bradley. Web based tools for visualizing imaging data and development of XNATView, a zero footprint image viewer.. Front Neuroinform. 2014.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/24904399/",
+      "year": 2014
+    },
+    {
+      "pmid": "24889866",
+      "type": "recovered",
+      "citation": "Colen, R. R., M. Vangel, J. Wang, D. A. Gutman, S. N. Hwang, M. Wintermark, R. Jain, M. Jilwan-Nicolas, J. Y. Chen, P. Raghavan, C. A. Holder, D. Rubin, E. Huang, J. Kirby, J. Freymann, C. C. Jaffe, A. Flanders, T. G. P. R. Group and P. O. Zinn (2014). &#8220;Imaging genomic mapping of an invasive MRI phenotype predicts patient outcome and metabolic dysfunction: a TCGA glioma phenotype research group project.&#8221; BMC Med Genomics 7: 30.",
+      "link": "https://web.archive.org/web/20200222234627/http://www.ncbi.nlm.nih.gov/pubmed/24889866",
+      "year": 2014
+    },
+    {
+      "pmid": "24646147",
+      "type": "recovered",
+      "citation": "Jain, R., L. M. Poisson, D. Gutman, L. Scarpace, S. N. Hwang, C. A. Holder, M. Wintermark, A. Rao, R. R. Colen, J. Kirby, J. Freymann, C. C. Jaffe, T. Mikkelsen and A. Flanders (2014). &#8220;Outcome prediction in patients with glioblastoma by using imaging, clinical, and genomic biomarkers: focus on the nonenhancing component of the tumor.&#8221; Radiology 272(2): 484-493.",
+      "link": "https://web.archive.org/web/20200222234627/http://www.ncbi.nlm.nih.gov/pubmed/24646147",
+      "year": 2014
+    },
+    {
+      "pmid": "23893318",
+      "type": "pubmed",
+      "citation": "Gutman David A, Cobb Jake, Somanna Dhananjaya, Park Yuna, Wang Fusheng, Kurc Tahsin, Saltz Joel H, Brat Daniel J, Cooper Lee A D. Cancer Digital Slide Archive: an informatics resource to support integrated in silico analysis of TCGA pathology data.. J Am Med Inform Assoc. 2013.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/23893318/",
+      "year": 2013
+    },
+    {
+      "pmid": "23986247",
+      "type": "pubmed",
+      "citation": "Hecht Erin E, Murphy Lauren E, Gutman David A, Votaw John R, Schuster David M, Preuss Todd M, Orban Guy A, Stout Dietrich, Parr Lisa A. Differences in neural activation for object-directed grasping in chimpanzees and humans.. J Neurosci. 2013. Aug.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/23986247/",
+      "year": 2013
+    },
+    {
+      "pmid": "23392431",
+      "type": "pubmed",
+      "citation": "Gutman David A, Cooper Lee A D, Hwang Scott N, Holder Chad A, Gao Jingjing, Aurora Tarun D, Dunn William D, Scarpace Lisa, Mikkelsen Tom, Jain Rajan, Wintermark Max, Jilwan Manal, Raghavan Prashant, Huang Erich, Clifford Robert J, Mongkolwat Pattanasak, Kleper Vladimir, Freymann John, Kirby Justin, Zinn Pascal O, Moreno Carlos S, Jaffe Carl, Colen Rivka, Rubin Daniel L, Saltz Joel, Flanders Adam, Brat Daniel J. MR imaging predictors of molecular profile and survival: multi-institutional study of the TCGA glioblastoma data set.. Radiology. 2013. May.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/23392431/",
+      "year": 2013
+    },
+    {
+      "pmid": "22527121",
+      "type": "pubmed",
+      "citation": "Gutman David A, Magnuson Matthew, Majeed Waqas, Keifer Orion P, Davis Michael, Ressler Kerry J, Keilholz Shella. Mapping of the mouse olfactory system with manganese-enhanced magnetic resonance imaging and diffusion tensor imaging.. Brain Struct Funct. 2013. Mar.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/22527121/",
+      "year": 2013
+    },
+    {
+      "pmid": "22539611",
+      "type": "pubmed",
+      "citation": "Hecht Erin E, Gutman David A, Preuss Todd M, Sanchez Mar M, Parr Lisa A, Rilling James K. Process versus product in social learning: comparative diffusion tensor imaging of neural systems for action execution-observation matching in macaques, chimpanzees, and humans.. Cereb Cortex. 2013. May.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/22539611/",
+      "year": 2013
+    },
+    {
+      "pmid": "23864165",
+      "type": "pubmed",
+      "citation": "Rutledge W Caleb, Kong Jun, Gao Jingjing, Gutman David A, Cooper Lee A D, Appin Christina, Park Yuna, Scarpace Lisa, Mikkelsen Tom, Cohen Mark L, Aldape Kenneth D, McLendon Roger E, Lehman Norman L, Miller C Ryan, Schniederjan Matthew J, Brennan Cameron W, Saltz Joel H, Moreno Carlos S, Brat Daniel J. Tumor-infiltrating lymphocytes in glioblastoma are associated with specific genomic alterations and related to transcriptional class.. Clin Cancer Res. 2013. Sep.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/23864165/",
+      "year": 2013
+    },
+    {
+      "pmid": "22796992",
+      "type": "pubmed",
+      "citation": "Gutman David A, Keifer Orion P, Magnuson Matthew E, Choi Dennis C, Majeed Waqas, Keilholz Shella, Ressler Kerry J. A DTI tractography analysis of infralimbic and prelimbic connectivity in the mouse using high-throughput MRI.. Neuroimage. 2012. Nov.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/22796992/",
+      "year": 2012
+    },
+    {
+      "pmid": "25328166",
+      "type": "pubmed",
+      "citation": "Cooper Lee A D, Carter Alexis B, Farris Alton B, Wang Fusheng, Kong Jun, Gutman David A, Widener Patrick, Pan Tony C, Cholleti Sharath R, Sharma Ashish, Kurc Tahsin M, Brat Daniel J, Saltz Joel H. Digital Pathology: Data-Intensive Frontier in Medical Imaging: Health-information sharing, specifically of digital pathology, is the subject of this paper which discusses how sharing the rich images in pathology can stretch the capabilities of all otherwise well-practiced disciplines.. Proc IEEE Inst Electr Electron Eng. 2012. Apr.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/25328166/",
+      "year": 2012
+    },
+    {
+      "pmid": "22278382",
+      "type": "pubmed",
+      "citation": "Cooper Lee A D, Kong Jun, Gutman David A, Wang Fusheng, Gao Jingjing, Appin Christina, Cholleti Sharath, Pan Tony, Sharma Ashish, Scarpace Lisa, Mikkelsen Tom, Kurc Tahsin, Moreno Carlos S, Brat Daniel J, Saltz Joel H. Integrated morphologic analysis for the identification and characterization of disease subtypes.. J Am Med Inform Assoc. 2012.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/22278382/",
+      "year": 2012
+    },
+    {
+      "pmid": "22440258",
+      "type": "pubmed",
+      "citation": "Cooper Lee A D, Gutman David A, Chisolm Candace, Appin Christina, Kong Jun, Rong Yuan, Kurc Tahsin, Van Meir Erwin G, Saltz Joel H, Moreno Carlos S, Brat Daniel J. The tumor microenvironment strongly impacts master transcriptional regulators and gene expression class of glioblastoma.. Am J Pathol. 2012. May.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/22440258/",
+      "year": 2012
+    },
+    {
+      "pmid": "22871912",
+      "type": "pubmed",
+      "citation": "Fani Negar, King Tricia Z, Jovanovic Tanja, Glover Ebony M, Bradley Bekh, Choi Kisueng, Ely Timothy, Gutman David A, Ressler Kerry J. White matter integrity in highly traumatized adults with and without post-traumatic stress disorder.. Neuropsychopharmacology. 2012. Nov.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/22871912/",
+      "year": 2012
+    },
+    {
+      "pmid": "21947516",
+      "type": "pubmed",
+      "citation": "Kong Jun, Cooper Lee A D, Wang Fusheng, Gutman David A, Gao Jingjing, Chisolm Candace, Sharma Ashish, Pan Tony, Van Meir Erwin G, Kurc Tahsin M, Moreno Carlos S, Saltz Joel H, Brat Daniel J. Integrative, multimodal analysis of glioblastoma using TCGA molecular data, pathology images, and clinical outcomes.. IEEE Trans Biomed Eng. 2011. Dec.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/21947516/",
+      "year": 2011
+    },
+    {
+      "pmid": "20951149",
+      "type": "pubmed",
+      "citation": "Gutman David A, Owens Michael J, Thrivikraman K V, Nemeroff Charles B. Persistent anxiolytic affects after chronic administration of the CRF\u2081 receptor antagonist R121919 in rats.. Neuropharmacology. 2011. Jun.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/20951149/",
+      "year": 2011
+    },
+    {
+      "pmid": "20656651",
+      "type": "pubmed",
+      "citation": "Cooper Lee A D, Kong Jun, Gutman David A, Wang Fusheng, Cholleti Sharath R, Pan Tony C, Widener Patrick M, Sharma Ashish, Mikkelsen Tom, Flanders Adam E, Rubin Daniel L, Van Meir Erwin G, Kurc Tahsin M, Moreno Carlos S, Brat Daniel J, Saltz Joel H. An integrative approach for in silico glioma research.. IEEE Trans Biomed Eng. 2010. Oct.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/20656651/",
+      "year": 2010
+    },
+    {
+      "pmid": "20838435",
+      "type": "pubmed",
+      "citation": "Cooper Lee A D, Gutman David A, Long Qi, Johnson Brent A, Cholleti Sharath R, Kurc Tahsin, Saltz Joel H, Brat Daniel J, Moreno Carlos S. The proneural molecular signature is enriched in oligodendrogliomas and predicts improved survival among diffuse gliomas.. PLoS One. 2010. Sep.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/20838435/",
+      "year": 2010
+    },
+    {
+      "pmid": "19013554",
+      "type": "pubmed",
+      "citation": "Gutman David A, Holtzheimer Paul E, Behrens Timothy E J, Johansen-Berg Heidi, Mayberg Helen S. A tractography analysis of two deep brain stimulation white matter targets for depression.. Biol Psychiatry. 2009. Feb.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/19013554/",
+      "year": 2009
+    },
+    {
+      "pmid": "18676086",
+      "type": "pubmed",
+      "citation": "Gutman David A, Coyer Megan J, Boss-Williams Katherine A, Owens Michael J, Nemeroff Charles B, Weiss Jay M. Behavioral effects of the CRF1 receptor antagonist R121919 in rats selectively bred for high and low activity in the swim test.. Psychoneuroendocrinology. 2008. Sep.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/18676086/",
+      "year": 2008
+    },
+    {
+      "pmid": "17297634",
+      "type": "pubmed",
+      "citation": "Skelton Kelly H, Gutman David A, Thrivikraman K V, Nemeroff Charles B, Owens Michael J. The CRF1 receptor antagonist R121919 attenuates the neuroendocrine and behavioral effects of precipitated lorazepam withdrawal.. Psychopharmacology (Berl). 2007. Jun.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/17297634/",
+      "year": 2007
+    },
+    {
+      "pmid": "17610870",
+      "type": "pubmed",
+      "citation": "Skelton Kelly H, Oren Dana, Gutman David A, Easterling Keith, Holtzman Stephen G, Nemeroff Charles B, Owens Michael J. The CRF1 receptor antagonist, R121919, attenuates the severity of precipitated morphine withdrawal.. Eur J Pharmacol. 2007. Sep.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/17610870/",
+      "year": 2007
+    },
+    {
+      "pmid": "17928332",
+      "type": "recovered",
+      "citation": "Johansen-Berg H, Gutman DA, Behrens TE, Matthews PM, Rushworth MF, Katz E, Lozano AM, Mayberg HS. Anatomical Connectivity of the Subgenual Cingulate Region Targeted with Deep Brain Stimulation for Treatment-Resistant Depression. Cereb Cortex. 2007 Oct;18(6):1374-1383.",
+      "link": "https://web.archive.org/web/20200222234627/http://www.ncbi.nlm.nih.gov/pubmed/17928332",
+      "year": 2007
+    },
+    {
+      "pmid": "16989291",
+      "type": "pubmed",
+      "citation": "Gutman David A, Owens Michael J. Serotonin and norepinephrine transporter binding profile of SSRIs.. Essent Psychopharmacol. 2006.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/16989291/",
+      "year": 2006
+    },
+    {
+      "pmid": "15741000",
+      "type": "pubmed",
+      "citation": "Gutman David A, Coplan Jeremy, Papp Laszlo, Martinez Jose, Gorman Jack. Doxapram-induced panic attacks and cortisol elevation.. Psychiatry Res. 2005. Feb.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/15741000/",
+      "year": 2005
+    },
+    {
+      "pmid": "12954441",
+      "type": "pubmed",
+      "citation": "Gutman David A, Nemeroff Charles B. Persistent central nervous system effects of an adverse early environment: clinical and preclinical studies.. Physiol Behav. 2003. Aug.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/12954441/",
+      "year": 2003
+    },
+    {
+      "pmid": "12538845",
+      "type": "pubmed",
+      "citation": "Gutman David A, Owens Michael J, Skelton Kelly H, Thrivikraman K V, Nemeroff Charles B. The corticotropin-releasing factor1 receptor antagonist R121919 attenuates the behavioral and endocrine responses to stress.. J Pharmacol Exp Ther. 2003. Feb.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/12538845/",
+      "year": 2003
+    },
+    {
+      "pmid": "12827150",
+      "type": "recovered",
+      "citation": "Mandell AJ, Selz KA, Owens MJ, Kinkead B, Shlesinger MF, Gutman DA, Arcuragi V. Cellular and behavioral effects of D2 dopamine receptor hydrophobic eigenmode-targeted peptide ligands. Neuropsychopharmacology. 2003 Jul;28(S):S98-107.",
+      "link": "https://web.archive.org/web/20200222234627/http://www.ncbi.nlm.nih.gov/pubmed/12827150",
+      "year": 2003
+    },
+    {
+      "pmid": "11953932",
+      "type": "pubmed",
+      "citation": "Gutman David A, Nemeroff Charles B. Neurobiology of early life stress: rodent studies.. Semin Clin Neuropsychiatry. 2002. Apr.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/11953932/",
+      "year": 2002
+    },
+    {
+      "pmid": "12160756",
+      "type": "recovered",
+      "citation": "Rilling J, Gutman D, Zeh T, Pagnoni G, Berns G, Kilts C. A Neural Basis for Social Cooperation. Neuron. 2002 Jul;35(2): 395-405.",
+      "link": "https://web.archive.org/web/20200222234627/http://www.ncbi.nlm.nih.gov/pubmed/12160756",
+      "year": 2002
+    },
+    {
+      "pmid": "12117583",
+      "type": "recovered",
+      "citation": "Algararsamy S, Rouse ST, Junge C, Hubert GW, Gutman D, Smith Y, Conn PJ. NMDA-induced phosphorylation and regulation of mGluR5. Pharmacology Biochem Behav. 2002 Sep;73(2): 299-306.",
+      "link": "https://web.archive.org/web/20200222234627/http://www.ncbi.nlm.nih.gov/pubmed/12117583",
+      "year": 2002
+    },
+    {
+      "pmid": "11164761",
+      "type": "pubmed",
+      "citation": "Rilling J K, Winslow J T, O'Brien D, Gutman D A, Hoffman J M, Kilts C D. Neural correlates of maternal separation in rhesus monkeys.. Biol Psychiatry. 2001. Jan.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/11164761/",
+      "year": 2001
+    },
+    {
+      "pmid": "10389661",
+      "type": "recovered",
+      "citation": "Anderson BB, Chen G, Gutman DA, Ewing AG. Demonstration of two distributions of vesicle radius in the dopamine neuron of Planorbis corneus from electrochemical data. Journal of Neuroscience Methods. 1999 May; 88(2):153-61.",
+      "link": "https://web.archive.org/web/20200222234627/http://www.ncbi.nlm.nih.gov/pubmed/10389661",
+      "year": 1999
+    },
+    {
+      "pmid": "9555063",
+      "type": "recovered",
+      "citation": "Anderson BB, Chen G, Gutman DA, Ewing AG. Dopamine levels of two classes of vesicles are differentially depleted by amphetamine. Brain Research. 1998 Mar;788(1-2):294-301.",
+      "link": "https://web.archive.org/web/20200222234627/http://www.ncbi.nlm.nih.gov/pubmed/9555063",
+      "year": 1998
+    },
+    {
+      "pmid": "11013717",
+      "type": "recovered",
+      "citation": "Kozminski KD, Gutman DA, Davila V, Sulzer D, Ewing AG. Voltammetric and pharmacological characterization of dopamine release from single exocytotic events at rat pheochromocytoma (PC12) cells. Analytical Chemistry. 1998 Aug;70(15):3123-3130.",
+      "link": "https://web.archive.org/web/20200222234627/http://www.ncbi.nlm.nih.gov/pubmed/11013717",
+      "year": 1998
+    },
+    {
+      "pmid": "9212703",
+      "type": "recovered",
+      "citation": "Hietpas PB, Bullard KM, Gutman DA, Ewing AG. Ultrathin slab gel separations of DNA using a single capillary sample introduction system. Analytical Chemistry. 1997 Jul;69(13):2292-2298.",
+      "link": "https://web.archive.org/web/20200222234627/http://www.ncbi.nlm.nih.gov/pubmed/9212703",
+      "year": 1997
+    },
+    {
+      "pmid": "8891256",
+      "type": "recovered",
+      "citation": "Chen GY, Gutman DA, Zerby SE, Ewing AG. Electrochemical monitoring of bursting exocytotic events from the giant dopamine neuron of Planorbis corneus. Brain Research. 1996 Sep;733(1):119-124.",
+      "link": "https://web.archive.org/web/20200222234627/http://www.ncbi.nlm.nih.gov/pubmed/8891256",
+      "year": 1996
+    }
+  ]
+}
