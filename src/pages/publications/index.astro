@@ -1,6 +1,7 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import GoogleScholarLinks from "../../components/GoogleScholarLinks.astro";
+import PapersList from "../../components/PapersList.astro";
 import { loadFragment } from "../../lib/fragments";
 import { readFileSync } from "node:fs";
 
@@ -12,7 +13,6 @@ function link(href: string) {
 
 // Load all recovered content sections
 const sections = [
-  { key: "papers", title: "Peer reviewed journal articles", fragment: loadFragment("publications__papers") },
   { key: "presentations", title: "Presentations", fragment: loadFragment("publications__presentations") },
   { key: "chapters", title: "Book chapters", fragment: loadFragment("publications__chapters") },
   { key: "posters-abstracts", title: "Posters and abstracts", fragment: loadFragment("publications__posters-abstracts") },
@@ -31,13 +31,16 @@ function countPresentations(html: string): number {
 
 function getSectionCount(key: string, content: string): number {
   switch (key) {
-    case "papers": return countNumbered(content);
     case "presentations": return countPresentations(content);
     case "chapters": return countNumbered(content);
     case "posters-abstracts": return countNumbered(content);
     default: return 0;
   }
 }
+
+// Papers count from the merged data
+import { papers } from "../../data/merged-papers.json";
+const paperCount = papers.length;
 ---
 
 <Layout title="Publications">
@@ -55,6 +58,15 @@ function getSectionCount(key: string, content: string): number {
       ))
     }
   </p>
+
+  <details class="pub-section" open>
+    <summary>
+      <h2 class="pub-section-title">Peer reviewed journal articles <span class="pub-count">({paperCount})</span></h2>
+    </summary>
+    <div class="pub-section-content">
+      <PapersList />
+    </div>
+  </details>
 
   {
     sections.map((section) => {
