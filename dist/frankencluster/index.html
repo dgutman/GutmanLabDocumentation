@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Pathology Frankencluster — A Heterogeneous Ceph & TrueNAS Odyssey</title>
+<style>
+/* ── Reset & Base ── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;font-size:16px}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,sans-serif;background:#0a0e17;color:#d1d5db;line-height:1.6}
+
+/* ── Typography ── */
+h1,h2,h3,h4{font-weight:700;line-height:1.2;color:#f3f4f6}
+h1{font-size:clamp(2rem,5vw,3.5rem)}
+h2{font-size:clamp(1.4rem,3vw,2rem);margin-top:3rem;margin-bottom:1rem;color:#60a5fa}
+h3{font-size:1.2rem;margin-top:2rem;margin-bottom:.5rem;color:#93c5fd}
+h4{font-size:1rem;margin-top:1.5rem;margin-bottom:.5rem}
+p{margin-bottom:1rem}
+a{color:#60a5fa;text-decoration:none}
+a:hover{text-decoration:underline}
+code{background:#1e293b;padding:.15em .4em;border-radius:4px;font-size:.9em;color:#e2e8f0}
+pre{background:#131c2e;padding:1.2rem;border-radius:8px;overflow-x:auto;font-size:.85rem;line-height:1.5;margin:1rem 0;border:1px solid #1e3a5f}
+pre code{background:none;padding:0}
+.container{max-width:1200px;margin:0 auto;padding:0 1.5rem}
+section{padding:2rem 0}
+
+/* ── Hero ── */
+.hero{min-height:70vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;position:relative;overflow:hidden;background:linear-gradient(135deg,#0a0e17 0%,#132044 50%,#1a0a2e 100%)}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 30% 50%,rgba(96,165,250,.08) 0%,transparent 60%),radial-gradient(circle at 70% 30%,rgba(192,132,252,.06) 0%,transparent 50%);pointer-events:none}
+.hero h1{background:linear-gradient(135deg,#93c5fd,#c084fc,#60a5fa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero .subtitle{font-size:1.2rem;color:#94a3b8;margin-top:1rem;max-width:700px}
+.hero .stats{display:flex;flex-wrap:wrap;gap:2rem;justify-content:center;margin-top:2.5rem}
+.stat{text-align:center}
+.stat-num{font-size:2.2rem;font-weight:800;color:#60a5fa}
+.stat-label{font-size:.85rem;color:#94a3b8;margin-top:.2rem}
+.scroll-hint{margin-top:2.5rem;color:#4b5563;animation:bounce 2s infinite}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
+
+/* ── Nav ── */
+nav{position:sticky;top:0;z-index:100;background:rgba(10,14,23,.85);backdrop-filter:blur(12px);border-bottom:1px solid #1e3a5f;padding:.6rem 0;display:none}
+nav.show{display:block}
+nav .container{display:flex;flex-wrap:wrap;gap:.4rem 1.2rem;justify-content:center}
+nav a{font-size:.85rem;color:#94a3b8;padding:.3rem .6rem;border-radius:6px;transition:color .2s,background .2s}
+nav a:hover{color:#f3f4f6;background:#1e293b;text-decoration:none}
+
+/* ── Cards ── */
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.2rem;margin:1.5rem 0}
+.card{background:#131c2e;border:1px solid #1e3a5f;border-radius:12px;padding:1.2rem;transition:border-color .2s,transform .2s}
+.card:hover{border-color:#3b82f6;transform:translateY(-2px)}
+.card h4{color:#93c5fd;margin-bottom:.5rem;font-size:1rem}
+.card .value{font-size:1.3rem;font-weight:700;color:#f3f4f6}
+.card .meta{font-size:.8rem;color:#6b7280;margin-top:.3rem}
+.card .detail{font-size:.85rem;color:#9ca3af;margin-top:.6rem}
+
+/* ── Tables ── */
+.table-wrap{overflow-x:auto;margin:1rem 0 1.5rem}
+table{width:100%;border-collapse:collapse;font-size:.85rem}
+thead{background:#1e293b}
+th{padding:.7rem .8rem;text-align:left;font-weight:600;color:#93c5fd;white-space:nowrap;border-bottom:2px solid #1e3a5f}
+td{padding:.6rem .8rem;border-bottom:1px solid #1e293b}
+tr:hover td{background:#162240}
+td.num{text-align:right;font-variant-numeric:tabular-nums}
+
+/* Performance bars */
+.bar-wrap{display:flex;align-items:center;gap:.6rem}
+.bar{height:20px;border-radius:4px;min-width:4px;transition:width .6s ease}
+.bar-label{font-size:.8rem;color:#94a3b8;white-space:nowrap}
+
+/* ── Tags ── */
+.tag{display:inline-block;padding:.15em .6em;border-radius:999px;font-size:.75rem;font-weight:600}
+.tag-hdd{background:#3b1f1f;color:#fca5a5}
+.tag-ssd{background:#1e3a5f;color:#93c5fd}
+.tag-nvme{background:#1a2e1a;color:#86efac}
+.tag-optane{background:#2e1a2e;color:#d8b4fe}
+
+/* ── Info Boxes ── */
+.info-box{background:#131c2e;border-left:4px solid #3b82f6;padding:1rem 1.2rem;border-radius:0 8px 8px 0;margin:1.2rem 0}
+.info-box.warn{border-left-color:#f59e0b}
+.info-box.success{border-left-color:#22c55e}
+.info-box h4{color:#93c5fd;margin-bottom:.3rem}
+.info-box p{margin-bottom:0;font-size:.9rem}
+
+/* ── Section TOC ── */
+.section-toc{background:#131c2e;border:1px solid #1e3a5f;border-radius:12px;padding:1.5rem;margin:2rem 0}
+.section-toc ol{list-style:none;counter-reset:item}
+.section-toc li{counter-increment:item;padding:.4rem 0;border-bottom:1px solid #1e293b}
+.section-toc li:last-child{border:none}
+.section-toc li::before{content:counter(item);background:#1e3a5f;color:#60a5fa;font-weight:700;width:1.8rem;height:1.8rem;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:.8rem;margin-right:.8rem}
+.section-toc a{color:#d1d5db}
+.section-toc a:hover{color:#60a5fa}
+
+/* ── Highlight numbers ── */
+.highlight{color:#fbbf24;font-weight:700}
+.highlight-blue{color:#60a5fa;font-weight:700}
+.highlight-green{color:#34d399;font-weight:700}
+
+/* ── Metrics row ── */
+.metrics{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1rem;margin:1.5rem 0}
+.metric{background:#131c2e;border:1px solid #1e3a5f;border-radius:10px;padding:1rem;text-align:center}
+.metric .val{font-size:1.6rem;font-weight:800;color:#f3f4f6}
+.metric .sub{font-size:.8rem;color:#6b7280;margin-top:.2rem}
+
+/* ── Timeline ── */
+.timeline{position:relative;padding-left:2rem;margin:1.5rem 0}
+.timeline::before{content:'';position:absolute;left:8px;top:0;bottom:0;width:2px;background:#1e3a5f}
+.tl-item{position:relative;padding-bottom:1.5rem}
+.tl-item::before{content:'';position:absolute;left:-2rem;top:.5rem;width:14px;height:14px;border-radius:50%;background:#3b82f6;border:3px solid #0a0e17}
+.tl-item:last-child{padding-bottom:0}
+.tl-item .tl-label{font-size:.8rem;color:#60a5fa;font-weight:600}
+.tl-item p{margin:.3rem 0 0;font-size:.9rem}
+
+/* ── Diagram placeholder ── */
+.diagram{background:#131c2e;border:1px solid #1e3a5f;border-radius:12px;padding:2rem;margin:1.5rem 0;text-align:center;font-family:'Courier New',monospace;line-height:1.8;font-size:.85rem;overflow-x:auto}
+.diagram .title{color:#93c5fd;font-weight:700;margin-bottom:1rem}
+
+/* ── Footer ── */
+footer{text-align:center;padding:2rem 0;border-top:1px solid #1e3a5f;color:#4b5563;font-size:.85rem;margin-top:3rem}
+
+/* ── Responsive ── */
+@media(max-width:640px){
+  .card-grid{grid-template-columns:1fr}
+  .metrics{grid-template-columns:repeat(2,1fr)}
+  .hero .stats{gap:1.2rem}
+  .stat-num{font-size:1.6rem}
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-track{background:#0a0e17}
+::-webkit-scrollbar-thumb{background:#1e3a5f;border-radius:4px}
+::-webkit-scrollbar-thumb:hover{background:#3b82f6}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════ HERO ═══════════════════ -->
+<section class="hero" id="top">
+  <h1>The Pathology Frankencluster</h1>
+  <p class="subtitle">1,000+ cores · 545 TB raw · 99 OSDs · 4 storage tiers · 4 TrueNAS hosts · 2 QNAP NAS · 1 very patient operator</p>
+  <div class="stats">
+    <div class="stat"><div class="stat-num">14</div><div class="stat-label">Proxmox Nodes</div></div>
+    <div class="stat"><div class="stat-num">99</div><div class="stat-label">Ceph OSDs</div></div>
+    <div class="stat"><div class="stat-num">~5.2 TB</div><div class="stat-label">RAM Total</div></div>
+    <div class="stat"><div class="stat-num">545 TB</div><div class="stat-label">Raw Capacity</div></div>
+    <div class="stat"><div class="stat-num">4</div><div class="stat-label">Storage Tiers</div></div>
+  </div>
+  <div class="scroll-hint">↓ scroll</div>
+</section>
+
+<!-- ═══════════════════ NAV ═══════════════════ -->
+<nav id="nav">
+  <div class="container">
+    <a href="#intro">Intro</a>
+    <a href="#hardware">Hardware</a>
+    <a href="#ceph-layout">Ceph Layout</a>
+    <a href="#ceph-benchmarks">Ceph Benchmarks</a>
+    <a href="#truenas">TrueNAS</a>
+    <a href="#icarus">Icarus Tuning</a>
+    <a href="#truenas-benchmarks">TrueNAS Benchmarks</a>
+    <a href="#backup">Backup Cluster</a>
+    <a href="#qnap">QNAP</a>
+    <a href="#lessons">Lessons</a>
+  </div>
+</nav>
+
+<div class="container">
+
+<!-- ═══════════════════ 1. INTRO ═══════════════════ -->
+<section id="intro">
+  <h2>1. What Is a Frankencluster?</h2>
+  <p>Most homelab clusters are uniform — same node, same drives, same everything. This is the opposite. The <strong>Emory Pathology Frankencluster</strong> is a living laboratory of hardware heterogeneity, spanning <strong>fourteen Proxmox nodes</strong> across three generations of server hardware, four drive classes, and five storage architectures — <strong>all in one Ceph cluster</strong>.</p>
+  <p>It wasn't designed this way. It <em>evolved</em> — each node was a hand-me-down, a surplus find, or a temporary measure that became permanent. And somehow, it works. Sometimes brilliantly.</p>
+
+  <div class="info-box">
+    <h4>⚡ The Core Idea</h4>
+    <p>Run a production-adjacent Ceph cluster where HDDs, SATA SSDs, NVMe, and Optane-backed SSDs coexist under a single CRUSH hierarchy. Tune each device class independently. Benchmark everything. Document what breaks and how you fix it.</p>
+  </div>
+
+  <div class="diagram">
+    <div class="title">pmoxprime Cluster Topology</div>
+┌──────────────────────────────────────────────────────────┐
+│                     14 × Proxmox Nodes                   │
+│   (pmox2053-2064, titan, triton @ 25GbE + 10GbE mesh)   │
+├──────────────────────────────────────────────────────────┤
+│                   Ceph Squid 19.2.4                        │
+│   ┌──────┐  ┌──────┐  ┌──────┐  ┌──────────┐          │
+│   │ 53×  │  │ 28×  │  │ 10×  │  │   8×     │          │
+│   │ HDD  │  │ SSD  │  │ NVMe │  │SSDoptane │          │
+│   │ OSDs │  │ OSDs │  │ OSDs │  │  OSDs    │          │
+│   └──────┘  └──────┘  └──────┘  └──────────┘          │
+│        │          │         │           │               │
+│        ▼          ▼         ▼           ▼               │
+│   replicated-hdd  replicated-ssd  replicated-nvme  ssdoptane_rule │
+│   (bulk/capacity) (balanced)     (performance)   (low-latency)   │
+├──────────────────────────────────────────────────────────┤
+│          4 × TrueNAS SCALE 25.04 hosts                    │
+│   (slidevault · scratchy · icarus · gauss)               │
+├──────────────────────────────────────────────────────────┤
+│          2 × QNAP NAS (apollo · Q2)                       │
+├──────────────────────────────────────────────────────────┤
+│         kubertpmox — 9-node backup cluster                │
+└──────────────────────────────────────────────────────────┘
+  </div>
+</section>
+
+<!-- ═══════════════════ 2. HARDWARE ═══════════════════ -->
+<section id="hardware">
+  <h2>2. The Hardware Zoo</h2>
+  <p>Every node tells a story. Some are purpose-built storage servers. Others are repurposed compute nodes stuffed with whatever drives fit. A few are held together by good vibes and hot spares.</p>
+
+  <h3>2.1 Node Overview</h3>
+  <div class="table-wrap">
+  <table>
+    <thead><tr><th>Node</th><th>RAM</th><th>NVMe</th><th>SSD</th><th>HDD</th><th>Raw Cap</th><th>VMs</th><th>Role</th></tr></thead>
+    <tbody>
+      <tr><td>pmox2062</td><td>188 GiB</td><td>3</td><td>1</td><td>11</td><td class="num">83 TB</td><td>2</td><td>Storage workhorse</td></tr>
+      <tr><td>pmox2061</td><td>188 GiB</td><td>2</td><td>1</td><td>10</td><td class="num">75 TB</td><td>3</td><td>Heavy HDD host</td></tr>
+      <tr><td>titan</td><td>188 GiB</td><td>2</td><td>1</td><td>8</td><td class="num">64 TB</td><td>2</td><td>Mixed storage</td></tr>
+      <tr><td>pmox2057</td><td>188 GiB</td><td>1</td><td>1</td><td>7</td><td class="num">45 TB</td><td>3</td><td>HDD bulk</td></tr>
+      <tr><td>pmox2059</td><td>377 GiB</td><td>1</td><td>1</td><td>7</td><td class="num">44 TB</td><td>2</td><td>HDD bulk</td></tr>
+      <tr><td>pmox2060</td><td>377 GiB</td><td>1</td><td>1</td><td>6</td><td class="num">44 TB</td><td>3</td><td>HDD bulk</td></tr>
+      <tr><td>pmox2058</td><td>314 GiB</td><td>2</td><td>1</td><td>5</td><td class="num">40 TB</td><td>2</td><td>Hybrid</td></tr>
+      <tr><td>pmox2055</td><td>503 GiB</td><td>2</td><td>8</td><td>0</td><td class="num">27 TB</td><td>10</td><td>All-flash compute</td></tr>
+      <tr><td>pmox2053</td><td>503 GiB</td><td>1</td><td>7</td><td>0</td><td class="num">25 TB</td><td>8</td><td>All-flash compute</td></tr>
+      <tr><td>pmox2064</td><td>503 GiB</td><td>2</td><td>8</td><td>0</td><td class="num">25 TB</td><td>4</td><td>All-flash + Optane</td></tr>
+      <tr><td>pmox2054</td><td>503 GiB</td><td>2</td><td>7</td><td>0</td><td class="num">23 TB</td><td>6</td><td>All-flash compute</td></tr>
+      <tr><td>pmox2056</td><td>503 GiB</td><td>2</td><td>7</td><td>0</td><td class="num">23 TB</td><td>10</td><td>All-flash compute</td></tr>
+      <tr><td>pmox2063</td><td>503 GiB</td><td>0</td><td>8</td><td>0</td><td class="num">21 TB</td><td>2</td><td>SSD-only</td></tr>
+      <tr><td>triton</td><td>6 TB</td><td>2</td><td>1</td><td>0</td><td class="num">6 TB</td><td>3</td><td>Ceph monitor + mgr</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p style="font-size:.8rem;color:#6b7280">* triton has 6 TB of flash — it's the cluster's control plane node (mon/mgr), not a storage node</p>
+
+  <h3>2.2 Physical Disk Breakdown</h3>
+  <div class="card-grid">
+    <div class="card"><h4>🧊 HDD</h4><div class="value">54 drives</div><div class="meta">~340 TB raw · Mixed 6TB/12TB SATA (Seagate ST* series)</div><div class="detail">Spanning 7 nodes. DB/WAL offloaded to NVMe via BlueFS dedicated DB. Enterprise SATA drives in the ST6000NM and ST12000VN families.</div></div>
+    <div class="card"><h4>⚡ SSD</h4><div class="value">53 drives</div><div class="meta">~130 TB raw · 3.49 TB SATA SSDs (mostly Samsung)</div><div class="detail">28 Ceph OSDs + direct attach in compute nodes. SATA 6Gb/s interface. Samsung 860/850 EVO and Micron 5100 series.</div></div>
+    <div class="card"><h4>🚀 NVMe</h4><div class="value">23 drives</div><div class="meta">Intel P3600 1.6TB · Samsung 970/980 PRO · 2TB Intel</div><div class="detail">10 dedicated Ceph OSDs + special vdevs + DB/WAL targets. Mixed PCIe 3.0/4.0. Also used for CephFS metadata and ZFS special vdevs.</div></div>
+    <div class="card"><h4>🔥 Optane-Backed</h4><div class="value">8 OSDs</div><div class="meta">3.49TB SATA SSD + Intel Optane 64 GB dedicated DB</div><div class="detail">SATA SSDs with <span class="highlight">dedicated NVMe-based BlueFS DB (64 GB)</span>. WAL co-located on the NVMe DB device. Lowest-latency Ceph tier.</div></div>
+  </div>
+
+  <h3>2.3 RAM Configuration</h3>
+  <p>502 TB of storage deserves some memory. The cluster has approximately <strong>5.2 TiB of DDR4 ECC RAM</strong> across all nodes — a mix of 16 GB and 32 GB sticks at 2133–2666 MT/s.</p>
+  <div class="table-wrap">
+  <table>
+    <thead><tr><th>Node</th><th>Total</th><th>Sticks</th><th>Populated</th><th>Empty</th><th>Speed</th></tr></thead>
+    <tbody>
+      <tr><td>pmox2053–2056</td><td>503 GiB</td><td>16×32 GB</td><td>16/24</td><td>8</td><td>2400 MT/s</td></tr>
+      <tr><td>pmox2063–2064</td><td>503 GiB</td><td>16×32 GB</td><td>16/24</td><td>8</td><td>2666 MT/s</td></tr>
+      <tr><td>pmox2059–2060</td><td>377 GiB</td><td>12×32 GB</td><td>12/24</td><td>12</td><td>2400 MT/s</td></tr>
+      <tr><td>pmox2058</td><td>314 GiB</td><td>10×32 GB</td><td>10/24</td><td>14</td><td>2400 MT/s</td></tr>
+      <tr><td>pmox2057/2062/titan</td><td>188 GiB</td><td>12×16 GB</td><td>12/24</td><td>12</td><td>2133/2666 MT/s</td></tr>
+      <tr><td>pmox2061</td><td>188 GiB</td><td>6×32 GB</td><td>6/24</td><td><span class="highlight-blue">18</span></td><td>2133 MT/s</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="info-box warn">
+    <h4>🧠 RAM Upgrade Candidates</h4>
+    <p><strong>pmox2061</strong> has 18 empty slots — the headroom to go from 188 GiB → 758 GiB by filling those slots with 32 GB sticks. <strong>pmox2058</strong> has 14 empty slots. A MEGATRON RAM harvest (96 GiB DDR4-2133) could boost pmox2057 from 188 → 284 GiB using matching-speed sticks.</p>
+  </div>
+
+  <h3>2.4 Network</h3>
+  <p>All nodes are connected over <strong>25GbE</strong> (Mellanox ConnectX-4/5) with a 10GbE fallback mesh. Jumbo frames (MTU 9000) are enabled on storage networks. The Ceph public and cluster networks are separated across different VLANs.</p>
+</section>
+
+<!-- ═══════════════════ 3. CEPH LAYOUT ═══════════════════ -->
+<section id="ceph-layout">
+  <h2>3. Ceph — Four Tiers, One Cluster</h2>
+  <p>The cluster runs <strong>Ceph Squid 19.2.4</strong> with 99 OSDs across 14 nodes. The secret sauce is the <strong>CRUSH device class hierarchy</strong> — four independent storage tiers, each with its own replication rules, pool placement, and tuning.</p>
+
+  <h3>3.1 Storage Tiers</h3>
+  <div class="table-wrap">
+  <table>
+    <thead><tr><th>Tier</th><th>OSDs</th><th>Device Class</th><th>CRUSH Rule</th><th>Pools</th><th>Latency Profile</th></tr></thead>
+    <tbody>
+      <tr><td><span class="tag tag-hdd">HDD</span></td><td>53</td><td>hdd</td><td>replicated-hdd</td><td>ceph_bulk, cephfs_images_bulk (EC), profile_hdd</td><td>High capacity, moderate latency</td></tr>
+      <tr><td><span class="tag tag-ssd">SSD</span></td><td>28</td><td>ssd</td><td>replicated-ssd</td><td>ceph_ssd</td><td>Balanced, good all-rounder</td></tr>
+      <tr><td><span class="tag tag-nvme">NVMe</span></td><td>10</td><td>nvme</td><td>replicated-nvme</td><td>ceph_nvme, profile_nvme</td><td>Low latency, high IOPS</td></tr>
+      <tr><td><span class="tag tag-optane">Optane-Backed</span></td><td>8</td><td>SSDoptane</td><td>ssdoptane_rule</td><td>ceph_optane</td><td>Ultra-low latency</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>3.2 BlueFS / DB-WAL Architecture</h3>
+  <p>This is where it gets interesting. Not every OSD has its data and metadata on the same device. The cluster uses <strong>BlueFS dedicated DB</strong> extensively to pair slow media with fast write-ahead storage.</p>
+  <div class="table-wrap">
+  <table>
+    <thead><tr><th>Class</th><th>Data Device</th><th>DB Device</th><th>WAL Device</th><th>Shared?</th></tr></thead>
+    <tbody>
+      <tr><td>hdd</td><td>HDD</td><td>on HDD</td><td><span class="highlight">NVMe (nvme1n1)</span></td><td>No</td></tr>
+      <tr><td>ssd</td><td>SSD</td><td>on SSD</td><td>on SSD</td><td>Yes</td></tr>
+      <tr><td>nvme</td><td>NVMe</td><td>on NVMe</td><td>on NVMe</td><td>Yes</td></tr>
+      <tr><td>SSDoptane</td><td>SSD</td><td><span class="highlight">NVMe (64 GB dedicated)</span></td><td>co-located with DB</td><td>No</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p><strong>Key insight:</strong> When <code>bluefs_dedicated_db: 1</code> is set, WAL is automatically co-located on the DB device — no separate WAL device needed. The HDD tier uses a shared NVMe for WAL, while the SSDoptane tier pairs a SATA SSD data device with a dedicated 64 GB NVMe partition for its BlueFS DB.</p>
+
+  <h3>3.3 Pool Layout</h3>
+  <div class="table-wrap">
+  <table>
+    <thead><tr><th>Pool</th><th>Type</th><th>Size</th><th>PGs</th><th>Rule</th><th>Apps</th></tr></thead>
+    <tbody>
+      <tr><td>ceph_bulk</td><td>replicated</td><td>3/2</td><td>512</td><td>replicated-hdd</td><td>rbd</td></tr>
+      <tr><td>ceph_nvme</td><td>replicated</td><td>3/2</td><td>128</td><td>replicated-nvme</td><td>rbd</td></tr>
+      <tr><td>ceph_optane</td><td>replicated</td><td>3/2</td><td>32</td><td>ssdoptane_rule</td><td>rbd</td></tr>
+      <tr><td>ceph_ssd</td><td>replicated</td><td>3/2</td><td>128</td><td>replicated-ssd</td><td>rbd</td></tr>
+      <tr><td>cephfs_images_bulk</td><td>erasure-code</td><td>6/5</td><td>512</td><td>cephfs_images_bulk</td><td>cephfs</td></tr>
+      <tr><td>cephfs_images_meta</td><td>replicated</td><td>3/2</td><td>128</td><td>replicated_rule</td><td>cephfs</td></tr>
+      <tr><td>profile_hdd / profile_nvme</td><td>replicated</td><td>3/2</td><td>32</td><td>hdd / nvme</td><td>rbd</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<!-- ═══════════════════ 4. CEPH BENCHMARKS ═══════════════════ -->
+<section id="ceph-benchmarks">
+  <h2>4. Ceph Performance — rados bench</h2>
+  <p>All benchmarks run with <strong>rados bench</strong> (30s per test, 16 concurrent threads, MTU 9000). Results reflect cluster-wide performance with 3× replication. These are <strong>real-world numbers</strong> from a cluster under production load — not a clean lab environment.</p>
+
+  <h3>4.1 Large Object Performance (4 MB)</h3>
+  <div class="table-wrap">
+  <table>
+    <thead><tr><th>Class</th><th>Write BW</th><th>Write IOPS</th><th>Read BW</th><th>Read IOPS</th><th>Rand Read BW</th><th>Rand Read IOPS</th></tr></thead>
+    <tbody>
+      <tr><td><span class="tag tag-nvme">NVMe</span></td><td class="num">1,175 MB/s</td><td class="num">293</td><td class="num">1,175 MB/s</td><td class="num">294</td><td class="num">1,175 MB/s</td><td class="num">294</td></tr>
+      <tr><td><span class="tag tag-ssd">SSD</span></td><td class="num">431 MB/s</td><td class="num">107</td><td class="num highlight-blue">1,170 MB/s</td><td class="num">292</td><td class="num highlight-blue">1,170 MB/s</td><td class="num">292</td></tr>
+      <tr><td><span class="tag tag-hdd">HDD (w/ DB/WAL)</span></td><td class="num">346 MB/s</td><td class="num">86</td><td class="num">852 MB/s</td><td class="num">213</td><td class="num">852 MB/s</td><td class="num">213</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="info-box">
+    <h4>📊 4 MB Sequential Read Performance</h4>
+    <div class="bar-wrap"><span style="width:80px">NVMe</span><div class="bar" style="width:100%;background:#86efac"></div><span class="bar-label">1,175 MB/s</span></div>
+    <div class="bar-wrap"><span style="width:80px">SSD</span><div class="bar" style="width:99.5%;background:#93c5fd"></div><span class="bar-label">1,170 MB/s</span></div>
+    <div class="bar-wrap"><span style="width:80px">HDD</span><div class="bar" style="width:72%;background:#fca5a5"></div><span class="bar-label">852 MB/s</span></div>
+    <p style="font-size:.9rem;margin-top:.8rem">SSD and NVMe read performance is nearly identical for large sequential reads — both saturate the 25GbE network. HDD with DB/WAL offload is the surprise star: <strong>852 MB/s reads</strong> from spinning rust.</p>
+  </div>
+
+  <h3>4.2 Small Object IOPS (4 KB) — Where Tiers Separate</h3>
+  <div class="table-wrap">
+  <table>
+    <thead><tr><th>Class</th><th>Write BW</th><th>Write IOPS</th><th>Read BW</th><th>Read IOPS</th></tr></thead>
+    <tbody>
+      <tr><td><span class="tag tag-nvme">NVMe</span></td><td class="num">32.5 MB/s</td><td class="num highlight">8,320</td><td class="num">125 MB/s</td><td class="num highlight">32,024</td></tr>
+      <tr><td><span class="tag tag-ssd">SSD</span></td><td class="num">7.8 MB/s</td><td class="num">1,999</td><td class="num">147 MB/s</td><td class="num highlight">37,629</td></tr>
+      <tr><td><span class="tag tag-hdd">HDD</span></td><td class="num">9.0 MB/s</td><td class="num">2,299</td><td class="num">94 MB/s</td><td class="num">23,988</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="info-box success">
+    <h4>🔍 HDD Write IOPS Surprise</h4>
+    <p>HDDs with DB/WAL offloaded to NVMe achieve <strong>2,299 write IOPS</strong> (4 KB) — competitive with SATA SSDs at 1,999 IOPS. The dedicated WAL on fast media eliminates the rotational write penalty for small objects. Read performance is also excellent: HDDs hit 24K read IOPS vs SSD's 38K, a smaller gap than you'd expect.</p>
+  </div>
+
+  <h3>4.3 NVMe Tier Deep Dive</h3>
+  <p>The NVMe tier uses 10 Intel P3600 1.6 TB drives spread across 6 nodes. These are PCIe 3.0 drives — modern but not cutting-edge. The 8,320 write IOPS number needs context:</p>
+  <ul style="margin-left:1.5rem;margin-bottom:1rem">
+    <li><strong>3× replication:</strong> every write is stored 3 times — raw 25K write IOPS per drive</li>
+    <li><strong>rados bench at 16 threads</strong> — NVMe can handle 64–128+ queue depth</li>
+    <li><strong>32 PGs across 8 OSDs</strong> — increasing to 128–256 PGs would improve parallelism</li>
+    <li><strong>MTU 9000</strong> was a game-changer: ~10× improvement over MTU 1500 in earlier tests</li>
+  </ul>
+
+  <h3>4.4 Optane-Backed Tier (ceph_optane)</h3>
+  <p>8 OSDs where a <strong>3.49 TB SATA SSD</strong> is paired with a <strong>dedicated 64 GB NVMe partition</strong> for BlueFS DB. The NVMe DB accelerates metadata operations and small writes dramatically while the SATA SSD provides the capacity. This tier targets workloads needing lower latency than pure SSD but without the cost-per-GB of all-NVMe.</p>
+  <p><em>Benchmark data for this tier is pending — earlier Optane pool configuration issues were identified and the pool is being rebuilt for proper characterization.</em></p>
+</section>
+
+<!-- ═══════════════════ 5. TRUENAS ═══════════════════ -->
+<section id="truenas">
+  <h2>5. TrueNAS SCALE — Four Hosts, Four Personalities</h2>
+  <p>Alongside Ceph, the lab runs <strong>four TrueNAS SCALE 25.04 hosts</strong>, each with a completely different storage architecture. They serve NFS shares to the Proxmox cluster and handle the bulk WSI (whole-slide imaging) archive.</p>
+  <p><em>All names are FQDN shortcuts — these are real lab servers, not metaphorical.</em></p>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4>🖥️ brainhost</h4>
+      <div class="value">slidevault</div>
+      <div class="meta">502 GiB RAM · Joyent S10G5 · 452 days uptime</div>
+      <div class="detail">
+        <strong>Pool:</strong> 2× 6-wide RAIDZ2 + NVMe special mirror + SLOG mirror<br>
+        <strong>Drives:</strong> 36 HDD (14 TB Toshiba MG07) + 9 SSD (Micron 5100) + 2 NVMe<br>
+        <strong>Capacity:</strong> 458 TiB raw · 359 TiB allocated<br>
+        <strong>Status:</strong> <span style="color:#f59e0b">DEGRADED</span> (scrub finished, pending replacement)
+      </div>
+    </div>
+    <div class="card">
+      <h4>🖥️ scratchy</h4>
+      <div class="value">samsungssd</div>
+      <div class="meta">377 GiB RAM · Dell PowerEdge R730 · 133 days uptime</div>
+      <div class="detail">
+        <strong>Pool:</strong> 3× mirror + NVMe special vdev<br>
+        <strong>Drives:</strong> All-SSD (Samsung 850/860 EVO)<br>
+        <strong>Role:</strong> High-performance scratch / temporary compute storage<br>
+        <strong>Status:</strong> Currently OFFLINE
+      </div>
+    </div>
+    <div class="card">
+      <h4>🖥️ icarus</h4>
+      <div class="value">daghome</div>
+      <div class="meta">503 GiB RAM · home directory + compute pool</div>
+      <div class="detail">
+        <strong>Pool:</strong> 4× mirror + NVMe special mirror + SLOG<br>
+        <strong>Drives:</strong> 8× SATA SSD + 2× NVMe special + 1× SLOG NVMe<br>
+        <strong>Notable:</strong> The poster child for ZFS misconfiguration → <span class="highlight-green">11× performance gain</span> after tuning
+      </div>
+    </div>
+    <div class="card">
+      <h4>🖥️ gauss</h4>
+      <div class="value">tank</div>
+      <div class="meta">general-purpose HDD pool</div>
+      <div class="detail">
+        <strong>Pool:</strong> 2× 6-wide RAIDZ2 + NVMe special vdev<br>
+        <strong>Drives:</strong> HDD + NVMe cache<br>
+        <strong>Role:</strong> Bulk storage, cold data
+      </div>
+    </div>
+  </div>
+
+  <p><em>Note: API key authentication error prevented full collection of icarus, scratchy, and gauss pool details. The benchmark data below was collected via direct fio runs.</em></p>
+</section>
+
+<!-- ═══════════════════ 6. ICARUS TUNING ═══════════════════ -->
+<section id="icarus">
+  <h2>6. The Icarus Optimization — How 3 Settings Killed 11× Performance</h2>
+  <p>This is the highlight reel. Icarus (<strong>daghome pool</strong>) had a simple setup: 8× SATA SSD in 4 mirrors + 2× NVMe mirror for metadata (special vdev) + a 120 GB Intel NVMe SLOG. Sequential writes should have been screaming. Instead, they crawled at <strong>375 MiB/s</strong>.</p>
+
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-label">🔴 Before</div>
+      <p><strong>375 MiB/s</strong> sequential write — something was very wrong</p>
+    </div>
+  </div>
+
+  <h3>6.1 Three Compounding Bottlenecks</h3>
+
+  <div class="info-box warn">
+    <h4>🔧 Bottleneck #1: special_small_blocks=128K + recordsize=16K</h4>
+    <p>Every file block (16 KB) was under the 128 KB threshold, so <strong>ALL writes were diverted to the 2× NVMe special vdev mirror</strong>. The 8× SATA SSDs sat idle for writes. The NVMe special became a bottleneck it was never meant to be.</p>
+    <p><strong>Fix:</strong> <code>special_small_blocks=0</code> — metadata only goes to NVMe, data spreads across the main pool.</p>
+    <p><em>Result after fix: +27%</em></p>
+  </div>
+
+  <div class="info-box warn">
+    <h4>🔧 Bottleneck #2: logbias=latency</h4>
+    <p>This setting forces <strong>EVERY write</strong> through the ZIL/SLOG — even async writes that should bypass it. With a single 120 GB Intel NVMe as SLOG, this created a hard ~360 MB/s bottleneck. logbias=latency is correct for NFS databases with sync writes, but disastrous for general file serving.</p>
+    <p><strong>Fix:</strong> <code>logbias=throughput</code> — async writes bypass the ZIL entirely.</p>
+    <p><em>Result after fix: +40% cumulative</em></p>
+  </div>
+
+  <div class="info-box warn">
+    <h4>🔧 Bottleneck #3: zfs_dirty_data_max=4 GB</h4>
+    <p>On a machine with <strong>503 GiB of RAM</strong>, the default dirty data limit was 4 GB — a measly 0.8%. TrueNAS SCALE ships with this hard-coded rather than the traditional 10% of RAM. The transaction group throttle kicked in constantly, limiting bulk write throughput.</p>
+    <p><strong>Fix:</strong> Raised to 32 GB (6% of RAM). Could go higher for write-heavy workloads.</p>
+    <p><em>Result after fix: +1,039% (11× improvement)</em></p>
+  </div>
+
+  <h3>6.2 The Numbers</h3>
+  <div class="metrics">
+    <div class="metric"><div class="val" style="color:#ef4444">375</div><div class="sub">Before (MiB/s)</div></div>
+    <div class="metric"><div class="val" style="color:#f59e0b">478</div><div class="sub">After special_small_blocks=0</div></div>
+    <div class="metric"><div class="val" style="color:#f59e0b">524</div><div class="sub">After logbias=throughput</div></div>
+    <div class="metric"><div class="val" style="color:#22c55e">4,271</div><div class="sub">After dirty_data=32 GB 🎯</div></div>
+  </div>
+  <p>Sequential write went from <strong>375 → 4,271 MiB/s</strong> — an 11× improvement from three configuration changes, zero hardware changes. The NFS-like (psync) workload hit <strong>1,549 MiB/s</strong>, which would saturate a 25 GbE link.</p>
+
+  <div class="diagram">
+    <div class="title">Icarus Optimization — Progressive Improvement</div>
+    Before (375 MiB/s)  ████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+    +special_blocks     ██████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░  (+27%)
+    +logbias=throughput ███████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░  (+40%)
+    +dirty=8 GB         ████████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░  (+51%)
+    +dirty=32 GB        ████████████████████████████████████████  (+1,039%)
+  </div>
+
+  <h3>6.3 Key ZFS Lessons</h3>
+  <ul style="margin-left:1.5rem;margin-bottom:1rem">
+    <li><strong><code>special_small_blocks</code> is powerful but dangerous.</strong> Combined with a small <code>recordsize</code>, it can accidentally turn the special vdev into the main write path, making it a bottleneck instead of an accelerator.</li>
+    <li><strong><code>logbias=latency</code> is for databases.</strong> Use it only when every write absolutely must survive a power loss. For home directories, NFS, and general file storage, <code>throughput</code> is correct.</li>
+    <li><strong>TrueNAS SCALE ships with zfs_dirty_data_max=4 GB.</strong> On machines with &gt;64 GB RAM, this is wildly conservative. Raise it to at least 10% of RAM for write-heavy workloads.</li>
+    <li><strong>Benchmark with the right workload.</strong> <code>direct=1</code> (bypasses ARC/page cache) vs <code>psync</code> (simulates NFS) can give 3× different results. Always test your actual access pattern.</li>
+  </ul>
+</section>
+
+<!-- ═══════════════════ 7. TRUENAS BENCHMARKS ═══════════════════ -->
+<section id="truenas-benchmarks">
+  <h2>7. TrueNAS Performance Benchmarks</h2>
+  <p>We ran comprehensive <strong>fio benchmarks</strong> across all four TrueNAS hosts. Here's how each pool performs with its unique architecture.</p>
+
+  <div class="table-wrap">
+  <table>
+    <thead><tr><th>Pool</th><th>Architecture</th><th>ARC Hit</th><th>Seq Write</th><th>Seq Read</th><th>4K Rand Read</th><th>Mixed 70/30</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>daghome</strong><br><span style="font-size:.75rem;color:#6b7280">(Icarus — post-opt)</span></td>
+        <td>4× mirror + NVMe special + SLOG</td>
+        <td>94.1%</td>
+        <td class="num"><span class="highlight">4,271 MiB/s</span></td>
+        <td class="num">4,430 MiB/s</td>
+        <td class="num"><span class="highlight">621K IOPS</span></td>
+        <td class="num">54800 R / 23500 W IOPS</td>
+      </tr>
+      <tr>
+        <td><strong>samsungssd</strong><br><span style="font-size:.75rem;color:#6b7280">(Scratchy)</span></td>
+        <td>3× mirror + NVMe special</td>
+        <td>99.7%</td>
+        <td class="num">1,413 MiB/s</td>
+        <td class="num">6,403 MiB/s</td>
+        <td class="num">253K IOPS</td>
+        <td class="num">29600 R / 12700 W IOPS</td>
+      </tr>
+      <tr>
+        <td><strong>slidevault</strong><br><span style="font-size:.75rem;color:#6b7280">(Brainhost)</span></td>
+        <td>2× 6-wide RAIDZ2 + NVMe special + SLOG</td>
+        <td>96.1%</td>
+        <td class="num">1,405 MiB/s</td>
+        <td class="num">6,675 MiB/s</td>
+        <td class="num">237K IOPS</td>
+        <td class="num">26600 R / 11400 W IOPS</td>
+      </tr>
+      <tr>
+        <td><strong>tank</strong><br><span style="font-size:.75rem;color:#6b7280">(Gauss)</span></td>
+        <td>2× 6-wide RAIDZ2 + NVMe special</td>
+        <td>98.9%</td>
+        <td class="num">905 MiB/s</td>
+        <td class="num">6,420 MiB/s</td>
+        <td class="num">101K IOPS</td>
+        <td class="num">15100 R / 6477 W IOPS</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>7.1 Analysis</h3>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4>📖 Sequential Read</h4>
+      <div class="value">up to 6.7 GB/s</div>
+      <div class="detail">All pools saturate or approach their network bandwidth for reads. Even the HDD-based slidevault pool reads at <strong>6.7 GB/s</strong> — the 2× RAIDZ2 groups with NVMe cache are outstanding for sequential access.</div>
+    </div>
+    <div class="card">
+      <h4>🎯 Random Read IOPS</h4>
+      <div class="value">621K IOPS (daghome)</div>
+      <div class="detail">Icarus's all-SSD pool with NVMe special vdev hits <strong>621K 4K random read IOPS</strong> — the ARC hit rate (94.1%) plus fast flash makes this exceptional for metadata-heavy workloads.</div>
+    </div>
+    <div class="card">
+      <h4>✍️ Mixed Workload</h4>
+      <div class="value">54.8K / 23.5K IOPS</div>
+      <div class="detail">daghome's 70/30 read/write mix shows the tuned pool can handle 78K total IOPS in real-world mixed access — ideal for home directories and compute scratch.</div>
+    </div>
+    <div class="card">
+      <h4>📦 Small File Write</h4>
+      <div class="value">396K IOPS (scratchy)</div>
+      <div class="detail">Scratchy's all-SSD mirror pool + NVMe special hits <strong>396,000 small-file write IOPS</strong> at 1,546 MiB/s — the benchmark for temp/scratch workloads.</div>
+    </div>
+  </div>
+
+  <div class="info-box">
+    <h4>📊 Key Takeaway</h4>
+    <p>NVMe special vdevs + <strong>high ARC hit rates</strong> make even the HDD-based pools perform like all-flash for reads. The bottleneck for writes is almost always a configuration issue (see Icarus), not the hardware. Once tuned, even the "slow" pools deliver impressive throughput.</p>
+  </div>
+</section>
+
+<!-- ═══════════════════ 8. BACKUP CLUSTER ═══════════════════ -->
+<section id="backup">
+  <h2>8. kubertpmox — The All-Flash Backup Cluster</h2>
+  <p>A separate 9-node Proxmox cluster serving as the DR/staging environment. All-flash Ceph with a lean layout — proof that you can do a lot with modest hardware when you design intentionally.</p>
+
+  <div class="card-grid">
+    <div class="card"><h4>🔹 kubert</h4><div class="value">144 vCPU · 541 GiB</div><div class="detail">4-socket compute monster with 3× NVMe + 11× SSD + GPU</div></div>
+    <div class="card"><h4>🔹 pmox2096</h4><div class="value">64 vCPU · 540 GiB</div><div class="detail">Pure Ceph storage node — 6× high-end SSD</div></div>
+    <div class="card"><h4>🔹 shinken</h4><div class="value">48 vCPU · 406 GiB</div><div class="detail">Ceph mon + mgr, runs the Corosync ring</div></div>
+    <div class="card"><h4>🔹 pmox2093</h4><div class="value">48 vCPU · 406 GiB</div><div class="detail">Active Ceph mgr + NVMe OSDs</div></div>
+    <div class="card"><h4>🔹 pmox2072</h4><div class="value">56 vCPU · 135 GiB</div><div class="detail">ZFS local storage — 19× SAS SSD (not in Ceph)</div></div>
+    <div class="card"><h4>🔹 pmox2070/71</h4><div class="value">48-56 vCPU · 135-270 GiB</div><div class="detail">Ceph + VMs — standard pairing: 1 NVMe + 1 SSD OSD each</div></div>
+  </div>
+
+  <h3>8.1 Cluster Summary</h3>
+  <div class="table-wrap">
+  <table>
+    <thead><tr><th>Metric</th><th>Value</th></tr></thead>
+    <tbody>
+      <tr><td>Nodes</td><td>9 (all PVE 9.1.2)</td></tr>
+      <tr><td>Total vCPU</td><td>~560</td></tr>
+      <tr><td>Total RAM</td><td>~2.7 TB</td></tr>
+      <tr><td>Ceph OSDs</td><td>13 (5 NVMe + 8 SSD)</td></tr>
+      <tr><td>Ceph Health</td><td><span class="highlight-green">HEALTH_OK</span></td></tr>
+      <tr><td>CephFS</td><td>Active with 2 standby MDS</td></tr>
+      <tr><td>Primary Pool</td><td>ceph_nvme (3/2 replicated)</td></tr>
+      <tr><td>Backups To</td><td>Proxmox Backup Server @ 192.168.70.210</td></tr>
+      <tr><td>Corosync</td><td>192.168.70.x range</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>8.2 Drive Detail</h3>
+  <div class="table-wrap">
+  <table>
+    <thead><tr><th>Node</th><th>NVMe</th><th>SSD</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td>kubert</td><td>3× 1TB 970 EVO Plus</td><td>Mixed (1TB EVO, 480GB D2CSTK, 860 EVO, 4TB EVO)</td><td>Compute heavy lifter</td></tr>
+      <tr><td>pmox2072</td><td>0</td><td>18× 1.2TB ST1200MM0007 + 4TB EVO</td><td>ZFS local — no Ceph</td></tr>
+      <tr><td>pmox2096</td><td>0</td><td>4× 1.92TB + 2× 3.84TB enterprise SSD</td><td>Ceph storage node</td></tr>
+      <tr><td>Standard nodes</td><td>1-2× 1.88TB/2TB NVMe</td><td>1-2× Samsung EVO</td><td>Paired OSD hosts</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<!-- ═══════════════════ 9. QNAP ═══════════════════ -->
+<section id="qnap">
+  <h2>9. QNAP NAS — The Legacy Archive</h2>
+  <p>Two QNAP units handle archival WSI storage. They're older, quirky (QTS Linux, not TrueNAS), and have zero redundancy at the NAS level — but the data is replicated to Ceph/TrueNAS via rsync/restic.</p>
+
+  <div class="card-grid">
+    <div class="card">
+      <h4>📦 Apollo (Q1)</h4>
+      <div class="value">TS-X83XU</div>
+      <div class="meta">62 GiB RAM · 5.2.9 firmware · 65 days uptime</div>
+      <div class="detail">
+        <strong>Disks:</strong> 24× HDD (16-18TB Seagate) + 1× SSD + 5× NVMe (Intel 2TB + Samsung 970 EVO)<br>
+        <strong>Capacity:</strong> ~249 TB usable (RAID6 × 2 → DRBD → LVM thin pool)<br>
+        <strong>Cache:</strong> 4× Intel 2TB NVMe + Samsung 970 EVO Plus 1TB<br>
+        <strong>Role:</strong> Primary WSI archive + APOLLO_ARCHIVE + restic backup target
+      </div>
+    </div>
+    <div class="card">
+      <h4>📦 Q2</h4>
+      <div class="value">TS-X80U</div>
+      <div class="meta">31 GiB RAM · 5.2.6 firmware · 377 days uptime</div>
+      <div class="detail">
+        <strong>Disks:</strong> 16 HDD (8-10TB Seagate) + 11 SSD (Samsung EVO) + 2 NVMe (Samsung 960 PRO)<br>
+        <strong>Shares:</strong> ArchivedSlideSets, BOHR_DICOM_IMAGING_DATA, BohrPmoxStore, TCGA_SLIDE_DATA, HCPData_BOHR, Public<br>
+        <strong>Role:</strong> Secondary archive + data distribution
+      </div>
+    </div>
+  </div>
+
+  <p>Both QNAP units connect over 10GbE. The NVMe cache tiers (Qtier) on Apollo significantly boost read performance for frequently accessed WSI data. All critical data is backed up via restic to Ceph RGW.</p>
+</section>
+
+<!-- ═══════════════════ 10. LESSONS ═══════════════════ -->
+<section id="lessons">
+  <h2>10. Lessons Learned</h2>
+  <p>This cluster has been running for years and every misconfiguration taught us something. Here's the curated list:</p>
+
+  <div class="info-box success">
+    <h4>✅ Heterogeneity Works — With the Right Abstraction</h4>
+    <p>Ceph's CRUSH device classes let you mix HDD, SSD, NVMe, and Optane-backed OSDs in a single cluster and route each workload to the right tier. This wouldn't work in a traditional RAID or SAN environment. The <strong>CRUSH rule + pool mapping</strong> pattern is the key architectural decision.</p>
+  </div>
+
+  <div class="info-box success">
+    <h4>✅ MTU 9000 Matters — A Lot</h4>
+    <p>Going from MTU 1500 → 9000 on the Ceph network showed <strong>~10× improvement</strong> in some benchmarks. Every storage node should have jumbo frames configured on its storage VLAN.</p>
+  </div>
+
+  <div class="info-box success">
+    <h4>✅ BlueFS DB/WAL Offloading Is a Force Multiplier</h4>
+    <p>HDDs with dedicated NVMe for WAL (or DB+WAL) perform far better than their spinning rust peers. Our HDD tier achieves <strong>2,299 write IOPS</strong> — competitive with SATA SSDs — thanks to this architecture.</p>
+  </div>
+
+  <div class="info-box warn">
+    <h4>⚠️ special_small_blocks: Read the Fine Print</h4>
+    <p>This ZFS feature is easy to misconfigure. If your dataset's <code>recordsize</code> is smaller than <code>special_small_blocks</code>, <strong>every write</strong> goes to the special vdev, not the main pool. This turns your metadata accelerator into a bottleneck.</p>
+  </div>
+
+  <div class="info-box warn">
+    <h4>⚠️ TrueNAS SCALE's 4 GB Dirty Data Limit</h4>
+    <p>A 4 GB <code>zfs_dirty_data_max</code> on machines with hundreds of GB of RAM creates constant transaction group throttling. This is a default that makes sense for embedded devices but not enterprise hardware. Raise it.</p>
+  </div>
+
+  <div class="info-box warn">
+    <h4>⚠️ Benchmark Scripts Lie — Verify Manually</h4>
+    <p>Our Ceph benchmark script had a parsing bug that misreported IOPS. Always run a manual <code>rados bench</code> to validate automated results. The corrected numbers told a much better story than the buggy ones.</p>
+  </div>
+
+  <div class="info-box success">
+    <h4>✅ Document Everything</h4>
+    <p>The INFRA-BRAIN repository auto-generates agent-readable facts from live cluster snapshots. This has been invaluable for diagnosing issues and planning upgrades. Every OSD, every pool, every benchmark is tracked in version-controlled JSON.</p>
+  </div>
+
+  <div class="info-box success">
+    <h4>✅ You Don't Need Uniform Hardware</h4>
+    <p>This cluster runs 14 nodes with 4 different CPU generations, mixed RAM speeds, and 4 drive classes. It's stable, performant, and handles real research workloads. The secret is <strong>software-defined storage</strong> that abstracts the hardware away — Ceph and ZFS both excel at this. Don't let perfect be the enemy of good when it comes to homelab hardware.</p>
+  </div>
+</section>
+
+<!-- ═══════════════════ FOOTER ═══════════════════ -->
+<footer>
+  <p>Built with data from <a href="https://github.com/dagutman/Infra-brain">INFRA-BRAIN</a> · Last updated September 2026</p>
+  <p>Proxmox · Ceph Squid 19.2.4 · TrueNAS SCALE 25.04 · ZFS · QTS 5.2.x</p>
+  <p style="margin-top:.5rem">⚡ This is a living document — benchmarks and configs change as the cluster evolves</p>
+</footer>
+
+</div><!-- .container -->
+
+<script>
+// Show nav on scroll
+const nav = document.getElementById('nav');
+let lastScroll = 0;
+window.addEventListener('scroll', () => {
+  const y = window.scrollY;
+  if (y > 400) {
+    nav.classList.add('show');
+  } else {
+    nav.classList.remove('show');
+  }
+  lastScroll = y;
+});
+
+// Animate bars on scroll
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.style.width = entry.target.dataset.width || entry.target.style.width;
+    }
+  });
+});
+document.querySelectorAll('.bar').forEach(bar => {
+  const w = bar.style.width;
+  bar.dataset.width = w;
+  bar.style.width = '0%';
+  observer.observe(bar);
+});
+</script>
+
+</body>
+</html>
