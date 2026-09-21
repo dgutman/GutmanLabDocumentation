@@ -3,15 +3,53 @@ import Layout from "../layouts/Layout.astro";
 import { loadFragment } from "../lib/fragments";
 
 const html = loadFragment("the-blog-page");
+const BASE = import.meta.env.BASE_URL?.replace(/\/$/, "") || "";
+function link(href: string) {
+  return href === "/" ? BASE : BASE + href;
+}
+
+const posts = [
+  {
+    href: "/blog/icarus-optimization/",
+    title: "How 3 ZFS Settings Cost Us 11× Performance",
+    date: "September 17, 2026",
+    excerpt:
+      "A 503 GiB machine with 8 SSDs in mirror + NVMe special vdev was writing at 375 MiB/s. After three configuration changes and zero hardware swaps: 4,271 MiB/s. The full investigation and key ZFS tuning lessons.",
+    tags: ["TrueNAS", "ZFS", "Performance"],
+  },
+];
 ---
 
 <Layout title="Lab blog">
   <h1 class="page-title">Lab blog</h1>
+
+  {posts.length > 0 && (
+    <div class="post-list">
+      {posts.map((post) => (
+        <article class="post-item">
+          <h2>
+            <a href={link(post.href)}>{post.title}</a>
+          </h2>
+          <p class="post-meta">{post.date}</p>
+          <p class="post-excerpt">{post.excerpt}</p>
+          <div class="post-tags">
+            {post.tags.map((tag) => (
+              <span class="tag">{tag}</span>
+            ))}
+          </div>
+        </article>
+      ))}
+    </div>
+  )}
+
   {
     html ? (
-      <div class="content-recovered" set:html={html} />
+      <details style="margin-top: 2rem">
+        <summary>Archived blog posts (from WordPress)</summary>
+        <div class="content-recovered" set:html={html} />
+      </details>
     ) : (
-      <p class="placeholder">
+      <p class="placeholder" style="margin-top: 2rem">
         The original site linked to a WordPress blog. Recover archived posts with{" "}
         <code>npm run recover</code> (adds{" "}
         <code>the-blog-page.html.fragment</code> when available), or replace
@@ -20,3 +58,50 @@ const html = loadFragment("the-blog-page");
     )
   }
 </Layout>
+
+<style>
+  .post-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .post-item {
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .post-item:last-child {
+    border-bottom: none;
+  }
+
+  .post-item h2 {
+    margin-bottom: 0.25rem;
+  }
+
+  .post-meta {
+    color: var(--muted);
+    font-size: 0.85rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .post-excerpt {
+    line-height: 1.75;
+    margin-bottom: 0.5rem;
+  }
+
+  .post-tags {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+  }
+
+  .tag {
+    background: var(--border);
+    border-radius: 999px;
+    padding: 0.15em 0.6em;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--muted);
+  }
+</style>

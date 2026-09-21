@@ -1,0 +1,131 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="Dr. David Gutman is an assistant professor of Biomedical Informatics at Emory University focused on understanding genomic bases of biological imaging."><title>How 3 ZFS Settings Cost Us 11× Performance — and How We Found Them | The Gutman Lab</title><style>.blog-post[data-astro-cid-fzxcd7p3]{max-width:720px;margin:2rem auto;padding:0 1rem}.blog-post[data-astro-cid-fzxcd7p3] h1[data-astro-cid-fzxcd7p3]{font-size:2rem;line-height:1.25;margin-bottom:.25rem}.blog-meta[data-astro-cid-fzxcd7p3]{color:var(--muted);font-size:.85rem;margin-bottom:.5rem}.blog-dek[data-astro-cid-fzxcd7p3]{font-size:1.1rem;color:var(--muted);line-height:1.5;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid var(--border)}.blog-post[data-astro-cid-fzxcd7p3] h2[data-astro-cid-fzxcd7p3]{font-size:1.4rem;margin-top:2.5rem;margin-bottom:1rem}.blog-post[data-astro-cid-fzxcd7p3] h3[data-astro-cid-fzxcd7p3]{font-size:1.1rem;margin-top:1.5rem;margin-bottom:.5rem}.blog-post[data-astro-cid-fzxcd7p3] p[data-astro-cid-fzxcd7p3]{margin-bottom:1rem;line-height:1.75}.blog-post[data-astro-cid-fzxcd7p3] ul[data-astro-cid-fzxcd7p3],.blog-post[data-astro-cid-fzxcd7p3] ol[data-astro-cid-fzxcd7p3]{margin:0 0 1rem 1.5rem;line-height:1.75}.callout[data-astro-cid-fzxcd7p3]{background:#e8f4f0;border-left:4px solid var(--accent);padding:.75rem 1rem;margin:1rem 0;border-radius:0 6px 6px 0;font-size:.95rem}.results-table-wrap[data-astro-cid-fzxcd7p3]{overflow-x:auto;margin:1.5rem 0}.results-table[data-astro-cid-fzxcd7p3]{width:100%;border-collapse:collapse;font-size:.9rem}.results-table[data-astro-cid-fzxcd7p3] th[data-astro-cid-fzxcd7p3]{text-align:left;padding:.5rem .75rem;background:var(--border);font-weight:600}.results-table[data-astro-cid-fzxcd7p3] td[data-astro-cid-fzxcd7p3]{padding:.5rem .75rem;border-bottom:1px solid var(--border)}.results-table[data-astro-cid-fzxcd7p3] .num[data-astro-cid-fzxcd7p3]{text-align:right;font-variant-numeric:tabular-nums}.results-table[data-astro-cid-fzxcd7p3] .highlight[data-astro-cid-fzxcd7p3]{font-weight:700;color:var(--accent)}pre[data-astro-cid-fzxcd7p3]{background:#f0eee8;padding:1rem;border-radius:6px;overflow-x:auto;font-size:.85rem;line-height:1.5;margin:1rem 0}hr[data-astro-cid-fzxcd7p3]{border:none;border-top:1px solid var(--border);margin:2rem 0}.takeaways[data-astro-cid-fzxcd7p3] li[data-astro-cid-fzxcd7p3]{margin-bottom:1rem}@media(max-width:640px){.blog-post[data-astro-cid-fzxcd7p3] h1[data-astro-cid-fzxcd7p3]{font-size:1.5rem}}
+</style>
+<link rel="stylesheet" href="/GutmanLabDocumentation/_astro/blog.CsZJHcMv.css"></head> <body> <header class="site-header"> <div class="site-header__inner"> <h1 class="site-title"> <a href="/GutmanLabDocumentation">The Gutman Lab</a> </h1> <nav aria-label="Primary"> <ul class="site-nav"> <li> <a href="/GutmanLabDocumentation">Home</a> </li><li> <a href="/GutmanLabDocumentation/people/about/">People</a> </li><li> <a href="/GutmanLabDocumentation/research/">Research</a> </li><li> <a href="/GutmanLabDocumentation/publications/">Publications</a> </li><li> <a href="/GutmanLabDocumentation/resources/">Resources</a> </li><li> <a href="/GutmanLabDocumentation/blog/">Lab Blog</a> </li> </ul> </nav> </div> <div class="site-version">v0.6.0</div> </header> <main>  <article class="blog-post" data-astro-cid-fzxcd7p3> <header data-astro-cid-fzxcd7p3> <p class="blog-meta" data-astro-cid-fzxcd7p3>September 17, 2026 · David Gutman</p> <h1 data-astro-cid-fzxcd7p3>How 3 ZFS Settings Cost Us 11× Performance</h1> <p class="blog-dek" data-astro-cid-fzxcd7p3>
+A 503 GiB machine with 8 SSDs in mirror + NVMe special vdev + SLOG was
+        writing at <strong data-astro-cid-fzxcd7p3>375 MiB/s</strong>. After three configuration changes
+        and zero hardware swaps: <strong data-astro-cid-fzxcd7p3>4,271 MiB/s</strong>.
+</p> </header> <h2 data-astro-cid-fzxcd7p3>The Setup</h2> <p data-astro-cid-fzxcd7p3>
+Our TrueNAS SCALE host named <strong data-astro-cid-fzxcd7p3>Icarus</strong> serves the
+<code data-astro-cid-fzxcd7p3>daghome</code> pool — home directories, compute scratch, and shared
+      project data for a pathology research lab. The hardware looked great on
+      paper:
+</p> <ul data-astro-cid-fzxcd7p3> <li data-astro-cid-fzxcd7p3><strong data-astro-cid-fzxcd7p3>8 × SATA SSD</strong> in 4 mirror vdevs</li> <li data-astro-cid-fzxcd7p3><strong data-astro-cid-fzxcd7p3>2 × NVMe mirror</strong> as a special (metadata + small-block) vdev</li> <li data-astro-cid-fzxcd7p3><strong data-astro-cid-fzxcd7p3>1 × 120 GB Intel NVMe</strong> as a dedicated SLOG</li> <li data-astro-cid-fzxcd7p3><strong data-astro-cid-fzxcd7p3>503 GiB DDR4 ECC RAM</strong></li> <li data-astro-cid-fzxcd7p3>Dual 25 GbE networking, MTU 9000</li> </ul> <p data-astro-cid-fzxcd7p3>
+This should have been a beast. Sequential writes should have been in the
+      multiple-GB/s range. Instead, routine <code data-astro-cid-fzxcd7p3>rsync</code> jobs crawled,
+      NFS felt sluggish, and a simple fio sequential write benchmark confirmed
+      the bad news: <strong data-astro-cid-fzxcd7p3>375 MiB/s</strong>.
+</p> <p data-astro-cid-fzxcd7p3>
+That's about what a single SATA SSD can do, or one half of a 10 GbE link.
+      Something was very wrong.
+</p> <hr data-astro-cid-fzxcd7p3> <h2 data-astro-cid-fzxcd7p3>The Investigation</h2> <p data-astro-cid-fzxcd7p3>
+We ran a full fio suite and started peeling back layers. The
+      hardware wasn't faulty — <code data-astro-cid-fzxcd7p3>iostat</code> showed the 8 SATA SSDs
+      mostly idle during writes. The bottleneck was software.
+</p> <h3 data-astro-cid-fzxcd7p3>Bottleneck #1: <code data-astro-cid-fzxcd7p3>special_small_blocks=128K</code> + <code data-astro-cid-fzxcd7p3>recordsize=16K</code></h3> <p data-astro-cid-fzxcd7p3>
+TrueNAS's special vdev is meant for metadata and small-file data. The
+<code data-astro-cid-fzxcd7p3>special_small_blocks</code> tunable sets the size threshold —
+      anything at or below it goes to the special vdev instead of the main pool.
+      We had it set to <strong data-astro-cid-fzxcd7p3>128 KB</strong>.
+</p> <p data-astro-cid-fzxcd7p3>
+Our dataset's <code data-astro-cid-fzxcd7p3>recordsize</code> was <strong data-astro-cid-fzxcd7p3>16 KB</strong>. Every
+      file block (16 KB) was under the 128 KB threshold, so <strong data-astro-cid-fzxcd7p3>every
+      single write</strong> was diverted to the 2× NVMe special mirror. The 8×
+      SATA SSDs sat idle for writes. The special vdev — meant to accelerate
+      metadata — became the main write path and the bottleneck.
+</p> <div class="callout" data-astro-cid-fzxcd7p3> <strong data-astro-cid-fzxcd7p3>Fix:</strong> Set <code data-astro-cid-fzxcd7p3>special_small_blocks=0</code>. Now
+      metadata-only goes to NVMe, and data spreads across the main pool's 8
+      SSDs as intended.
+</div> <p data-astro-cid-fzxcd7p3><em data-astro-cid-fzxcd7p3>Result: 375 → 478 MiB/s (+27%)</em></p> <h3 data-astro-cid-fzxcd7p3>Bottleneck #2: <code data-astro-cid-fzxcd7p3>logbias=latency</code></h3> <p data-astro-cid-fzxcd7p3>
+The <code data-astro-cid-fzxcd7p3>logbias</code> property controls whether ZFS writes
+      synchronous data only (the default interpretation) or <strong data-astro-cid-fzxcd7p3>all</strong>
+data through the ZIL/SLOG. <code data-astro-cid-fzxcd7p3>logbias=latency</code> forces every write
+      — even asynchronous writes that should be aggregated in RAM and flushed
+      as large chunks — through the SLOG.
+</p> <p data-astro-cid-fzxcd7p3>
+Our SLOG was a single 120 GB Intel NVMe. Its sequential write throughput
+      tops out around 360 MB/s. With <code data-astro-cid-fzxcd7p3>logbias=latency</code>, every write
+      had to pass through that single device serially, creating a hard
+      ~360 MB/s ceiling regardless of how fast the main pool was.
+</p> <p data-astro-cid-fzxcd7p3>
+This setting is appropriate for NFS exports of database storage where
+      every write absolutely must survive a power loss. For home directories,
+      NFS file serving, and compute scratch, it's pure overhead.
+</p> <div class="callout" data-astro-cid-fzxcd7p3> <strong data-astro-cid-fzxcd7p3>Fix:</strong> Set <code data-astro-cid-fzxcd7p3>logbias=throughput</code>. Async writes
+      now bypass the ZIL entirely and aggregate into large transactions in RAM.
+</div> <p data-astro-cid-fzxcd7p3><em data-astro-cid-fzxcd7p3>Result: 375 → 524 MiB/s (+40% cumulative)</em></p> <h3 data-astro-cid-fzxcd7p3>Bottleneck #3: <code data-astro-cid-fzxcd7p3>zfs_dirty_data_max=4 GB</code></h3> <p data-astro-cid-fzxcd7p3>
+ZFS accumulates dirty (unwritten) data in RAM and flushes it in large
+      transaction groups. The <code data-astro-cid-fzxcd7p3>zfs_dirty_data_max</code> tunable caps how
+      much dirty data is allowed before the transaction group throttle kicks in
+      and starts blocking writes.
+</p> <p data-astro-cid-fzxcd7p3>
+Traditionally, OpenZFS defaults this to <strong data-astro-cid-fzxcd7p3>10% of RAM</strong> (about
+      50 GB on a 503 GiB machine). But TrueNAS SCALE ships with it hard-coded to
+<strong data-astro-cid-fzxcd7p3>4 GB</strong> — a paltry 0.8%. Why? Because TrueNAS used to run on
+      appliances with 8-16 GB of RAM where 10% made sense. SCALE inherited that
+      default, and nobody changed it for large-memory deployments.
+</p> <p data-astro-cid-fzxcd7p3>
+With 503 GiB of RAM and a 4 GB cap, ZFS was constantly hitting its
+      throttle. Dirty data would accumulate in 5-10 seconds, block new writes
+      until the TXG flushed, then repeat. Bulk write throughput was limited not
+      by the SSDs or the network, but by ZFS's own write-throttling mechanism.
+</p> <div class="callout" data-astro-cid-fzxcd7p3> <strong data-astro-cid-fzxcd7p3>Fix:</strong> Set <code data-astro-cid-fzxcd7p3>zfs_dirty_data_max=32 GB</code> (about 6%
+      of RAM). For write-heavy workloads, 10-20% would be fine.
+</div> <p data-astro-cid-fzxcd7p3><em data-astro-cid-fzxcd7p3>Result: 524 → 4,271 MiB/s (+1,039% cumulative)</em></p> <hr data-astro-cid-fzxcd7p3> <h2 data-astro-cid-fzxcd7p3>The Results</h2> <div class="results-table-wrap" data-astro-cid-fzxcd7p3> <table class="results-table" data-astro-cid-fzxcd7p3> <thead data-astro-cid-fzxcd7p3> <tr data-astro-cid-fzxcd7p3> <th data-astro-cid-fzxcd7p3>Configuration</th> <th data-astro-cid-fzxcd7p3>Sequential Write</th> <th data-astro-cid-fzxcd7p3>vs. Baseline</th> </tr> </thead> <tbody data-astro-cid-fzxcd7p3> <tr data-astro-cid-fzxcd7p3> <td data-astro-cid-fzxcd7p3>Original (all 3 bottlenecks)</td> <td class="num" data-astro-cid-fzxcd7p3>375 MiB/s</td> <td class="num" data-astro-cid-fzxcd7p3>—</td> </tr> <tr data-astro-cid-fzxcd7p3> <td data-astro-cid-fzxcd7p3>After <code data-astro-cid-fzxcd7p3>special_small_blocks=0</code></td> <td class="num" data-astro-cid-fzxcd7p3>478 MiB/s</td> <td class="num" data-astro-cid-fzxcd7p3>+27%</td> </tr> <tr data-astro-cid-fzxcd7p3> <td data-astro-cid-fzxcd7p3>After <code data-astro-cid-fzxcd7p3>logbias=throughput</code></td> <td class="num" data-astro-cid-fzxcd7p3>524 MiB/s</td> <td class="num" data-astro-cid-fzxcd7p3>+40%</td> </tr> <tr data-astro-cid-fzxcd7p3> <td data-astro-cid-fzxcd7p3>After <code data-astro-cid-fzxcd7p3>dirty_data=8 GB</code></td> <td class="num" data-astro-cid-fzxcd7p3>568 MiB/s</td> <td class="num" data-astro-cid-fzxcd7p3>+51%</td> </tr> <tr data-astro-cid-fzxcd7p3> <td data-astro-cid-fzxcd7p3>After <code data-astro-cid-fzxcd7p3>dirty_data=32 GB</code></td> <td class="num highlight" data-astro-cid-fzxcd7p3>4,271 MiB/s</td> <td class="num highlight" data-astro-cid-fzxcd7p3>+1,039%</td> </tr> </tbody> </table> </div> <p data-astro-cid-fzxcd7p3>
+That's an <strong data-astro-cid-fzxcd7p3>11× improvement</strong> from three configuration
+      changes. No hardware was swapped. No drivers were updated. No cables were
+      reseated. Just ZFS parameters that had been inadvertently misconfigured
+      by a combination of defaults and well-intentioned but wrong settings.
+</p> <p data-astro-cid-fzxcd7p3>
+We also benchmarked with <code data-astro-cid-fzxcd7p3>psync</code> (NFS-like sync writes) to
+      simulate real-world workload patterns. The optimized pool hit
+<strong data-astro-cid-fzxcd7p3>1,549 MiB/s</strong> — enough to saturate a 25 GbE link.
+</p> <h3 data-astro-cid-fzxcd7p3>Random Read IOPS</h3> <p data-astro-cid-fzxcd7p3>
+After the fix, 4K random reads hit <strong data-astro-cid-fzxcd7p3>621,000 IOPS</strong> at
+      2,424 MiB/s, and mixed 70/30 read/write sustained
+<strong data-astro-cid-fzxcd7p3>54,800 read + 23,500 write IOPS</strong>. The pool is now
+      extremely capable for both bulk throughput and metadata-heavy workloads.
+</p> <hr data-astro-cid-fzxcd7p3> <h2 data-astro-cid-fzxcd7p3>Key Takeaways</h2> <ol class="takeaways" data-astro-cid-fzxcd7p3> <li data-astro-cid-fzxcd7p3> <strong data-astro-cid-fzxcd7p3><code data-astro-cid-fzxcd7p3>special_small_blocks</code> is powerful but dangerous.</strong>
+Combined with a small <code data-astro-cid-fzxcd7p3>recordsize</code>, it can accidentally turn
+        your metadata accelerator into your main write path and biggest bottleneck.
+        Set it to 0 unless you know exactly what you're doing and have tested
+        the workload.
+</li> <li data-astro-cid-fzxcd7p3> <strong data-astro-cid-fzxcd7p3><code data-astro-cid-fzxcd7p3>logbias=latency</code> is for databases, not file servers.</strong>
+Use it only when every write must survive a power loss. For NFS home
+        directories, SMB shares, and compute scratch, <code data-astro-cid-fzxcd7p3>throughput</code>
+is almost always correct.
+</li> <li data-astro-cid-fzxcd7p3> <strong data-astro-cid-fzxcd7p3>TrueNAS SCALE ships with zfs_dirty_data_max=4 GB.</strong>
+On machines with more than 64 GB of RAM, this is insanely conservative.
+        Raise it to at least 10% of RAM for write-heavy workloads. On our
+        503 GiB machine, going from 4 GB → 32 GB was the single biggest
+        performance lever.
+</li> <li data-astro-cid-fzxcd7p3> <strong data-astro-cid-fzxcd7p3>Benchmark with the right access pattern.</strong> <code data-astro-cid-fzxcd7p3>direct=1</code> (bypasses ARC/page cache) and <code data-astro-cid-fzxcd7p3>psync</code>
+(simulates NFS behavior) can give wildly different results. Test your
+        actual workload, not a synthetic best-case.
+</li> <li data-astro-cid-fzxcd7p3> <strong data-astro-cid-fzxcd7p3>Verify your defaults.</strong> TrueNAS makes reasonable
+        assumptions for embedded appliances. On server-class hardware, many
+        of those assumptions are wrong. Profile before you assume it's
+        "fine."
+</li> </ol> <hr data-astro-cid-fzxcd7p3> <h2 data-astro-cid-fzxcd7p3>How to Check Your Own System</h2> <p data-astro-cid-fzxcd7p3>Run these on your TrueNAS or vanilla ZFS system:</p> <pre data-astro-cid-fzxcd7p3><code data-astro-cid-fzxcd7p3># Check current settings
+zfs get special_small_blocks <dataset data-astro-cid-fzxcd7p3>
+zfs get logbias <dataset data-astro-cid-fzxcd7p3>
+echo "zfs_dirty_data_max = $(cat /sys/module/zfs/parameters/zfs_dirty_data_max)"
+
+# Permanent fix (on TrueNAS SCALE, add to System → Tunables):
+# special_small_blocks=0
+# zfs_dirty_data_max=34359738368  (32 GB — adjust for your RAM)
+</dataset></dataset></code></pre> <p data-astro-cid-fzxcd7p3>
+The <code data-astro-cid-fzxcd7p3>logbias</code> change is a dataset property, so apply it to
+      individual datasets. Home directories and general-purpose shares should
+      use <code data-astro-cid-fzxcd7p3>throughput</code>. Databases and iSCSI LUNs can stay on
+<code data-astro-cid-fzxcd7p3>latency</code>.
+</p> <hr data-astro-cid-fzxcd7p3> <h2 data-astro-cid-fzxcd7p3>What's Next</h2> <p data-astro-cid-fzxcd7p3>
+We're running similar tuning on our other TrueNAS hosts (brainhost,
+      gauss, scratchy). Early results suggest the <code data-astro-cid-fzxcd7p3>zfs_dirty_data_max</code>
+fix helps all of them, while <code data-astro-cid-fzxcd7p3>special_small_blocks</code> and
+<code data-astro-cid-fzxcd7p3>logbias</code> corrections are dataset-specific.
+</p> <p data-astro-cid-fzxcd7p3>
+For more on our infrastructure, see the
+<a href="/GutmanLabDocumentation/frankencluster/" data-astro-cid-fzxcd7p3>full Frankencluster write-up</a>,
+      which covers the Proxmox+Ceph cluster, all four TrueNAS hosts, and
+      comprehensive benchmark results across every storage tier.
+</p> </article>  </main> <footer class="site-footer"> <p>© 2026 The Gutman Lab. Content recovered from archived drgutman.org pages.</p> </footer> </body></html> 

@@ -1,0 +1,408 @@
+---
+import Layout from "../../layouts/Layout.astro";
+
+const BASE = import.meta.env.BASE_URL?.replace(/\/$/, "") || "";
+function link(href: string) {
+  return href === "/" ? BASE : BASE + href;
+}
+---
+
+<Layout title="How 3 ZFS Settings Cost Us 11× Performance — and How We Found Them">
+  <article class="blog-post">
+    <header>
+      <p class="blog-meta">September 17, 2026 · David Gutman</p>
+      <h1>How 3 ZFS Settings Cost Us 11× Performance</h1>
+      <p class="blog-dek">
+        A 503 GiB machine with 8 SSDs in mirror + NVMe special vdev + SLOG was
+        writing at <strong>375 MiB/s</strong>. After three configuration changes
+        and zero hardware swaps: <strong>4,271 MiB/s</strong>.
+      </p>
+    </header>
+
+    <h2>The Setup</h2>
+
+    <p>
+      Our TrueNAS SCALE host named <strong>Icarus</strong> serves the
+      <code>daghome</code> pool — home directories, compute scratch, and shared
+      project data for a pathology research lab. The hardware looked great on
+      paper:
+    </p>
+
+    <ul>
+      <li><strong>8 × SATA SSD</strong> in 4 mirror vdevs</li>
+      <li><strong>2 × NVMe mirror</strong> as a special (metadata + small-block) vdev</li>
+      <li><strong>1 × 120 GB Intel NVMe</strong> as a dedicated SLOG</li>
+      <li><strong>503 GiB DDR4 ECC RAM</strong></li>
+      <li>Dual 25 GbE networking, MTU 9000</li>
+    </ul>
+
+    <p>
+      This should have been a beast. Sequential writes should have been in the
+      multiple-GB/s range. Instead, routine <code>rsync</code> jobs crawled,
+      NFS felt sluggish, and a simple fio sequential write benchmark confirmed
+      the bad news: <strong>375 MiB/s</strong>.
+    </p>
+
+    <p>
+      That's about what a single SATA SSD can do, or one half of a 10 GbE link.
+      Something was very wrong.
+    </p>
+
+    <hr />
+
+    <h2>The Investigation</h2>
+
+    <p>
+      We ran a full fio suite and started peeling back layers. The
+      hardware wasn't faulty — <code>iostat</code> showed the 8 SATA SSDs
+      mostly idle during writes. The bottleneck was software.
+    </p>
+
+    <h3>Bottleneck #1: <code>special_small_blocks=128K</code> + <code>recordsize=16K</code></h3>
+
+    <p>
+      TrueNAS's special vdev is meant for metadata and small-file data. The
+      <code>special_small_blocks</code> tunable sets the size threshold —
+      anything at or below it goes to the special vdev instead of the main pool.
+      We had it set to <strong>128 KB</strong>.
+    </p>
+
+    <p>
+      Our dataset's <code>recordsize</code> was <strong>16 KB</strong>. Every
+      file block (16 KB) was under the 128 KB threshold, so <strong>every
+      single write</strong> was diverted to the 2× NVMe special mirror. The 8×
+      SATA SSDs sat idle for writes. The special vdev — meant to accelerate
+      metadata — became the main write path and the bottleneck.
+    </p>
+
+    <div class="callout">
+      <strong>Fix:</strong> Set <code>special_small_blocks=0</code>. Now
+      metadata-only goes to NVMe, and data spreads across the main pool's 8
+      SSDs as intended.
+    </div>
+
+    <p><em>Result: 375 → 478 MiB/s (+27%)</em></p>
+
+    <h3>Bottleneck #2: <code>logbias=latency</code></h3>
+
+    <p>
+      The <code>logbias</code> property controls whether ZFS writes
+      synchronous data only (the default interpretation) or <strong>all</strong>
+      data through the ZIL/SLOG. <code>logbias=latency</code> forces every write
+      — even asynchronous writes that should be aggregated in RAM and flushed
+      as large chunks — through the SLOG.
+    </p>
+
+    <p>
+      Our SLOG was a single 120 GB Intel NVMe. Its sequential write throughput
+      tops out around 360 MB/s. With <code>logbias=latency</code>, every write
+      had to pass through that single device serially, creating a hard
+      ~360 MB/s ceiling regardless of how fast the main pool was.
+    </p>
+
+    <p>
+      This setting is appropriate for NFS exports of database storage where
+      every write absolutely must survive a power loss. For home directories,
+      NFS file serving, and compute scratch, it's pure overhead.
+    </p>
+
+    <div class="callout">
+      <strong>Fix:</strong> Set <code>logbias=throughput</code>. Async writes
+      now bypass the ZIL entirely and aggregate into large transactions in RAM.
+    </div>
+
+    <p><em>Result: 375 → 524 MiB/s (+40% cumulative)</em></p>
+
+    <h3>Bottleneck #3: <code>zfs_dirty_data_max=4 GB</code></h3>
+
+    <p>
+      ZFS accumulates dirty (unwritten) data in RAM and flushes it in large
+      transaction groups. The <code>zfs_dirty_data_max</code> tunable caps how
+      much dirty data is allowed before the transaction group throttle kicks in
+      and starts blocking writes.
+    </p>
+
+    <p>
+      Traditionally, OpenZFS defaults this to <strong>10% of RAM</strong> (about
+      50 GB on a 503 GiB machine). But TrueNAS SCALE ships with it hard-coded to
+      <strong>4 GB</strong> — a paltry 0.8%. Why? Because TrueNAS used to run on
+      appliances with 8-16 GB of RAM where 10% made sense. SCALE inherited that
+      default, and nobody changed it for large-memory deployments.
+    </p>
+
+    <p>
+      With 503 GiB of RAM and a 4 GB cap, ZFS was constantly hitting its
+      throttle. Dirty data would accumulate in 5-10 seconds, block new writes
+      until the TXG flushed, then repeat. Bulk write throughput was limited not
+      by the SSDs or the network, but by ZFS's own write-throttling mechanism.
+    </p>
+
+    <div class="callout">
+      <strong>Fix:</strong> Set <code>zfs_dirty_data_max=32 GB</code> (about 6%
+      of RAM). For write-heavy workloads, 10-20% would be fine.
+    </div>
+
+    <p><em>Result: 524 → 4,271 MiB/s (+1,039% cumulative)</em></p>
+
+    <hr />
+
+    <h2>The Results</h2>
+
+    <div class="results-table-wrap">
+      <table class="results-table">
+        <thead>
+          <tr>
+            <th>Configuration</th>
+            <th>Sequential Write</th>
+            <th>vs. Baseline</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Original (all 3 bottlenecks)</td>
+            <td class="num">375 MiB/s</td>
+            <td class="num">—</td>
+          </tr>
+          <tr>
+            <td>After <code>special_small_blocks=0</code></td>
+            <td class="num">478 MiB/s</td>
+            <td class="num">+27%</td>
+          </tr>
+          <tr>
+            <td>After <code>logbias=throughput</code></td>
+            <td class="num">524 MiB/s</td>
+            <td class="num">+40%</td>
+          </tr>
+          <tr>
+            <td>After <code>dirty_data=8 GB</code></td>
+            <td class="num">568 MiB/s</td>
+            <td class="num">+51%</td>
+          </tr>
+          <tr>
+            <td>After <code>dirty_data=32 GB</code></td>
+            <td class="num highlight">4,271 MiB/s</td>
+            <td class="num highlight">+1,039%</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>
+      That's an <strong>11× improvement</strong> from three configuration
+      changes. No hardware was swapped. No drivers were updated. No cables were
+      reseated. Just ZFS parameters that had been inadvertently misconfigured
+      by a combination of defaults and well-intentioned but wrong settings.
+    </p>
+
+    <p>
+      We also benchmarked with <code>psync</code> (NFS-like sync writes) to
+      simulate real-world workload patterns. The optimized pool hit
+      <strong>1,549 MiB/s</strong> — enough to saturate a 25 GbE link.
+    </p>
+
+    <h3>Random Read IOPS</h3>
+    <p>
+      After the fix, 4K random reads hit <strong>621,000 IOPS</strong> at
+      2,424 MiB/s, and mixed 70/30 read/write sustained
+      <strong>54,800 read + 23,500 write IOPS</strong>. The pool is now
+      extremely capable for both bulk throughput and metadata-heavy workloads.
+    </p>
+
+    <hr />
+
+    <h2>Key Takeaways</h2>
+
+    <ol class="takeaways">
+      <li>
+        <strong><code>special_small_blocks</code> is powerful but dangerous.</strong>
+        Combined with a small <code>recordsize</code>, it can accidentally turn
+        your metadata accelerator into your main write path and biggest bottleneck.
+        Set it to 0 unless you know exactly what you're doing and have tested
+        the workload.
+      </li>
+      <li>
+        <strong><code>logbias=latency</code> is for databases, not file servers.</strong>
+        Use it only when every write must survive a power loss. For NFS home
+        directories, SMB shares, and compute scratch, <code>throughput</code>
+        is almost always correct.
+      </li>
+      <li>
+        <strong>TrueNAS SCALE ships with zfs_dirty_data_max=4 GB.</strong>
+        On machines with more than 64 GB of RAM, this is insanely conservative.
+        Raise it to at least 10% of RAM for write-heavy workloads. On our
+        503 GiB machine, going from 4 GB → 32 GB was the single biggest
+        performance lever.
+      </li>
+      <li>
+        <strong>Benchmark with the right access pattern.</strong>
+        <code>direct=1</code> (bypasses ARC/page cache) and <code>psync</code>
+        (simulates NFS behavior) can give wildly different results. Test your
+        actual workload, not a synthetic best-case.
+      </li>
+      <li>
+        <strong>Verify your defaults.</strong> TrueNAS makes reasonable
+        assumptions for embedded appliances. On server-class hardware, many
+        of those assumptions are wrong. Profile before you assume it's
+        "fine."
+      </li>
+    </ol>
+
+    <hr />
+
+    <h2>How to Check Your Own System</h2>
+
+    <p>Run these on your TrueNAS or vanilla ZFS system:</p>
+
+    <pre><code># Check current settings
+zfs get special_small_blocks <dataset>
+zfs get logbias <dataset>
+echo "zfs_dirty_data_max = $(cat /sys/module/zfs/parameters/zfs_dirty_data_max)"
+
+# Permanent fix (on TrueNAS SCALE, add to System → Tunables):
+# special_small_blocks=0
+# zfs_dirty_data_max=34359738368  (32 GB — adjust for your RAM)
+</code></pre>
+
+    <p>
+      The <code>logbias</code> change is a dataset property, so apply it to
+      individual datasets. Home directories and general-purpose shares should
+      use <code>throughput</code>. Databases and iSCSI LUNs can stay on
+      <code>latency</code>.
+    </p>
+
+    <hr />
+
+    <h2>What's Next</h2>
+
+    <p>
+      We're running similar tuning on our other TrueNAS hosts (brainhost,
+      gauss, scratchy). Early results suggest the <code>zfs_dirty_data_max</code>
+      fix helps all of them, while <code>special_small_blocks</code> and
+      <code>logbias</code> corrections are dataset-specific.
+    </p>
+
+    <p>
+      For more on our infrastructure, see the
+      <a href={link("/frankencluster/")}>full Frankencluster write-up</a>,
+      which covers the Proxmox+Ceph cluster, all four TrueNAS hosts, and
+      comprehensive benchmark results across every storage tier.
+    </p>
+  </article>
+</Layout>
+
+<style>
+  .blog-post {
+    max-width: 720px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+  }
+
+  .blog-post h1 {
+    font-size: 2rem;
+    line-height: 1.25;
+    margin-bottom: 0.25rem;
+  }
+
+  .blog-meta {
+    color: var(--muted);
+    font-size: 0.85rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .blog-dek {
+    font-size: 1.1rem;
+    color: var(--muted);
+    line-height: 1.5;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .blog-post h2 {
+    font-size: 1.4rem;
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .blog-post h3 {
+    font-size: 1.1rem;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .blog-post p {
+    margin-bottom: 1rem;
+    line-height: 1.75;
+  }
+
+  .blog-post ul, .blog-post ol {
+    margin: 0 0 1rem 1.5rem;
+    line-height: 1.75;
+  }
+
+  .callout {
+    background: #e8f4f0;
+    border-left: 4px solid var(--accent);
+    padding: 0.75rem 1rem;
+    margin: 1rem 0;
+    border-radius: 0 6px 6px 0;
+    font-size: 0.95rem;
+  }
+
+  .results-table-wrap {
+    overflow-x: auto;
+    margin: 1.5rem 0;
+  }
+
+  .results-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+
+  .results-table th {
+    text-align: left;
+    padding: 0.5rem 0.75rem;
+    background: var(--border);
+    font-weight: 600;
+  }
+
+  .results-table td {
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .results-table .num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .results-table .highlight {
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  pre {
+    background: #f0eee8;
+    padding: 1rem;
+    border-radius: 6px;
+    overflow-x: auto;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    margin: 1rem 0;
+  }
+
+  hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 2rem 0;
+  }
+
+  .takeaways li {
+    margin-bottom: 1rem;
+  }
+
+  @media (max-width: 640px) {
+    .blog-post h1 { font-size: 1.5rem; }
+  }
+</style>
