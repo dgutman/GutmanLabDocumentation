@@ -30,5 +30,14 @@ const pageTitle = title === siteTitle ? title : `${title} | ${siteTitle}`;
       <slot />
     </main>
     <Footer />
+
+    {
+      false && (
+        <script
+          data-goatcounter="https://your-code.goatcounter.com/count"
+          async src="//gc.zgo.at/count.js"
+        />
+      )
+    }
   </body>
 </html>

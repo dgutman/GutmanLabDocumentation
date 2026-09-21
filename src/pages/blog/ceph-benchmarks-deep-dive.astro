@@ -1,0 +1,503 @@
+---
+import Layout from "../../layouts/Layout.astro";
+
+const BASE = import.meta.env.BASE_URL?.replace(/\/$/, "") || "";
+function link(href: string) {
+  return href === "/" ? BASE : BASE + href;
+}
+---
+
+<Layout title="Ceph Benchmarks Deep Dive — What 99 OSDs Across 4 Storage Classes Deliver">
+  <article class="blog-post">
+    <header>
+      <p class="blog-meta">September 20, 2026 · David Gutman</p>
+      <h1>Ceph Benchmarks Deep Dive</h1>
+      <p class="blog-dek">
+        Real-world rados bench results for a heterogeneous Ceph cluster running
+        HDD, SSD, NVMe, and Optane-backed OSDs — with 3× replication, MTU 9000,
+        and the benchmark bugs that nearly sent us down the wrong path.
+      </p>
+    </header>
+
+    <h2>The Cluster</h2>
+
+    <p>
+      Our main Ceph cluster (<strong>pmoxprime</strong>) runs Ceph Squid 19.2.4
+      across 14 Proxmox nodes. It's the opposite of a uniform deployment — 99
+      OSDs spread across four device classes with a CRUSH hierarchy designed to
+      keep each tier isolated:
+    </p>
+
+    <table class="data-table">
+      <thead>
+        <tr><th>Tier</th><th>OSDs</th><th>Device</th><th>Pools</th><th>Target Workload</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>HDD</strong></td><td>53</td><td>6–12 TB SATA (Seagate)</td><td>ceph_bulk, cephfs_images_bulk, profile_hdd</td><td>Capacity — bulk storage, WSI archive</td></tr>
+        <tr><td><strong>SSD</strong></td><td>28</td><td>3.49 TB SATA (Samsung/Micron)</td><td>ceph_ssd</td><td>Balanced — general-purpose VM storage</td></tr>
+        <tr><td><strong>NVMe</strong></td><td>10</td><td>1.6 TB Intel P3600</td><td>ceph_nvme, profile_nvme</td><td>Performance — low latency, high IOPS</td></tr>
+        <tr><td><strong>Optane-Backed</strong></td><td>8</td><td>3.49 TB SATA SSD + 64 GB NVMe DB</td><td>ceph_optane</td><td>Low-latency — metadata-heavy workloads</td></tr>
+      </tbody>
+    </table>
+
+    <p>
+      The key architectural decision: <strong>every HDD has its WAL on NVMe</strong>
+      via BlueFS dedicated DB. The SSDoptane class pairs a SATA SSD data device
+      with a dedicated 64 GB NVMe partition for BlueFS DB, with WAL co-located.
+      This offload architecture is what makes the HDD tier competitive for small
+      writes.
+    </p>
+
+    <hr />
+
+    <h2>Benchmark Methodology</h2>
+
+    <p>
+      All numbers here come from <code>rados bench</code> — Ceph's built-in
+      benchmarking tool. Parameters:
+    </p>
+
+    <ul>
+      <li>30-second test duration per object size</li>
+      <li>16 concurrent threads (limited by rados bench defaults)</li>
+      <li>3× replication across all pools (size=3, min_size=2)</li>
+      <li>MTU 9000 on the Ceph public and cluster networks</li>
+      <li>Tests run from a monitor node (triton) against dedicated profile pools</li>
+    </ul>
+
+    <div class="callout warn">
+      <strong>⚠️ Important caveats:</strong> rados bench uses a single OSD
+      thread per rados instance and limited queue depth. These numbers
+      <em>underreport</em> what the drives can do compared to a properly
+      multi-threaded workload. They're useful for comparing tiers, not for
+      absolute drive benchmarking. True peak performance would be 2-4× higher
+      with optimal queue depth and parallel rados instances.
+    </div>
+
+    <hr />
+
+    <h2>Large Object Performance (4 MB)</h2>
+
+    <p>
+      For large sequential objects, the network is often the bottleneck, not
+      the drives. Here's how each tier compares:
+    </p>
+
+    <table class="data-table">
+      <thead>
+        <tr><th>Class</th><th>Write BW</th><th>Write IOPS</th><th>Read BW</th><th>Read IOPS</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>NVMe</strong></td>
+        <td class="num">1,175 MB/s</td>
+        <td class="num">293</td>
+        <td class="num accent">1,175 MB/s</td>
+        <td class="num">294</td>
+      </tr>
+      <tr>
+        <td><strong>SSD</strong></td>
+        <td class="num">431 MB/s</td>
+        <td class="num">107</td>
+        <td class="num accent">1,170 MB/s</td>
+        <td class="num">292</td>
+      </tr>
+      <tr>
+        <td><strong>HDD</strong></td>
+        <td class="num">346 MB/s</td>
+        <td class="num">86</td>
+        <td class="num">852 MB/s</td>
+        <td class="num">213</td>
+      </tr>
+    </tbody>
+    </table>
+
+    <div class="callout">
+      <strong>📊 Key observation:</strong> SSD and NVMe reads are virtually
+      identical at ~1,170 MB/s — both saturate the 25 GbE network. HDD reads
+      at 852 MB/s, which is excellent for spinning rust and reflects the DB/WAL
+      offload doing its job. Write throughput tells a different story: the
+      NVMe tier writes at 2.7× the SSD tier, and the HDD tier holds its own at
+      346 MB/s — about 80% of the SSD write rate.
+    </div>
+
+    <hr />
+
+    <h2>Small Object IOPS (4 KB) — Where Tiers Actually Separate</h2>
+
+    <p>
+      This is the test that reveals real performance differences. Small-object
+      IOPS are dominated by seek time, controller overhead, and the effectiveness
+      of the BlueFS DB/WAL offload:
+    </p>
+
+    <table class="data-table">
+      <thead>
+        <tr><th>Class</th><th>Write BW</th><th>Write IOPS</th><th>Read BW</th><th>Read IOPS</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>NVMe</strong></td>
+          <td class="num">32.5 MB/s</td>
+          <td class="num highlight">8,320</td>
+          <td class="num">125 MB/s</td>
+          <td class="num highlight">32,024</td>
+        </tr>
+        <tr>
+          <td><strong>SSD</strong></td>
+          <td class="num">7.8 MB/s</td>
+          <td class="num">1,999</td>
+          <td class="num accent">147 MB/s</td>
+          <td class="num highlight">37,629</td>
+        </tr>
+        <tr>
+          <td><strong>HDD</strong></td>
+          <td class="num">9.0 MB/s</td>
+          <td class="num highlight-alt">2,299</td>
+          <td class="num">94 MB/s</td>
+          <td class="num">23,988</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="callout">
+      <strong>🔍 The HDD surprise:</strong> HDDs achieve <strong>2,299 write
+      IOPS</strong> — <em>higher</em> than SATA SSDs at 1,999 IOPS. This is
+      entirely due to the NVMe WAL offload. The write penalty of spinning
+      rust is almost eliminated because small writes land on the NVMe WAL
+      and are committed asynchronously. For read IOPS, SSDs lead at 37,629
+      vs HDD's 23,988 — a narrower gap than you'd expect, again thanks to
+      the NVMe DB accelerating metadata lookups.
+    </div>
+
+    <h3>Understanding the NVMe Write IOPS Number</h3>
+
+    <p>
+      8,320 write IOPS might seem low for NVMe. Here's the context:
+    </p>
+
+    <ul>
+      <li><strong>3× replication:</strong> every write to Ceph is stored on three OSDs. The raw drive write IOPS is ~25,000 per drive — reasonable for Intel P3600 (PCIe 3.0) drives from 2015.</li>
+      <li><strong>rados bench at 16 threads</strong> is the bottleneck here. These NVMe drives can handle queue depths of 64–128+. With a properly tuned workload, expect 2-3× these numbers.</li>
+      <li><strong>32 PGs for 8 OSDs</strong> limits parallelism. Increasing to 128–256 PGs would distribute load better.</li>
+      <li><strong>The Intel P3600</strong> is a PCIe 3.0 enterprise NVMe drive — good for its era (~2,600 MB/s sequential, ~460K random read IOPS at QD128), but not a modern Gen 4 drive.</li>
+    </ul>
+
+    <hr />
+
+    <h2>Read Performance: Sequential vs Random</h2>
+
+    <p>
+      An interesting detail: Ceph's <code>rados bench</code> with sequential and
+      random read flags showed <strong>identical performance</strong> for 4 MB
+      objects across all tiers. This makes sense — at 4 MB objects with 3×
+      replication, Ceph's CRUSH distribution spreads the replicas across OSDs
+      such that sequential access patterns don't give the read head a meaningful
+      advantage. The bottleneck is network throughput, not disk seek:
+    </p>
+
+    <table class="data-table">
+      <thead>
+        <tr><th>Class</th><th>Seq Read (4 MB)</th><th>Rand Read (4 MB)</th><th>Difference</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>NVMe</td><td class="num">1,175 MB/s</td><td class="num">1,175 MB/s</td><td>0%</td></tr>
+        <tr><td>SSD</td><td class="num">1,170 MB/s</td><td class="num">1,170 MB/s</td><td>0%</td></tr>
+        <tr><td>HDD</td><td class="num">852 MB/s</td><td class="num">852 MB/s</td><td>0%</td></tr>
+      </tbody>
+    </table>
+
+    <p>
+      For 4 KB objects, random reads were slightly slower than sequential — the
+      HDD tier dropped from ~24K to ~19K IOPS — but the gap was smaller than
+      we expected, again reflecting the DB/WAL offload absorbing the rotational
+      penalty.
+    </p>
+
+    <hr />
+
+    <h2>The Benchmark Bug That Almost Derailed Us</h2>
+
+    <p>
+      An important meta-lesson: our automated benchmark script was <strong>wrong</strong>
+      for weeks. The script parsed <code>rados bench</code> output looking for
+      <code>"IOPS:"</code>, but the actual output uses <code>"Average IOPS:"</code>.
+      Every IOPS value the script reported was silently zero or incorrect.
+    </p>
+
+    <p>
+      We discovered this when manual <code>rados bench</code> runs gave completely
+      different — and much better — numbers. The lesson: <strong>always verify
+      automated benchmark results with manual runs</strong>. A parsing bug can
+      hide for months if nobody questions the output.
+    </p>
+
+    <p>
+      The corrected numbers told a much better story. The HDD tier went from
+      looking mediocre to genuinely impressive once the DB/WAL offload was
+      properly reflected in the IOPS figures.
+    </p>
+
+    <hr />
+
+    <h2>MTU 9000: The 10× Improvement</h2>
+
+    <p>
+      Early in the cluster's life, we ran with standard MTU 1500 on the Ceph
+      network. After switching to MTU 9000 (jumbo frames), we saw dramatic
+      improvements — roughly <strong>10× for small-block workloads</strong> and
+      significant gains for large-block transfers.
+    </p>
+
+    <p>
+      The mechanism: with MTU 9000, each Ethernet frame carries 6× more payload.
+      For a 4 MB write, that's ~290 frames instead of ~2,800 at MTU 1500. Less
+      CPU time spent on interrupt handling, fewer context switches, and the
+      25 GbE links can actually reach line rate instead of being frame-bound.
+    </p>
+
+    <p>
+      Every Ceph node in our cluster now has MTU 9000 on dedicated storage
+      VLANs (172.16.25.0/24 for Ceph backup, 192.168.24.0/24 for Ceph public
+      where configured). The one lesson: <strong>verify end-to-end</strong> —
+      a single misconfigured switch port will cause packet loss and
+      performance degradation that's hard to diagnose.
+    </p>
+
+    <hr />
+
+    <h2>Optane-Backed Tier: Work in Progress</h2>
+
+    <p>
+      The SSDoptane class (8 OSDs) pairs SATA SSDs with dedicated 64 GB NVMe
+      partitions for BlueFS DB. We haven't published benchmark numbers for this
+      tier yet because early tests revealed <strong>configuration issues</strong>
+      with the pool that skewed results. The pool is being rebuilt for proper
+      characterization.
+    </p>
+
+    <p>
+      What we expect: the 64 GB NVMe DB device should accelerate metadata
+      operations and small writes dramatically compared to the plain SSD tier,
+      while the SATA SSD provides 3.49 TB of capacity per OSD. This tier should
+      slot between SSD and NVMe in the latency hierarchy — close to NVMe for
+      metadata-heavy workloads, close to SSD for bulk throughput.
+    </p>
+
+    <hr />
+
+    <h2>Cluster-Wide Summary</h2>
+
+    <table class="data-table">
+      <thead>
+        <tr><th>Metric</th><th>Value</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Ceph Version</td><td>Squid 19.2.4</td></tr>
+        <tr><td>Total OSDs</td><td>99 (53 HDD + 28 SSD + 10 NVMe + 8 Optane-backed)</td></tr>
+        <tr><td>Raw Capacity</td><td>~451 TiB total, ~345 TiB available</td></tr>
+        <tr><td>Placement Groups</td><td>1,601 (all active+clean)</td></tr>
+        <tr><td>Pools</td><td>12 (5 replicated + 1 erasure-coded + profile/test pools)</td></tr>
+        <tr><td>CRUSH Rules</td><td>9 (4 device-class + 3 replicated + 2 EC)</td></tr>
+        <tr><td>Network</td><td>25 GbE with MTU 9000</td></tr>
+        <tr><td>Best 4 MB Write</td><td>1,175 MB/s (NVMe)</td></tr>
+        <tr><td>Best 4 KB Write IOPS</td><td>8,320 (NVMe)</td></tr>
+        <tr><td>Best 4 KB Read IOPS</td><td>37,629 (SSD)</td></tr>
+      </tbody>
+    </table>
+
+    <hr />
+
+    <h2>What We'd Do Differently</h2>
+
+    <ol>
+      <li>
+        <strong>Higher PG counts.</strong> 32 PGs for 8 NVMe OSDs leaves
+        performance on the table. 128–256 PGs would improve parallelism,
+        especially for small-object workloads.
+      </li>
+      <li>
+        <strong>Benchmark with proper queue depth.</strong> rados bench at
+        16 threads underreports NVMe capability. A multi-instance fio workload
+        via <code>rbd map</code> or librbd would give more realistic numbers.
+      </li>
+      <li>
+        <strong>Standardize MTU 9000 everywhere.</strong> Not all nodes have
+        the Ceph public VLAN configured — some fall back to the management
+        network at MTU 1500, creating a mixed-MTU situation.
+      </li>
+      <li>
+        <strong>Fix the benchmark script early.</strong> Weeks of development
+        decisions were based on bad data because a grep string was wrong.
+      </li>
+      <li>
+        <strong>Characterize the Optane tier before putting it in production.</strong>
+        We rushed the deployment and discovered config issues during benchmarking
+        that should have been caught earlier.
+      </li>
+    </ol>
+
+    <hr />
+
+    <h2>How to Run This Yourself</h2>
+
+    <pre><code># Quick rados bench on any Ceph pool
+rados -p &lt;pool&gt; bench 30 write -b 4194304 --no-cleanup
+rados -p &lt;pool&gt; bench 30 seq -b 4194304
+rados -p &lt;pool&gt; bench 30 rand -b 4194304
+
+# 4K small-object test
+rados -p &lt;pool&gt; bench 30 write -b 4096 --no-cleanup
+rados -p &lt;pool&gt; bench 30 rand -b 4096
+
+# Clean up test objects
+rados -p &lt;pool&gt; cleanup</code></pre>
+
+    <p>
+      For a comprehensive campaign across multiple tiers, our
+      <a href="https://github.com/dagutman/Infra-brain">INFRA-BRAIN</a>
+      repository has a benchmark toolkit with automated campaign scripts.
+    </p>
+
+    <hr />
+
+    <h2>Related Reading</h2>
+
+    <ul>
+      <li>
+        <a href={link("/frankencluster/")}>The Pathology Frankencluster</a>
+        — full hardware inventory, network topology, and all storage tiers
+      </li>
+      <li>
+        <a href={link("/blog/icarus-optimization/")}>How 3 ZFS Settings Cost Us 11× Performance</a>
+        — our TrueNAS tuning story with lessons for any ZFS deployment
+      </li>
+    </ul>
+  </article>
+</Layout>
+
+<style>
+  .blog-post {
+    max-width: 720px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+  }
+
+  .blog-post h1 {
+    font-size: 2rem;
+    line-height: 1.25;
+    margin-bottom: 0.25rem;
+  }
+
+  .blog-meta {
+    color: var(--muted);
+    font-size: 0.85rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .blog-dek {
+    font-size: 1.1rem;
+    color: var(--muted);
+    line-height: 1.5;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .blog-post h2 {
+    font-size: 1.4rem;
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .blog-post h3 {
+    font-size: 1.1rem;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .blog-post p {
+    margin-bottom: 1rem;
+    line-height: 1.75;
+  }
+
+  .blog-post ul, .blog-post ol {
+    margin: 0 0 1rem 1.5rem;
+    line-height: 1.75;
+  }
+
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+    margin: 1.2rem 0;
+  }
+
+  .data-table th {
+    text-align: left;
+    padding: 0.5rem 0.75rem;
+    background: var(--border);
+    font-weight: 600;
+  }
+
+  .data-table td {
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .data-table .num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .data-table .accent {
+    font-weight: 600;
+    color: #0d4f4a;
+  }
+
+  .data-table .highlight {
+    font-weight: 700;
+    color: #0d4f4a;
+  }
+
+  .data-table .highlight-alt {
+    font-weight: 700;
+    color: #b33;
+  }
+
+  .callout {
+    background: #e8f4f0;
+    border-left: 4px solid var(--accent);
+    padding: 0.75rem 1rem;
+    margin: 1rem 0;
+    border-radius: 0 6px 6px 0;
+    font-size: 0.95rem;
+  }
+
+  .callout.warn {
+    background: #fff8e5;
+    border-left-color: #d99;
+  }
+
+  pre {
+    background: #f0eee8;
+    padding: 1rem;
+    border-radius: 6px;
+    overflow-x: auto;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    margin: 1rem 0;
+  }
+
+  hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 2rem 0;
+  }
+
+  @media (max-width: 640px) {
+    .blog-post h1 { font-size: 1.5rem; }
+    .data-table { font-size: 0.8rem; }
+  }
+</style>
